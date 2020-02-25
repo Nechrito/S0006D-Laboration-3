@@ -1,6 +1,7 @@
 import pygame
 import pygame.freetype
 from src.Settings import *
+from src.code.engine.Camera import CameraInstance
 from src.code.environment.Tile import Tile
 from src.code.math.Iterator import fori
 from src.code.math.Vector import vec2
@@ -16,21 +17,15 @@ class Renderer:
         pygame.display.update()
         self.surface.fill((200, 200, 200))
 
-    def renderTileImg(self, img, pos):
-        self.surface.blit(img, pos.tuple)
-
     def renderTile(self, tile: Tile):
-        self.surface.blit(tile.image, tile)
+        self.surface.blit(tile.image, CameraInstance.centeredRect(tile.rect))
 
     def renderRect(self, size, pos, color=(255, 255, 255), alpha=128):
         surface = pygame.Surface(size)
         surface.set_alpha(alpha)
         surface.fill(color)
-        self.surface.blit(surface, pos)
-        #if SETTINGS.CURRENT_LEVEL >= 4:
-            #self.surface.blit(surface, CameraInstance.centeredVec(pos))
-        #else:
-            #self.surface.blit(surface, pos)
+        rect = pygame.Rect(pos[0], pos[1], size[0], size[1])
+        self.surface.blit(surface, CameraInstance.centeredRect(rect))
 
     def renderGrid(self):
         tWidth = SETTINGS.TILE_SCALE[0]

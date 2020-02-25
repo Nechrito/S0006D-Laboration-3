@@ -22,4 +22,4 @@ class Tile:
         return "Tile"
 
     def addImage(self, img):
-        self.image = pygame.transform.scale(img, (SETTINGS.TILE_SCALE[0], SETTINGS.TILE_SCALE[1]))
+        self.image = img

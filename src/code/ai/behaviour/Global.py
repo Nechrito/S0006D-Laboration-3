@@ -28,22 +28,22 @@ class Global(IState):
         if entity.hunger >= 95 and not self.currentState == Eat:
             #self.cachedCondition = self.memoize(entity.hunger <= 5)
             self.currentState = Eat
-            entity.setState(Eat(), True)
+            entity.setState(Eat())
 
         if entity.fatigue >= 95 and not self.currentState == Sleep:
             #self.cachedCondition = self.memoize(entity.fatigue <= 5)
             self.currentState = Sleep
-            entity.setState(Sleep(), True)
+            entity.setState(Sleep())
 
         if entity.thirst >= 95 and not self.currentState == Drink:
             #self.cachedCondition = self.memoize(entity.thirst <= 5)
             self.currentState = Drink
-            entity.setState(Drink(), True)
+            entity.setState(Drink())
 
         if entity.bank <= 10 and not self.currentState == Collect:
             #self.cachedCondition = self.memoize(entity.bank >= 30)
             self.currentState = Collect
-            entity.setState(Collect(), True)
+            entity.setState(Collect())
 
     def exit(self, entity: Entity):
         pass

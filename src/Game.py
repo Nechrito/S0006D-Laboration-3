@@ -7,6 +7,8 @@ from src.Settings import *
 from src.code.ai.Entity import Entity
 from src.code.ai.behaviour.Global import Global
 from src.code.ai.behaviour.states.CollectState import Collect
+from src.code.ai.behaviour.states.HangoutState import Hangout
+from src.code.ai.behaviour.states.PurchasingState import Purchase
 from src.code.engine.Camera import CameraInstance
 from src.code.engine.GameTime import GameTime
 from src.code.engine.Renderer import Renderer
@@ -14,8 +16,6 @@ from src.code.environment.AllBuildings import *
 from src.code.environment.Map import Map
 from src.code.environment.Tile import Tile
 from src.code.math.Vector import vec2
-from src.code.pathfinding.PathManager import getFullPath
-from src.enums.PathType import PathType
 
 
 class Game:
@@ -46,136 +46,41 @@ class Game:
         self.cursor = vec2(temp[0], temp[1])
         self.cursorSize = 9
 
+        self.relative = vec2()
+
         self.realCursorEnabled = False
         pygame.mouse.set_visible(self.realCursorEnabled)
         pygame.event.set_grab(not self.realCursorEnabled)
 
-        self.startPos = vec2()
-        self.endPos = vec2()
-
-        self.agents = []
-        self.buildings = []
-
-        self.activePaths = []
-        self.activeChildren = []
-
-        self.loadMap(1)
-
-    def loadMap(self, index):
-        SETTINGS.CURRENT_LEVEL = index
-
-        self.agents = []
-        self.buildings = []
-
-        if index == 4:
-            #SETTINGS.SCREEN_WIDTH = SETTINGS.SCREEN_HEIGHT = 832
-            #SETTINGS.SCREEN_WIDTH = 1024
-            #SETTINGS.SCREEN_HEIGHT = 768
-            self.map = Map(self.getRealFilePath(SETTINGS.MAP_OLD))
-            self.scaleAssets()
-
-            self.buildings = (getClub(), getDrink(), getResturant(), getStore(),
-                              getStackHQ(), getHotel(), getHangout(), getLTU())
-
-            self.agents = [Entity("Alex", Collect(), Global(), self.entityImg, vec2(359, 307))]
-                           #Entity("Wendy", Collect(), Global(), self.entityImg, vec2(150, 610)),
-                           #Entity("John", Collect(), Global(), self.entityImg, vec2(700, 380)),
-                           #Entity("James", Collect(), Global(), self.entityImg, vec2(940, 400))]
-
-        else:
-
-            if index == 1:
-                self.map = Map(self.getRealFilePath(SETTINGS.MAP_1), self.getRealFilePath(SETTINGS.MAP_REF1))
-                self.scaleAssets()
-
-            elif index == 2:
-                self.map = Map(self.getRealFilePath(SETTINGS.MAP_2), self.getRealFilePath(SETTINGS.MAP_REF2))
-                self.scaleAssets()
-
-            elif index == 3:
-                SETTINGS.SCREEN_WIDTH = SETTINGS.SCREEN_HEIGHT = 832
-                self.map = Map(self.getRealFilePath(SETTINGS.MAP_3), self.getRealFilePath(SETTINGS.MAP_REF3))
-                self.scaleAssets()
-
-            self.agents = [Entity("John", None, None, self.entityImg, self.map.start)]
-
-        self.setEnd(self.map.end)
-        self.setStart(self.map.start)
-
-        CameraInstance.init()
-        self.surface = pygame.display.set_mode((SETTINGS.SCREEN_WIDTH, SETTINGS.SCREEN_HEIGHT))
-        self.renderer = Renderer(self.surface)
-
-        self.updatePaths()
-
-    def scaleAssets(self):
+        self.map = Map(self.getRealFilePath(SETTINGS.MAP_PATH))
 
         self.font = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
 
-        scale = SETTINGS.TILE_SCALE
         self.entityImg = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
-        self.entityImg = pygame.transform.scale(self.entityImg, scale)
-
         self.obstacleImg = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_OBSTACLE))
-        self.obstacleImg = pygame.transform.scale(self.obstacleImg, scale)
-
         self.startImg = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_START))
-        self.startImg = pygame.transform.scale(self.startImg, scale)
-
         self.goalImg = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_GOAL))
-        self.goalImg = pygame.transform.scale(self.goalImg, scale)
 
-    def updatePaths(self, changePathingType=False):
+        self.buildings = (getClub(), getDrink(), getResturant(), getStore(),
+                          getStackHQ(), getHotel(), getHangout(), getLTU())
 
-        if changePathingType:
-            for agent in self.agents:
-                newType = int(agent.getPathType()) + 1
+        sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
 
-                if newType > len(PathType):
-                    newType = PathType(1)
+        self.characterAlex = Entity("Alex", Hangout(), Global(), vec2(495, 405), sensei)
+        #self.characterWendy = Entity("Wendy", Collect(), Global(), vec2(150, 610), sensei)
+        #self.characterJohn = Entity("John", Purchase(), Global(), vec2(700, 380), sensei)
+        #self.characterJames = Entity("James", Collect(), Global(), vec2(940, 400), sensei)
 
-                agent.setPathType(newType)
+        self.agents = [self.characterAlex]
 
-        self.agents[0].waypoints.clear()
-        self.activePaths = []
-        self.activeChildren = []
-
-        for col in range(len(SETTINGS.Graph)):
-            for row in range(len(SETTINGS.Graph[col])):
-                node = SETTINGS.Graph[col][row]
-                node.parent = None
-                node.validate()
-                node.addNeighbours()
-
-        if SETTINGS.CURRENT_LEVEL <= 3:
-            self.agents[0].moveTo(self.endPos)
-
-        self.activePaths = self.agents[0].waypoints
-        self.activeChildren = self.agents[0].pathfinder.requestChildren()
-
-        if not self.activePaths or len(self.activePaths) <= 2:
-            return
-
-        total = getFullPath(self.activeChildren, 0)
-        for i in range(0, len(self.activeChildren)):
-            covered = getFullPath(self.activeChildren, i)
-            self.activeChildren[i].updateColors(covered, total)
-
-    def setStart(self, pos: vec2):
-        if SETTINGS.CURRENT_LEVEL <= 3:
-            self.startPos = self.selectedTile(pos).position
-            self.agents[0].setStart(self.startPos, self.endPos)
-
-    def setEnd(self, pos: vec2):
-        if SETTINGS.CURRENT_LEVEL <= 3:
-            self.endPos = self.selectedTile(pos).position
+        CameraInstance.init()
 
     def update(self):
 
-        CameraInstance.followTarget(self.agents[0])
-
-        #self.cursor.log()
+        # mouse relative coords
+        self.relative = vec2(self.cursor.X - CameraInstance.center.X+8, self.cursor.Y - CameraInstance.center.Y + 8)
+        CameraInstance.followTarget(self.relative)
 
         if not self.paused:
             pygame.display.set_caption(SETTINGS.TITLE +
@@ -193,66 +98,48 @@ class Game:
         for agent in self.agents:
             agent.update()
 
-
     def draw(self):
 
         self.renderer.clear()
 
         for tile in SETTINGS.BackgroundTIles:
-            self.renderer.renderTileImg(tile.image, tile.position)
+            self.renderer.renderTile(tile)
 
         for tile in SETTINGS.PathTiles:
-            self.renderer.renderTileImg(tile.image, tile.position)
+            self.renderer.renderTile(tile)
 
         for tile in SETTINGS.TilesAll:
-            self.renderer.renderTileImg(tile.image, tile.position)
+            self.renderer.renderTile(tile)
 
-        #self.renderer.renderGrid()
-
-        if SETTINGS.CURRENT_LEVEL <= 4:
-
-            for obstacle in SETTINGS.ObstacleTiles:
-                self.renderer.renderTileImg(self.obstacleImg, obstacle.position)
-
-            self.renderer.renderTileImg(self.startImg, self.startPos)
-            self.renderer.renderTileImg(self.goalImg, self.endPos)
-
-            if self.activePaths:
-                # children
-                for child in self.activeChildren:
-                    if child.position == self.endPos or child.position == self.startPos:
-                        continue
-
-                    self.renderer.renderRect((SETTINGS.TILE_SCALE[0], SETTINGS.TILE_SCALE[1]), child.position.tuple, child.color)
-
-                # path line
-                for i in range(1, len(self.activePaths) - 1):
-                    waypoint1 = (self.activePaths[i].position + SETTINGS.TILE_SCALE[0] / 2).toInt.tuple
-                    waypoint2 = (self.activePaths[i + 1].position + SETTINGS.TILE_SCALE[1] / 2).toInt.tuple
-                    self.renderer.renderLine(waypoint1, waypoint2)
-                    pygame.draw.circle(self.surface, (152, 52, 23), waypoint1, 2)
-
-                # agents path
-                for agent in self.agents:
-                    waypoint1 = vec2(agent.position.X + SETTINGS.TILE_SCALE[0] / 2, agent.position.Y + SETTINGS.TILE_SCALE[1] / 2)
-                    waypoint2 = vec2(agent.nextNode.X + SETTINGS.TILE_SCALE[0] / 2, agent.nextNode.Y + SETTINGS.TILE_SCALE[1] / 2)
-                    self.renderer.renderLine(waypoint1, waypoint2, (152, 52, 152), 5)
+        # self.renderer.renderGrid()
 
         if not self.realCursorEnabled:
             intersection = self.selectedTile()
             if intersection:
                 self.renderer.renderRect(SETTINGS.TILE_SCALE, intersection.position.tuple)
 
-            self.renderer.renderRect((self.cursorSize, self.cursorSize), (self.cursor.X + self.cursorSize, self.cursor.Y + self.cursorSize), (37, 37, 38), 200)
+            self.renderer.renderRect((self.cursorSize, self.cursorSize), (self.relative.X - self.cursorSize+8, self.relative.Y - self.cursorSize+8), (37, 37, 38), 200)
 
-        for agent in self.agents:
-            self.renderer.renderTileImg(agent.image, agent.position)
+        for entity in self.agents:
+            self.surface.blit(entity.image, CameraInstance.centeredSprite(entity))
+
+            for i in range(0, len(entity.waypoints) - 1):
+                self.renderer.renderLine(entity.waypoints[i].position, entity.waypoints[i + 1].position)
+
+            (x, y) = (entity.position.X, entity.position.Y + SETTINGS.TILE_SCALE[1] - 5)
+            self.renderer.renderRect((60, 18), (x - 30, y - 9), (0, 0, 0), 170)
+            self.renderer.renderText(entity.name, (x, y + CameraInstance.center.Y), self.font)
+
+        for building in self.buildings:
+            self.renderer.renderText(building.name,
+                                     (building.position.X, building.position.Y + CameraInstance.center.Y - SETTINGS.TILE_SCALE[1] * 5),
+                                     self.fontBold)
 
         self.clock.tick(SETTINGS.MAX_FPS)
 
     def selectedTile(self, position: vec2 = None):
         if not position:
-            position = self.cursor + self.cursorSize
+            position = self.relative
 
         return SETTINGS.closestTile(position)
 

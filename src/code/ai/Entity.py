@@ -14,7 +14,7 @@ class Entity:
 
     waypoints: List[Node]
 
-    def __init__(self, name, state, globalState, image, position: vec2):
+    def __init__(self, name, state, globalState, position: vec2, image):
         self.image = image
         self.name = name
         self.position = position
@@ -47,18 +47,16 @@ class Entity:
         self.rect = self.image.get_rect()
         self.rect.center = (self.position - 8).tuple
 
+        if len(self.waypoints) > 1:
+            if self.nextNode.distance(self.position) > self.radius:
+                self.position += (self.nextNode - self.position).normalized * GameTime.deltaTime * 200
+            elif len(self.waypoints) >= 2:
+                self.waypoints.pop(0)
+                if len(self.waypoints) >= 2:
+                    self.nextNode = self.waypoints[1].position
+
         if self.stateMachine is not None:
             self.updateState()
-
-        if len(self.waypoints) <= 1:
-            return
-
-        if self.nextNode.distance(self.position) > self.radius:
-            self.position += (self.nextNode - self.position).normalized * GameTime.deltaTime * 200
-        elif len(self.waypoints) >= 2:
-            self.waypoints.pop(0)
-            if len(self.waypoints) >= 2:
-                self.nextNode = self.waypoints[1].position
 
     def moveTo(self, target: vec2):
         if target.distance(self.position) <= self.radius:

@@ -2,9 +2,9 @@ from copy import copy
 
 
 class SETTINGS:
-    TITLE = "S0006D Pathfinding - Philip Lindh"
+    TITLE = "S0006D Strategic AI - Philip Lindh"
 
-    SCREEN_WIDTH = 768
+    SCREEN_WIDTH = 1024
     SCREEN_HEIGHT = 768
 
     MAP_WIDTH = None
@@ -16,7 +16,6 @@ class SETTINGS:
     TILE_SCALE = None
 
     MAX_FPS = 200
-    CURRENT_LEVEL = 1
 
     # Global accessors
     Graph = {}
@@ -27,13 +26,7 @@ class SETTINGS:
     #BuildingObjects = []
 
     # Resource files direct path
-    MAP_OLD = "map/map_old.tmx"
-    MAP_1 = "map/map1.tmx"
-    MAP_2 = "map/map2.tmx"
-    MAP_3 = "map/map3.tmx"
-    MAP_REF1 = "map/ref/Map1.txt"
-    MAP_REF2 = "map/ref/Map2.txt"
-    MAP_REF3 = "map/ref/Map3.txt"
+    MAP_PATH = "map/Map.tmx"
 
     TILE_OBSTACLE = "tiles/wall.png"
     TILE_START = "tiles/start.png"
@@ -54,8 +47,8 @@ class SETTINGS:
         cls.SCREEN_RESOLUTION = [cls.SCREEN_WIDTH, cls.SCREEN_HEIGHT]
 
         # upscaled tilesize
-        scalex = SETTINGS.SCREEN_WIDTH // (cls.MAP_WIDTH // 16)
-        scaley = SETTINGS.SCREEN_HEIGHT // (cls.MAP_HEIGHT // 16)
+        scalex = 16  #SETTINGS.SCREEN_WIDTH // (cls.MAP_WIDTH // 16)
+        scaley = 16  #SETTINGS.SCREEN_HEIGHT // (cls.MAP_HEIGHT // 16)
         cls.TILE_SCALE = (scalex, scaley)
 
         cls.GRID_BOUNDS = (cls.SCREEN_WIDTH + scalex // 2, cls.SCREEN_HEIGHT + scaley // 2)
@@ -66,12 +59,10 @@ class SETTINGS:
             return copy(cls.Graph[int(position.LocalY - 1)][int(position.LocalX - 1)])
         except IndexError:
             pass
-            #position.log(True)
 
     @classmethod
     def closestTile(cls, position = None):
         node = cls.getNode(position)
-
         if node:
             return node
 

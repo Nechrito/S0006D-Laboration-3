@@ -20,20 +20,6 @@ class UserInput:
                     pygame.quit()
                     sys.exit()
 
-                # Load different map
-                if event.key == pygame.K_1:
-                    self.instance.loadMap(1)
-                    return
-                if event.key == pygame.K_2:
-                    self.instance.loadMap(2)
-                    return
-                if event.key == pygame.K_3:
-                    self.instance.loadMap(3)
-                    return
-                if event.key == pygame.K_4:
-                    self.instance.loadMap(4)
-                    return
-
                 # Toggle mouse
                 if event.key == pygame.K_LALT:
                     self.instance.realCursorEnabled = not self.instance.realCursorEnabled
@@ -55,19 +41,3 @@ class UserInput:
                 # Slow down
                 if not self.instance.paused and event.key == pygame.K_LCTRL:
                     self.timeScaleCurrent = GameTime.setScale(self.timeScaleCurrent / 2)
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                square = self.instance.selectedTile()  # nearest square to mouse
-                if square:
-                    changeType = False
-                    if event.button == 1 and not self.instance.isObstacle(square):  # LEFT-CLICK
-                        self.instance.setStart(square.position)
-                    elif event.button == 2:  # MIDDLE-CLICK
-                        self.instance.setObstacle()
-                    elif event.button == 3 and not self.instance.isObstacle(square):  # RIGHT CLICK
-                        self.instance.setEnd(square.position)
-                    else: # SCROLL
-                        changeType = True
-
-                    # update the path
-                    self.instance.updatePaths(changeType)

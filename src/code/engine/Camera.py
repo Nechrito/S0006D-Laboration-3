@@ -1,6 +1,5 @@
 import pygame
 from src.Settings import *
-from src.code.ai.Entity import Entity
 from src.code.engine.GameTime import GameTime
 from src.code.math.Vector import vec2
 
@@ -14,7 +13,6 @@ class CameraInstance:
     @classmethod
     def init(cls):
         cls.center = vec2()
-        print(str(SETTINGS.MAP_WIDTH))
         cls.rect = pygame.Rect(0, 0, SETTINGS.MAP_WIDTH, SETTINGS.MAP_HEIGHT)
         cls.width = cls.rect[2]
         cls.height = cls.rect[3]
@@ -28,18 +26,10 @@ class CameraInstance:
         return sprite.rect.move(cls.rect.topleft)
 
     @classmethod
-    def centeredVec(cls, vec):
-        if SETTINGS.CURRENT_LEVEL >= 4:
-            camPos = vec2(CameraInstance.center.X, CameraInstance.center.Y)
-            return (camPos + vec).tuple
-        else:
-            return vec[0], vec[1]
+    def followTarget(cls, target):
 
-    @classmethod
-    def followTarget(cls, target: Entity):
-
-        centerx = (-target.position.X + cls.width // 2) - cls.center.X
-        centery = (-target.position.Y + cls.height // 2) - cls.center.Y
+        centerx = (-target.X + cls.width // 2) - cls.center.X
+        centery = (-target.Y + cls.height // 2) - cls.center.Y
 
         cls.center += vec2(centerx, centery) * GameTime.fixedDeltaTime
 
