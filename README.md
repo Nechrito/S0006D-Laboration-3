@@ -1,10 +1,4 @@
-# S0006D-Laboration-2 - Combination of Pathfinding (A*) and FSM (Finite State Machine)
-
-CONTROLS
-* Mouse Left Click = Set Starting Point
-* Mouse Right Click = Set End Point
-* Mouse Middle Click = Add/Remove Obstacles
-* Mouse Scroll = Change algorithm 
+# S0006D-Laboration-3 - Combination of Pathfinding (A*) and FSM (Finite State Machine)
 
 MISC
 * Esc = Exit
