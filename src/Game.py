@@ -67,7 +67,7 @@ class Game:
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
 
-        self.characterAlex = Entity("Alex", Hangout(), Global(), vec2(495, 405), sensei)
+        self.characterAlex = Entity("Alex", Hangout(), Global(), vec2(495, 410), sensei)
         #self.characterWendy = Entity("Wendy", Collect(), Global(), vec2(150, 610), sensei)
         #self.characterJohn = Entity("John", Purchase(), Global(), vec2(700, 380), sensei)
         #self.characterJames = Entity("James", Collect(), Global(), vec2(940, 400), sensei)
@@ -78,11 +78,16 @@ class Game:
 
     def update(self):
 
-        # mouse relative coords
-        self.relative = vec2(self.cursor.X - CameraInstance.center.X+8, self.cursor.Y - CameraInstance.center.Y + 8)
         CameraInstance.followTarget(self.relative)
 
+        # mouse relative coords
+        self.relative = vec2(self.cursor.X - CameraInstance.center.X + 8, self.cursor.Y - CameraInstance.center.Y + 8)
+
+        for agent in self.agents:
+            agent.update()
+
         if not self.paused:
+
             pygame.display.set_caption(SETTINGS.TITLE +
                                        " | Speed: " +
                                        str(GameTime.timeScale) +
@@ -95,33 +100,29 @@ class Game:
             temp = pygame.mouse.get_pos()
             self.cursor = vec2(temp[0], temp[1])
 
-        for agent in self.agents:
-            agent.update()
-
     def draw(self):
 
         self.renderer.clear()
 
-        for tile in SETTINGS.BackgroundTIles:
-            self.renderer.renderTile(tile)
-
-        for tile in SETTINGS.PathTiles:
-            self.renderer.renderTile(tile)
-
         for tile in SETTINGS.TilesAll:
             self.renderer.renderTile(tile)
 
-        # self.renderer.renderGrid()
+       #a self.renderer.renderGrid()
 
         if not self.realCursorEnabled:
-            intersection = self.selectedTile()
+            intersection = SETTINGS.closestNode(self.relative)
             if intersection:
-                self.renderer.renderRect(SETTINGS.TILE_SCALE, intersection.position.tuple)
+                x = intersection.position
+                self.renderer.renderRect(SETTINGS.TILE_SCALE, x.tuple, (128,128,128), 255)
 
-            self.renderer.renderRect((self.cursorSize, self.cursorSize), (self.relative.X - self.cursorSize+8, self.relative.Y - self.cursorSize+8), (37, 37, 38), 200)
+            self.renderer.renderRect((8, 8), (self.relative.X - self.cursorSize+8, self.relative.Y - self.cursorSize+8), (37, 37, 38), 200)
 
         for entity in self.agents:
             self.surface.blit(entity.image, CameraInstance.centeredSprite(entity))
+
+            if len(entity.waypoints) > 0:
+                print("PATH YAY")
+                self.renderer.renderRect([10, 10], entity.waypoints[-1].position)
 
             for i in range(0, len(entity.waypoints) - 1):
                 self.renderer.renderLine(entity.waypoints[i].position, entity.waypoints[i + 1].position)

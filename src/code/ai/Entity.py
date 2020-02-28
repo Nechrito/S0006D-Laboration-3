@@ -59,10 +59,11 @@ class Entity:
             self.updateState()
 
     def moveTo(self, target: vec2):
+        assert target is not type(vec2)
         if target.distance(self.position) <= self.radius:
             return
 
-        temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)
+        temp = self.pathfinder.requestPath(self.position, target)  #self.pathfinder.requestPathCached(self.waypoints, self.position, target)
         if temp is None:
             return
 

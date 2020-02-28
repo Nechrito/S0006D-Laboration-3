@@ -14,11 +14,15 @@ class AStar(IPath):
         super().__init__()
 
     def getPath(self, start: vec2, end: vec2):
+        assert end is not type(vec2)
         self.timerStart = time.time()
         self.timeElapsed = None
 
         startNode = SETTINGS.getNode(start)
         endNode = SETTINGS.getNode(end)
+
+        if not startNode:
+            return None
 
         closedList = []
         openList = [startNode]

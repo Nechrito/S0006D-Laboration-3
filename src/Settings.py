@@ -61,14 +61,22 @@ class SETTINGS:
             pass
 
     @classmethod
+    def closestNode(cls, position):
+        closest = None
+        distance = 0
+        for i in cls.Graph:
+            for j in i:
+                currentDist = j.position.distance(position)
+                if currentDist < distance or distance == 0:
+                    distance = currentDist
+                    closest = j
+        return closest
+
+    @classmethod
     def closestTile(cls, position = None):
         node = cls.getNode(position)
         if node:
             return node
-
-        for tile in cls.PathTiles:
-            if tile.rect.collidepoint(position.tuple):
-                return tile
 
         closest = None
         distance = 0

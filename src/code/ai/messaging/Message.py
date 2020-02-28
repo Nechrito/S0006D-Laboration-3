@@ -12,4 +12,4 @@ class Message:
         timeFormatted = '\x1b[1;31m' + '[' + GameTime.timeElapsed() + "] " + '\x1b[0m'
         nameColored = '\x1b[2;34m' + sender.name + '\x1b[0m'
         messageFormatted = '\x1b[3;37m' + message + '\x1b[0m'
-        print(timeFormatted + nameColored + ": " + messageFormatted)
+        print(timeFormatted + nameColored + ": " + "\n~ " + messageFormatted)

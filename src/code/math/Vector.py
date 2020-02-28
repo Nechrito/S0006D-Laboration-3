@@ -71,11 +71,8 @@ class vec2:
     def distance(self, other):
         return math.sqrt(((self.X - other[0]) ** 2) + ((self.Y - other[1]) ** 2))
 
-    def log(self, local=False):
-        if local:
-            print("Local: " + str(self.LocalX) + " | " + str(self.LocalY))
-        else:
-            print(str(self.X) + " | " + str(self.Y))
+    def log(self, header=""):
+        print(header + " (" + str(self.X) + ", " + str(self.Y) + ") | Local: (" + str(self.LocalX) + ", " + str(self.LocalY) + ")")
 
     def break_tie(self, start, goal):
         dx1 = self.X - goal.X
