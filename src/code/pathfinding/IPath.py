@@ -21,7 +21,7 @@ class IPath(object, metaclass=abc.ABCMeta):
         self.average[index][1] += 1
 
     def getAverage(self, index):
-        return self.average[index][0] / self.average[index][1]
+        return self.average[index][0] / max(1, self.average[index][1])
 
     @abc.abstractmethod
     def getPath(self, start: vec2, end: vec2):

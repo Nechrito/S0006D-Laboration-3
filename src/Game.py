@@ -9,6 +9,7 @@ from src.code.ai.behaviour.Global import Global
 from src.code.ai.behaviour.states.CollectState import Collect
 from src.code.ai.behaviour.states.HangoutState import Hangout
 from src.code.ai.behaviour.states.PurchasingState import Purchase
+from src.code.ai.behaviour.states.SleepingState import Sleep
 from src.code.engine.Camera import CameraInstance
 from src.code.engine.GameTime import GameTime
 from src.code.engine.Renderer import Renderer
@@ -54,7 +55,7 @@ class Game:
 
         self.map = Map(self.getRealFilePath(SETTINGS.MAP_PATH))
 
-        self.font = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
+        self.font = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 10 // SETTINGS.SCREEN_WIDTH)
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
 
         self.entityImg = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
@@ -67,7 +68,7 @@ class Game:
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
 
-        self.characterAlex = Entity("Alex", Hangout(), Global(), vec2(495, 410), sensei)
+        self.characterAlex = Entity("Alex", Sleep(), Global(), vec2(495, 410), sensei)
         #self.characterWendy = Entity("Wendy", Collect(), Global(), vec2(150, 610), sensei)
         #self.characterJohn = Entity("John", Purchase(), Global(), vec2(700, 380), sensei)
         #self.characterJames = Entity("James", Collect(), Global(), vec2(940, 400), sensei)
@@ -85,6 +86,7 @@ class Game:
 
         for agent in self.agents:
             agent.update()
+            agent.moveTo(self.relative)
 
         if not self.paused:
 
@@ -107,6 +109,10 @@ class Game:
         for tile in SETTINGS.TilesAll:
             self.renderer.renderTile(tile)
 
+        for col in range(len(SETTINGS.Graph)):
+            for row in range(len(SETTINGS.Graph[col])):
+                node = SETTINGS.Graph[col][row]
+                self.renderer.renderText(str(col) + ":" + str(row), node.position + vec2(10, 10), self.font)
        #a self.renderer.renderGrid()
 
         if not self.realCursorEnabled:

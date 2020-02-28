@@ -93,6 +93,10 @@ class vec2:
         return hash(self.X) + hash(self.Y)
 
     @property
+    def isZero(self):
+        return self.X == 0 and self.Y == 0
+
+    @property
     def toInt(self):
         x = int(self.X)
         y = int(self.Y)

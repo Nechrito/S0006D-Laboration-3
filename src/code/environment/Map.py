@@ -34,7 +34,7 @@ class Map:
         SETTINGS.TilesAll = []
         SETTINGS.PathTiles = []
         SETTINGS.ObstacleTiles = []
-        SETTINGS.BackgroundTIles = []
+        SETTINGS.BackgroundTiles = []
 
         # This creates an 2D array, very quickly, through copying the same immutable object over and over again
         rows, cols = (SETTINGS.MAP_WIDTH, SETTINGS.MAP_HEIGHT)
@@ -45,7 +45,7 @@ class Map:
             if tile:
                 tileObj = Tile(vec2(x * SETTINGS.TILE_SCALE[0], y * SETTINGS.TILE_SCALE[1]), gid)
                 tileObj.addImage(tile)
-                SETTINGS.BackgroundTIles.append(tileObj)
+                SETTINGS.BackgroundTiles.append(tileObj)
 
         for x, y, gid in pathLayer:
             tile = ti(gid)
@@ -56,8 +56,7 @@ class Map:
                 tileObj.addImage(tile)
                 SETTINGS.PathTiles.append(tileObj)
 
-                nodeObj = Node(position)
-                SETTINGS.Graph[y][x] = nodeObj
+                SETTINGS.Graph[x][y] = Node(position)
 
         for layer in self.tmx.visible_layers:
             for x, y, gid in layer:
@@ -67,13 +66,14 @@ class Map:
                     tileObj.addImage(tile)
                     SETTINGS.TilesAll.append(tileObj)
 
+        # filter out nodes which are not filled in the path
         temp = []
-        #print(str(type(SETTINGS.Graph)))
         for x in SETTINGS.Graph:
             row = []
             for y in x:
                 if str(y) != str(0):
                     row.append(y)
+
             if len(row) > 0:
                 temp.append(row)
 

@@ -22,6 +22,11 @@ class AStar(IPath):
         endNode = SETTINGS.getNode(end)
 
         if not startNode:
+            print("failed to find start")
+            return None
+
+        if not endNode:
+            print("failed to find end")
             return None
 
         closedList = []
@@ -51,7 +56,7 @@ class AStar(IPath):
 
             for pos in currentNode.neighbours:
                 neighbour = SETTINGS.getNode(pos)
-                if not neighbour.isWalkable or neighbour in closedList:
+                if not neighbour or not neighbour.isWalkable or neighbour in closedList:
                     continue
 
                 neighbour.parent = currentNode

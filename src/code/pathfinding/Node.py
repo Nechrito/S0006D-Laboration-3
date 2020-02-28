@@ -27,7 +27,7 @@ class Node:
             neighbour = self.position + vec2(direction.X * SETTINGS.TILE_SCALE[0], direction.Y * SETTINGS.TILE_SCALE[1])
 
             if neighbour not in self.neighbours:
-                if 0 < neighbour.X < SETTINGS.SCREEN_WIDTH - SETTINGS.TILE_SCALE[0] and 0 < neighbour.Y < SETTINGS.SCREEN_HEIGHT - SETTINGS.TILE_SCALE[1]:
+                if 0 < neighbour.X < SETTINGS.MAP_WIDTH and 0 < neighbour.Y < SETTINGS.MAP_HEIGHT:
                     self.neighbours.append(neighbour)
 
     def validate(self):
@@ -36,7 +36,7 @@ class Node:
                 self.isWalkable = False
                 return False
 
-        if 0 < self.position.X < SETTINGS.SCREEN_WIDTH - SETTINGS.TILE_SCALE[0] and 0 < self.position.Y < SETTINGS.SCREEN_HEIGHT - SETTINGS.TILE_SCALE[1]:
+        if 0 < self.position.X < SETTINGS.MAP_WIDTH - SETTINGS.TILE_SCALE[0] and 0 < self.position.Y < SETTINGS.MAP_HEIGHT - SETTINGS.TILE_SCALE[1]:
             if SETTINGS.getNode(self.position):
                 self.isWalkable = True
                 return True

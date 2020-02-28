@@ -21,7 +21,7 @@ class SETTINGS:
     Graph = {}
     PathTiles = []
     ObstacleTiles = []
-    BackgroundTIles = []
+    BackgroundTiles = []
     TilesAll = []
     #BuildingObjects = []
 
@@ -56,7 +56,7 @@ class SETTINGS:
     @classmethod
     def getNode(cls, position):
         try:
-            return copy(cls.Graph[int(position.LocalY - 1)][int(position.LocalX - 1)])
+            return copy(cls.Graph[int(position.LocalX - 1)][int(position.LocalY - 1)])
         except IndexError:
             pass
 
