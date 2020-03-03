@@ -59,6 +59,8 @@ class SETTINGS:
             return copy(cls.Graph[int(position.LocalX - 1)][int(position.LocalY - 1)])
         except IndexError:
             pass
+        
+        return cls.closestNode(position)
 
     @classmethod
     def closestNode(cls, position):

@@ -39,11 +39,14 @@ class Renderer:
             self.renderLine(vec2(tWidth, y), vec2(sWidth, y))
 
     def renderLine(self, start: vec2, end: vec2, color=(255, 255, 255), width=1):
-        pygame.draw.line(self.surface, color, vec2(start).tuple, vec2(end).tuple, width)
+        v1 = vec2(start) + CameraInstance.center - vec2(8)
+        v2 = vec2(end) + CameraInstance.center - vec2(8)
+        pygame.draw.line(self.surface, color, v1.tuple, v2.tuple, width)
 
     def renderText(self, text: str, position, font, color=(255, 255, 255)):
+        v1 = vec2(position) + CameraInstance.center
         fontRendered, fontRect = font.render(text, color)
-        self.surface.blit(fontRendered, (position[0] - fontRect[2] / 2, position[1] - fontRect[3] / 2))
+        self.surface.blit(fontRendered, (v1.X - fontRect[2] / 2, v1.Y - fontRect[3] / 2))
 
     def renderTexts(self, position, font, color=(0, 0, 0)):
         if len(self.texts) <= 0:

@@ -26,12 +26,16 @@ class CameraInstance:
         return sprite.rect.move(cls.rect.topleft)
 
     @classmethod
+    def centeredVec(cls, position):
+        return position + cls.center
+
+    @classmethod
     def followTarget(cls, target):
 
         centerx = (-target.X + cls.width // 2) - cls.center.X
         centery = (-target.Y + cls.height // 2) - cls.center.Y
 
-        cls.center += vec2(centerx, centery) * GameTime.fixedDeltaTime
+        cls.center += vec2(centerx, centery) * GameTime.fixedDeltaTime * 2
 
         #  Make sure we're within map boundaries
         xMin = min(0, cls.center.X)

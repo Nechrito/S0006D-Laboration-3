@@ -56,7 +56,7 @@ class Map:
                 tileObj.addImage(tile)
                 SETTINGS.PathTiles.append(tileObj)
 
-                SETTINGS.Graph[x][y] = Node(position)
+                SETTINGS.Graph[y][x] = Node(position)
 
         for layer in self.tmx.visible_layers:
             for x, y, gid in layer:
@@ -83,7 +83,9 @@ class Map:
             for row in range(len(SETTINGS.Graph[col])):
                 node = SETTINGS.Graph[col][row]
                 node.addNeighbours()
-                node.validate()
+
+        for x in SETTINGS.Graph:
+            print(x)
 
         timeElapsed = time.time() - startTime
         print("Loaded map in: " + str(truncate(timeElapsed * 1000)) + "ms")

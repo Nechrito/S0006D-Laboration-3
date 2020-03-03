@@ -7,7 +7,6 @@ from src.Settings import *
 from src.code.ai.Entity import Entity
 from src.code.ai.behaviour.Global import Global
 from src.code.ai.behaviour.states.CollectState import Collect
-from src.code.ai.behaviour.states.HangoutState import Hangout
 from src.code.ai.behaviour.states.PurchasingState import Purchase
 from src.code.ai.behaviour.states.SleepingState import Sleep
 from src.code.engine.Camera import CameraInstance
@@ -55,7 +54,7 @@ class Game:
 
         self.map = Map(self.getRealFilePath(SETTINGS.MAP_PATH))
 
-        self.font = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 10 // SETTINGS.SCREEN_WIDTH)
+        self.font = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 18 // SETTINGS.SCREEN_WIDTH)
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
 
         self.entityImg = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
@@ -67,13 +66,12 @@ class Game:
                           getStackHQ(), getHotel(), getHangout(), getLTU())
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
+        self.characterAlex = Entity("Alex", Sleep(), Global(), self.buildings[0].position, sensei)  # vec2(495, 410)
+        self.characterWendy = Entity("Wendy", Collect(), Global(), self.buildings[1].position, sensei)
+        self.characterJohn = Entity("John", Purchase(), Global(), self.buildings[2].position, sensei)
+        self.characterJames = Entity("James", Collect(), Global(), self.buildings[3].position, sensei)
 
-        self.characterAlex = Entity("Alex", Sleep(), Global(), vec2(495, 410), sensei)
-        #self.characterWendy = Entity("Wendy", Collect(), Global(), vec2(150, 610), sensei)
-        #self.characterJohn = Entity("John", Purchase(), Global(), vec2(700, 380), sensei)
-        #self.characterJames = Entity("James", Collect(), Global(), vec2(940, 400), sensei)
-
-        self.agents = [self.characterAlex]
+        self.agents = [self.characterJames]
 
         CameraInstance.init()
 
@@ -83,10 +81,9 @@ class Game:
 
         # mouse relative coords
         self.relative = vec2(self.cursor.X - CameraInstance.center.X + 8, self.cursor.Y - CameraInstance.center.Y + 8)
-
         for agent in self.agents:
             agent.update()
-            agent.moveTo(self.relative)
+            #agent.moveTo(self.relative)
 
         if not self.paused:
 
@@ -95,8 +92,7 @@ class Game:
                                        str(GameTime.timeScale) +
                                        " | FPS " +
                                        "{:.0f}".format(self.clock.get_fps()) +
-                                       " | Date: " + GameTime.timeElapsed() +
-                                       " | Algorithm: " + str(self.agents[0].getPathType()))
+                                       " | Date: " + GameTime.timeElapsed())
 
         if not self.realCursorEnabled:
             temp = pygame.mouse.get_pos()
@@ -109,10 +105,11 @@ class Game:
         for tile in SETTINGS.TilesAll:
             self.renderer.renderTile(tile)
 
-        for col in range(len(SETTINGS.Graph)):
-            for row in range(len(SETTINGS.Graph[col])):
-                node = SETTINGS.Graph[col][row]
-                self.renderer.renderText(str(col) + ":" + str(row), node.position + vec2(10, 10), self.font)
+        #for col in range(len(SETTINGS.Graph)):
+            #for row in range(len(SETTINGS.Graph[col])):
+                #node = SETTINGS.Graph[col][row]
+                #self.renderer.renderText(str(col) + ":" + str(row), node.position + vec2(10, 10), self.font)
+
        #a self.renderer.renderGrid()
 
         if not self.realCursorEnabled:
@@ -127,7 +124,6 @@ class Game:
             self.surface.blit(entity.image, CameraInstance.centeredSprite(entity))
 
             if len(entity.waypoints) > 0:
-                print("PATH YAY")
                 self.renderer.renderRect([10, 10], entity.waypoints[-1].position)
 
             for i in range(0, len(entity.waypoints) - 1):
@@ -135,14 +131,33 @@ class Game:
 
             (x, y) = (entity.position.X, entity.position.Y + SETTINGS.TILE_SCALE[1] - 5)
             self.renderer.renderRect((60, 18), (x - 30, y - 9), (0, 0, 0), 170)
-            self.renderer.renderText(entity.name, (x, y + CameraInstance.center.Y), self.font)
+            self.renderer.renderText(entity.name, (x, y), self.font)
 
         for building in self.buildings:
             self.renderer.renderText(building.name,
-                                     (building.position.X, building.position.Y + CameraInstance.center.Y - SETTINGS.TILE_SCALE[1] * 5),
+                                     (building.position.X, building.position.Y - SETTINGS.TILE_SCALE[1] * 5),
                                      self.fontBold)
 
+        self.drawEntitiesInfo()
+
         self.clock.tick(SETTINGS.MAX_FPS)
+
+    def drawEntitiesInfo(self):
+
+        count = 0
+        for entity in self.agents:
+
+            self.renderer.renderRect((150, 150), (count * 150, 50), (0, 0, 0), 160)
+
+            self.renderer.append(entity.name + " (" + str(entity.stateMachine.currentState) + ")")
+            self.renderer.append("Fatigue: {0}%".format("{:.0f}".format(float(entity.fatigue))))
+            self.renderer.append("Hunger: {0}%".format("{:.0f}".format(float(entity.hunger))))
+            self.renderer.append("Thirst: {0}%".format("{:.0f}".format(float(entity.thirst))))
+            self.renderer.append("Bank: {0}$".format("{:.0f}".format(float(entity.bank))))
+            self.renderer.renderTexts((25 + SETTINGS.SCREEN_WIDTH * 0.05 + 150 * count, SETTINGS.SCREEN_HEIGHT * 0.10), self.font,
+                                      (255, 255, 255))
+
+            count += 1
 
     def selectedTile(self, position: vec2 = None):
         if not position:

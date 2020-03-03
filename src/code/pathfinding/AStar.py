@@ -18,6 +18,9 @@ class AStar(IPath):
         self.timerStart = time.time()
         self.timeElapsed = None
 
+        #start.log("start")
+        #end.log("end")
+
         startNode = SETTINGS.getNode(start)
         endNode = SETTINGS.getNode(end)
 

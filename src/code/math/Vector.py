@@ -13,6 +13,9 @@ class vec2:
             self.X = X
             self.Y = Y
 
+    def Local(self):
+        return vec2(self.LocalX, self.LocalY)
+
     @property
     def LocalX(self):
         return self.X // (SETTINGS.TILE_SCALE[0] - 1)

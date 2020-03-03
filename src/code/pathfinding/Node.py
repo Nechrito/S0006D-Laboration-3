@@ -27,22 +27,8 @@ class Node:
             neighbour = self.position + vec2(direction.X * SETTINGS.TILE_SCALE[0], direction.Y * SETTINGS.TILE_SCALE[1])
 
             if neighbour not in self.neighbours:
-                if 0 < neighbour.X < SETTINGS.MAP_WIDTH and 0 < neighbour.Y < SETTINGS.MAP_HEIGHT:
+                if SETTINGS.getNode(neighbour):
                     self.neighbours.append(neighbour)
-
-    def validate(self):
-        for obstacle in SETTINGS.ObstacleTiles:
-            if self.rect.colliderect(obstacle.rect):
-                self.isWalkable = False
-                return False
-
-        if 0 < self.position.X < SETTINGS.MAP_WIDTH - SETTINGS.TILE_SCALE[0] and 0 < self.position.Y < SETTINGS.MAP_HEIGHT - SETTINGS.TILE_SCALE[1]:
-            if SETTINGS.getNode(self.position):
-                self.isWalkable = True
-                return True
-
-        self.isWalkable = False
-        return False
 
     def updateColors(self, distanceCovered, distanceTotal):
         delta = min(1.0, max(1e-4, distanceCovered / distanceTotal))
