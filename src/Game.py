@@ -52,26 +52,30 @@ class Game:
         pygame.mouse.set_visible(self.realCursorEnabled)
         pygame.event.set_grab(not self.realCursorEnabled)
 
-        self.map = Map(self.getRealFilePath(SETTINGS.MAP_PATH))
+        # Yes this is some next level fuckery, I'm on a deadline lol
+        SETTINGS.TILE_B = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_B))
+        SETTINGS.TILE_M = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_M))
+        SETTINGS.TILE_T = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_T))
+        SETTINGS.TILE_G = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_G))
+        SETTINGS.TILE_V = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_V))
+
+        self.map = Map(self.getRealFilePath(SETTINGS.MAP_PATH), self.getRealFilePath(SETTINGS.MAP_REF))
 
         self.font = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 18 // SETTINGS.SCREEN_WIDTH)
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
 
         self.entityImg = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
-        self.obstacleImg = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_OBSTACLE))
-        self.startImg = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_START))
-        self.goalImg = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_GOAL))
-
-        self.buildings = (getClub(), getDrink(), getResturant(), getStore(),
-                          getStackHQ(), getHotel(), getHangout(), getLTU())
+        self.buildings = ( getClub(), getDrink(), getResturant(),
+                           getStore(), getStackHQ(), getHotel(),
+                           getHangout(), getLTU() )
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
         self.characterAlex = Entity("Alex", Sleep(), Global(), self.buildings[0].position, sensei)  # vec2(495, 410)
-        self.characterWendy = Entity("Wendy", Collect(), Global(), self.buildings[1].position, sensei)
-        self.characterJohn = Entity("John", Purchase(), Global(), self.buildings[2].position, sensei)
-        self.characterJames = Entity("James", Collect(), Global(), self.buildings[3].position, sensei)
+        #self.characterWendy = Entity("Wendy", Collect(), Global(), self.buildings[1].position, sensei)
+        #self.characterJohn = Entity("John", Purchase(), Global(), self.buildings[2].position, sensei)
+        #self.characterJames = Entity("James", Collect(), Global(), self.buildings[3].position, sensei)
 
-        self.agents = [self.characterJames]
+        self.agents = [self.characterAlex]
 
         CameraInstance.init()
 
@@ -80,7 +84,7 @@ class Game:
         CameraInstance.followTarget(self.relative)
 
         # mouse relative coords
-        self.relative = vec2(self.cursor.X - CameraInstance.center.X + 8, self.cursor.Y - CameraInstance.center.Y + 8)
+        self.relative = vec2(self.cursor.X - CameraInstance.center.X, self.cursor.Y - CameraInstance.center.Y)
         for agent in self.agents:
             agent.update()
             #agent.moveTo(self.relative)

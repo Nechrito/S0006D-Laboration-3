@@ -18,7 +18,8 @@ class Renderer:
         self.surface.fill((200, 200, 200))
 
     def renderTile(self, tile: Tile):
-        self.surface.blit(tile.image, CameraInstance.centeredRect(tile.rect))
+        if tile.image:
+            self.surface.blit(tile.image, CameraInstance.centeredRect(tile.rect))
 
     def renderRect(self, size, pos, color=(255, 255, 255), alpha=128):
         surface = pygame.Surface(size)
@@ -30,8 +31,8 @@ class Renderer:
     def renderGrid(self):
         tWidth = SETTINGS.TILE_SCALE[0]
         tHeight = SETTINGS.TILE_SCALE[1]
-        sWidth = (SETTINGS.SCREEN_WIDTH - tWidth)
-        sHeight = (SETTINGS.SCREEN_HEIGHT - tHeight)
+        sWidth = (SETTINGS.MAP_WIDTH - tWidth)
+        sHeight = (SETTINGS.MAP_HEIGHT - tHeight)
 
         for x in fori(tWidth, sWidth, tWidth):
             self.renderLine(vec2(x, tHeight), vec2(x, sHeight))

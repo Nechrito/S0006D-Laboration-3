@@ -40,7 +40,7 @@ class Entity:
         self.thirst += 0.5 * GameTime.deltaTime
         self.hunger += 0.5 * GameTime.deltaTime
         self.fatigue += 0.5 * GameTime.deltaTime
-        self.stateMachine.update()
+       # self.stateMachine.update()
 
     def update(self):
         self.rect = self.image.get_rect()

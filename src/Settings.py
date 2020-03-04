@@ -17,20 +17,27 @@ class SETTINGS:
 
     MAX_FPS = 200
 
-    # Global accessors
+    # Resource files direct path
+    MAP_PATH = "map/Map4.tmx"
+    MAP_REF = "map/MapRef.txt"
+    TILES_B = []
+    TILES_M = []
+    TILES_T = []
+    TILES_G = []
+    TILES_V = []
+
+    # GAME GRID
     Graph = {}
+    TilesAll = []
     PathTiles = []
     ObstacleTiles = []
-    BackgroundTiles = []
-    TilesAll = []
-    #BuildingObjects = []
 
-    # Resource files direct path
-    MAP_PATH = "map/Map.tmx"
-
-    TILE_OBSTACLE = "tiles/wall.png"
-    TILE_START = "tiles/start.png"
-    TILE_GOAL = "tiles/goal.png"
+    # ADDITIONAL TILE RESOURCES
+    TILE_B = "tiles/B.png"
+    TILE_M = "tiles/M.png"
+    TILE_T = "tiles/T.png"
+    TILE_G = "tiles/G.png"
+    TILE_V = "tiles/V.png"
 
     ENTITY_SENSEI = "img/sensei.png"
 
