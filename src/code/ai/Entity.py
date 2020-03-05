@@ -24,7 +24,7 @@ class Entity:
 
         self.pathfinder = PathManager(PathType.AStar)
         self.nextNode = self.position
-        self.radius = 16
+        self.radius = 2
 
         self.fatigue = random.randrange(0, 70)
         self.bank = random.randrange(0, 120)
@@ -40,7 +40,7 @@ class Entity:
         self.thirst += 0.5 * GameTime.deltaTime
         self.hunger += 0.5 * GameTime.deltaTime
         self.fatigue += 0.5 * GameTime.deltaTime
-       # self.stateMachine.update()
+        self.stateMachine.update()
 
     def update(self):
         self.rect = self.image.get_rect()
@@ -62,7 +62,7 @@ class Entity:
             return
 
         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)  #self.pathfinder.requestPathCached(self.waypoints, self.position, target)
-        if temp is None or len(temp) < 2:
+        if temp is None:
             return
 
         self.waypoints = temp

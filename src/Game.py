@@ -70,7 +70,7 @@ class Game:
                            getHangout(), getLTU() )
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
-        self.characterAlex = Entity("Alex", Sleep(), Global(), self.buildings[0].position, sensei)  # vec2(495, 410)
+        self.characterAlex = Entity("Alex", Sleep(), Global(), self.buildings[0].position, sensei)  #
         #self.characterWendy = Entity("Wendy", Collect(), Global(), self.buildings[1].position, sensei)
         #self.characterJohn = Entity("John", Purchase(), Global(), self.buildings[2].position, sensei)
         #self.characterJames = Entity("James", Collect(), Global(), self.buildings[3].position, sensei)
@@ -109,6 +109,8 @@ class Game:
         for tile in SETTINGS.TilesAll:
             self.renderer.renderTile(tile)
 
+        self.drawEntitiesInfo()
+
         #for col in range(len(SETTINGS.Graph)):
             #for row in range(len(SETTINGS.Graph[col])):
                 #node = SETTINGS.Graph[col][row]
@@ -120,7 +122,9 @@ class Game:
             intersection = SETTINGS.closestNode(self.relative)
             if intersection:
                 x = intersection.position
-                self.renderer.renderRect(SETTINGS.TILE_SCALE, x.tuple, (128,128,128), 255)
+                self.renderer.renderRect(SETTINGS.TILE_SCALE, x.tuple, (52,52,57), 200)
+                for neighbour in intersection.neighbours:
+                    self.renderer.renderRect(SETTINGS.TILE_SCALE, neighbour.tuple, (0, 128, 128), 128)
 
             self.renderer.renderRect((8, 8), (self.relative.X - self.cursorSize+8, self.relative.Y - self.cursorSize+8), (37, 37, 38), 200)
 
@@ -131,18 +135,16 @@ class Game:
                 self.renderer.renderRect([10, 10], entity.waypoints[-1].position)
 
             for i in range(0, len(entity.waypoints) - 1):
-                self.renderer.renderLine(entity.waypoints[i].position, entity.waypoints[i + 1].position)
+                self.renderer.renderLine(entity.waypoints[i].position, entity.waypoints[i + 1].position, (255, 255, 255), 5)
 
             (x, y) = (entity.position.X, entity.position.Y + SETTINGS.TILE_SCALE[1] - 5)
             self.renderer.renderRect((60, 18), (x - 30, y - 9), (0, 0, 0), 170)
             self.renderer.renderText(entity.name, (x, y), self.font)
 
-        for building in self.buildings:
-            self.renderer.renderText(building.name,
-                                     (building.position.X, building.position.Y - SETTINGS.TILE_SCALE[1] * 5),
-                                     self.fontBold)
-
-        self.drawEntitiesInfo()
+        #for building in self.buildings:
+        #    self.renderer.renderText(building.name,
+        #                             (building.position.X, building.position.Y - SETTINGS.TILE_SCALE[1] * 5),
+        #                             self.fontBold)
 
         self.clock.tick(SETTINGS.MAX_FPS)
 

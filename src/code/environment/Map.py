@@ -37,37 +37,18 @@ class Map:
         SETTINGS.ObstacleTiles = []
         SETTINGS.BackgroundTiles = []
 
-        # loading progress
-        inner = 0
-        outer = 1
-        innerSize = 0
-        outerSize = 32702
-
         # This creates an 2D array, very quickly, through copying the same immutable object over and over again
         rows, cols = (SETTINGS.MAP_WIDTH, SETTINGS.MAP_HEIGHT)
         SETTINGS.Graph = [i[:] for i in [[0] * rows] * cols]
 
-        innerSize = 96
-        inner = 0
-        outer += innerSize
         for x, y, gid in backgroundLayer:
-            inner += 1
-            #self.printLoadingProgress(inner, outer, innerSize, outerSize)
-
             tile = ti(gid)
             if tile:
                 tileObj = Tile(vec2(x * SETTINGS.TILE_SCALE[0], y * SETTINGS.TILE_SCALE[1]), gid)
                 tileObj.addImage(tile)
                 SETTINGS.BackgroundTiles.append(tileObj)
 
-        #print("[1] INNER: " + str(inner))
-        innerSize = 9800
-        inner = 0
-        outer += innerSize
         for x, y, gid in pathLayer:
-            inner += 1
-            #self.printLoadingProgress(inner, outer, innerSize, outerSize)
-
             tile = ti(gid)
             if tile:
                 position = vec2(x * SETTINGS.TILE_SCALE[0], y * SETTINGS.TILE_SCALE[1])
@@ -76,16 +57,11 @@ class Map:
                 tileObj.addImage(tile)
                 SETTINGS.PathTiles.append(tileObj)
 
-                SETTINGS.Graph[y][x] = Node(position)
+                nodeObj = Node(position)
+                nodeObj.addNeighbours()
+                SETTINGS.Graph[y][x] = nodeObj
 
-        #print("[2] INNER: " + str(inner))
-        innerSize = 3
-        inner = 0
-        outer += innerSize
         for layer in self.tmx.visible_layers:
-            inner += 1
-            #self.printLoadingProgress(inner, outer, innerSize, outerSize)
-
             for x, y, gid in layer:
                 tile = ti(gid)
                 if tile:
@@ -94,16 +70,8 @@ class Map:
                     SETTINGS.TilesAll.append(tileObj)
 
 
-        # filter out nodes which are not filled in the path
         temp = []
-        #print("[3] INNER: " + str(inner))
-
-        innerSize = 1600
-        inner = 0
-        outer += innerSize
         for x in SETTINGS.Graph:
-            inner += 1
-            #self.printLoadingProgress(inner, outer, innerSize, outerSize)
             row = []
             for y in x:
                 if str(y) != str(0):
@@ -113,20 +81,6 @@ class Map:
                 temp.append(row)
 
         SETTINGS.Graph = temp
-        #print("[4] INNER: " + str(inner))
-
-        #innerSize = 96
-        #inner = 0
-        #outer += innerSize
-        #for col in range(len(SETTINGS.Graph)):
-        #    inner = 0
-        #    outer += innerSize
-        #    self.printLoadingProgress(inner, outer, innerSize, outerSize)
-        #    for row in range(len(SETTINGS.Graph[col])):
-        #        inner += 1
-        #        SETTINGS.Graph[col][row].addNeighbours()
-
-        #print("[5] INNER: " + str(inner))
         for x in SETTINGS.Graph:
             print(x)
 
@@ -170,31 +124,3 @@ class Map:
                         SETTINGS.TilesAll.append(tileObj)
                     x += 1
                 y += 1
-
-    # DEPRECATED, JUST A REFERENCE
-    def loadReferenceMapOld(self, filename):
-        with open(filename, 'r') as file:
-            lines = file.readlines()[1:-1]
-            y = 1
-            for line in lines:
-                x = 1
-                line = line[1:-2]
-                for char in line:
-                    if char == 'X':
-                        SETTINGS.ObstacleTiles.append(Tile(vec2(x * SETTINGS.TILE_SCALE[0], y * SETTINGS.TILE_SCALE[1])))
-                    if char == 'S':
-                        self.start = vec2(x * SETTINGS.TILE_SCALE[0], y * SETTINGS.TILE_SCALE[1])
-                    if char == 'G':
-                        self.end = vec2(x * SETTINGS.TILE_SCALE[0], y * SETTINGS.TILE_SCALE[1])
-
-                    x += 1
-                y += 1
-
-        for col in range(len(SETTINGS.Graph)):
-            for row in range(len(SETTINGS.Graph[col])):
-                node = SETTINGS.Graph[col][row]
-                node.addNeighbours()
-                node.validate()
-
-        #for col in SETTINGS.Graph:
-            #print(str(col))

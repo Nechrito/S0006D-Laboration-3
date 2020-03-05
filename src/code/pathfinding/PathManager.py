@@ -27,15 +27,9 @@ class PathManager:
         elif pathType == PathType.BFS:
             self.algorithm = BreadthFirst()
 
-    def requestPathCached(self, waypoints, start: vec2, end: vec2):
-        if waypoints and len(waypoints) >= 2:
-            found = False
-            for p in waypoints:
-                if p.position.Local == end.Local:
-                    found = True
-                    break
-            if found:
-                return waypoints
+    def requestPathCached(self, waypoints, start, end: vec2):
+        if waypoints and len(waypoints) >= 2 and end == waypoints[-1]:
+            return waypoints
 
         newPath = self.requestPath(start, end)
         return newPath
@@ -43,20 +37,18 @@ class PathManager:
     def requestPath(self, start: vec2, end: vec2):
         self.algorithm.childNodes = []
         path = self.algorithm.getPath(start, end)
-
         if not path or len(path) <= 2:
-            return None
+            found = False
 
-        #if end.Local != path[-1].position.Local and end.Local != path[-2].position.Local:
-           #return None
+            for p in path:
 
-        found = False
-        for p in path:
-            if p.position == end:
-                found = True
-                break
-        if not found:
-            return None
+                if p.position == end:
+                    found = True
+
+                    break
+
+            if not found:
+                return None
 
         return path
 

@@ -9,10 +9,7 @@ class SETTINGS:
 
     MAP_WIDTH = None
     MAP_HEIGHT = None
-
-    # Outer bounds of window
     GRID_BOUNDS = None
-
     TILE_SCALE = None
 
     MAX_FPS = 200

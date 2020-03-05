@@ -14,23 +14,11 @@ class AStar(IPath):
         super().__init__()
 
     def getPath(self, start: vec2, end: vec2):
-        assert end is not type(vec2)
         self.timerStart = time.time()
         self.timeElapsed = None
 
-        #start.log("start")
-        #end.log("end")
-
         startNode = SETTINGS.getNode(start)
         endNode = SETTINGS.getNode(end)
-
-        if not startNode:
-            print("failed to find start")
-            return None
-
-        if not endNode:
-            print("failed to find end")
-            return None
 
         closedList = []
         openList = [startNode]
@@ -56,7 +44,7 @@ class AStar(IPath):
 
             for pos in currentNode.neighbours:
                 neighbour = SETTINGS.getNode(pos)
-                if not neighbour or not neighbour.isWalkable or neighbour in closedList:
+                if not neighbour.isWalkable or neighbour in closedList:
                     continue
 
                 neighbour.parent = currentNode
@@ -94,4 +82,3 @@ class AStar(IPath):
                   "ms) | Path Length: " + str(len(path)))
 
             return path[::-1]
-
