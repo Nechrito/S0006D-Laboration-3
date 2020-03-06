@@ -32,7 +32,6 @@ class IPath(object, metaclass=abc.ABCMeta):
     def heuristic(node1, node2):
         dx = abs(node1.X - node2.X)
         dy = abs(node1.Y - node2.Y)
-
         D = 1
         D2 = math.sqrt(2)
         return D * (dx + dy) + (D2 - 2 * D) * min(dx, dy)

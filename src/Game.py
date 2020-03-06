@@ -70,7 +70,7 @@ class Game:
                            getHangout(), getLTU() )
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
-        self.characterAlex = Entity("Alex", Sleep(), Global(), self.buildings[0].position, sensei)  #
+        self.characterAlex = Entity("Alex", Sleep(), Global(), SETTINGS.closestNode(vec2(495, 410)).position, sensei)  #
         #self.characterWendy = Entity("Wendy", Collect(), Global(), self.buildings[1].position, sensei)
         #self.characterJohn = Entity("John", Purchase(), Global(), self.buildings[2].position, sensei)
         #self.characterJames = Entity("James", Collect(), Global(), self.buildings[3].position, sensei)
