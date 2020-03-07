@@ -61,7 +61,7 @@ class Game:
 
         self.map = Map(self.getRealFilePath(SETTINGS.MAP_PATH), self.getRealFilePath(SETTINGS.MAP_REF))
 
-        self.fontSmall = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 6 // SETTINGS.SCREEN_WIDTH)
+        self.fontSmall = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 12 // SETTINGS.SCREEN_WIDTH)
         self.fontRegular = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 18 // SETTINGS.SCREEN_WIDTH)
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
 
@@ -76,15 +76,16 @@ class Game:
         #self.characterJohn = Entity("John", Purchase(), Global(), self.buildings[2].position, sensei)
         #self.characterJames = Entity("James", Collect(), Global(), self.buildings[3].position, sensei)
 
-        self.agents = [self.characterAlex]
+        self.agents = [self.characterAlex ]
 
         CameraInstance.init()
 
     def update(self):
+        self.relative = CameraInstance.center + vec2(self.cursor.X - SETTINGS.TILE_SCALE[0],
+                                                     self.cursor.Y - SETTINGS.TILE_SCALE[1])
 
         if not self.realCursorEnabled:
-            self.relative = CameraInstance.centeredVec( vec2(self.cursor.X , self.cursor.Y) )
-            CameraInstance.followTarget(self.agents[0].position)
+            CameraInstance.followTarget(self.relative)
 
             temp = pygame.mouse.get_pos()
             self.cursor = vec2(temp[0], temp[1])
@@ -109,22 +110,16 @@ class Game:
         for tile in SETTINGS.TilesAll:
             self.renderer.renderTile(tile)
 
-        #self.drawEntitiesInfo()
-
-        #for col in range(len(SETTINGS.Graph)):
-            #for row in range(len(SETTINGS.Graph[col])):
-                #node = SETTINGS.Graph[col][row]
-                #self.renderer.renderText(str(row), node.position + vec2(8, 8), self.fontRegular)
-
         self.renderer.renderGrid()
 
         if not self.realCursorEnabled:
             intersection = SETTINGS.getNode(self.relative)
             if intersection:
                 x = intersection.position
-                self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple, (x).tuple, (52,52,57), 200)
+                self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple, (x - vec2(8, 16)).tuple, (52,52,57), 200)
+
                 for neighbour in intersection.neighbours:
-                    self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple, (neighbour).tuple, (0, 128, 128), 128)
+                    self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple, (neighbour - vec2(8, 16)).tuple, (0, 128, 128), 128)
 
                 self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple,
                                          self.relative.tuple,
@@ -148,6 +143,7 @@ class Game:
             self.renderer.renderText(building.name,
                                      (building.position.X, building.position.Y - SETTINGS.TILE_SCALE[1] * 5),
                                      self.fontBold)
+        self.drawEntitiesInfo()
 
         self.clock.tick(SETTINGS.MAX_FPS)
 

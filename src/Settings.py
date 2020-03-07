@@ -62,15 +62,18 @@ class SETTINGS:
     @classmethod
     def getNode(cls, position):
         try:
-            return copy(cls.Graph[int(position.LocalY)][int(position.LocalX)])
+            return copy(cls.Graph[int(position.LocalY-1)][int(position.LocalX-1)])
         except IndexError:
             pass
 
+        return cls.closestNode(position, False)
+
     @classmethod
-    def closestNode(cls, position):
-        instant = cls.getNode(position)
-        if instant:
-            return instant
+    def closestNode(cls, position, allowInstant=True):
+        if allowInstant:
+            instant = cls.getNode(position)
+            if instant:
+                return instant
 
         closest = None
         distance = 0
