@@ -32,11 +32,14 @@ class BreadthFirst(IPath):
             currentNode = self.queue.pop(0)
             self.childNodes.append(currentNode)
 
-            if currentNode.position == end:
+            if currentNode is None or currentNode.position == end:
                 break
 
             for childPos in currentNode.neighbours:
                 neighbour = SETTINGS.getNode(childPos)
+                if not neighbour:
+                    continue
+
                 neighbour.parent = currentNode
 
                 if neighbour.isWalkable and neighbour not in pathDict:

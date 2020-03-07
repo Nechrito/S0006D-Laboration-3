@@ -45,7 +45,7 @@ class PathManager:
     def requestPath(self, start: vec2, end: vec2):
         self.algorithm.childNodes = []
         path = self.algorithm.getPath(start, end)
-        if not path or len(path) <= 2:
+        if not path:
             return None
 
         return path

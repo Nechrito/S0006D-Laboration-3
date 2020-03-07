@@ -47,7 +47,7 @@ class IPath(object, metaclass=abc.ABCMeta):
     @staticmethod
     def backTrace(node):
         path = [node]
-        while node.parent:
+        while node and node.parent:
             node = node.parent
             path.append(node)
         path.reverse()

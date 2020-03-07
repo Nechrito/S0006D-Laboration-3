@@ -22,7 +22,7 @@ class Entity:
         self.rect.center = (self.position + 8).tuple
         self.waypoints = []
 
-        self.pathfinder = PathManager(PathType.BFS)
+        self.pathfinder = PathManager(PathType.AStar)
         self.nextNode = self.position
         self.radius = 16
 
@@ -50,9 +50,6 @@ class Entity:
         if self.stateMachine is not None:
             self.updateState()
 
-        if len(self.waypoints) <= 1:
-            return
-
         if self.nextNode.distance(self.position) > self.radius:
             self.position += (self.nextNode - self.position).normalized * GameTime.deltaTime * 200
         elif len(self.waypoints) >= 2:
@@ -65,7 +62,7 @@ class Entity:
             return
 
         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)
-        if temp is None:
+        if temp is None or len(temp) <= 1:
             return
 
         self.waypoints = temp

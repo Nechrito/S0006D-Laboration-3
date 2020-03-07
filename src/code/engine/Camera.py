@@ -32,8 +32,8 @@ class CameraInstance:
     @classmethod
     def followTarget(cls, target):
 
-        centerx = (-target.X + cls.width / 2) - cls.center.X
-        centery = (-target.Y + cls.height / 2) - cls.center.Y
+        centerx = (-target.X + SETTINGS.SCREEN_WIDTH / 2) - cls.center.X
+        centery = (-target.Y + SETTINGS.SCREEN_HEIGHT / 2) - cls.center.Y
 
         cls.center += vec2(centerx, centery) * GameTime.fixedDeltaTime * 2
 

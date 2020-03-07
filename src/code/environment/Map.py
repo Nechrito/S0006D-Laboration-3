@@ -14,6 +14,8 @@ class Map:
     def __init__(self, filename, reference=None):
         self.tmx = pytmx.load_pygame(filename, pixelalpha=True)
 
+        startTime = time.time()
+
         mapWidth = self.tmx.width * self.tmx.tilewidth
         mapHeight = self.tmx.height * self.tmx.tileheight
         SETTINGS.configure(mapWidth, mapHeight)
@@ -25,38 +27,24 @@ class Map:
         if reference:
             self.loadReferenceMap(reference)
 
-    def loadPath(self):
-        startTime = time.time()
+        timeElapsed = time.time() - startTime
+        print("Loaded map in: " + str(truncate(timeElapsed * 1000)) + "ms")
 
+    def loadPath(self):
         pathLayer = self.tmx.get_layer_by_name("Path")
-        backgroundLayer = self.tmx.get_layer_by_name("Background")
         ti = self.tmx.get_tile_image_by_gid
 
         SETTINGS.TilesAll = []
         SETTINGS.PathTiles = []
-        SETTINGS.ObstacleTiles = []
-        SETTINGS.BackgroundTiles = []
 
         # This creates an 2D array, very quickly, through copying the same immutable object over and over again
         rows, cols = (SETTINGS.MAP_WIDTH, SETTINGS.MAP_HEIGHT)
         SETTINGS.Graph = [i[:] for i in [[0] * rows] * cols]
 
-        for x, y, gid in backgroundLayer:
-            tile = ti(gid)
-            if tile:
-                tileObj = Tile(vec2(x * SETTINGS.TILE_SCALE[0], y * SETTINGS.TILE_SCALE[1]), gid)
-                tileObj.addImage(tile)
-                SETTINGS.BackgroundTiles.append(tileObj)
-
         for x, y, gid in pathLayer:
             tile = ti(gid)
             if tile:
                 position = vec2(x * SETTINGS.TILE_SCALE[0], y * SETTINGS.TILE_SCALE[1])
-
-                tileObj = Tile(position, gid)
-                tileObj.addImage(tile)
-                SETTINGS.PathTiles.append(tileObj)
-
                 nodeObj = Node(position)
                 nodeObj.addNeighbours()
                 SETTINGS.Graph[y][x] = nodeObj
@@ -68,7 +56,6 @@ class Map:
                     tileObj = Tile(vec2(x * SETTINGS.TILE_SCALE[0], y * SETTINGS.TILE_SCALE[1]), gid)
                     tileObj.addImage(tile)
                     SETTINGS.TilesAll.append(tileObj)
-
 
         temp = []
         for x in SETTINGS.Graph:
@@ -83,9 +70,6 @@ class Map:
         SETTINGS.Graph = temp
         for x in SETTINGS.Graph:
             print(x)
-
-        timeElapsed = time.time() - startTime
-        print("Loaded map in: " + str(truncate(timeElapsed * 1000)) + "ms")
 
     def printLoadingProgress(self, inner, outer, innerSize, outerSize):
         print("Loading... " + str(int(outer/max(1, outerSize))) + "% " + str(outer) + '/' + str(outerSize) + " -> " + str(inner) + '/' + str(innerSize))

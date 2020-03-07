@@ -51,23 +51,27 @@ class SETTINGS:
         cls.SCREEN_RESOLUTION = [cls.SCREEN_WIDTH, cls.SCREEN_HEIGHT]
 
         # upscaled tilesize
-        scalex = 16  #SETTINGS.SCREEN_WIDTH // (cls.MAP_WIDTH // 16)
-        scaley = 16  #SETTINGS.SCREEN_HEIGHT // (cls.MAP_HEIGHT // 16)
-        cls.TILE_SCALE = (scalex, scaley)
+        scalex = max(16, SETTINGS.SCREEN_WIDTH // (cls.MAP_WIDTH // 16))
+        scaley = max(16, SETTINGS.SCREEN_HEIGHT // (cls.MAP_HEIGHT // 16))
 
-        cls.GRID_BOUNDS = (cls.SCREEN_WIDTH + scalex // 2, cls.SCREEN_HEIGHT + scaley // 2)
+        from src.code.math.Vector import vec2
+        cls.TILE_SCALE = vec2(scalex, scaley)
+
+        cls.GRID_BOUNDS = (cls.SCREEN_WIDTH + scalex / 2, cls.SCREEN_HEIGHT + scaley / 2)
 
     @classmethod
     def getNode(cls, position):
         try:
-            return copy(cls.Graph[int(position.LocalX - 1)][int(position.LocalY - 1)])
+            return copy(cls.Graph[int(position.LocalY)][int(position.LocalX)])
         except IndexError:
             pass
-        
-        return cls.closestNode(position)
 
     @classmethod
     def closestNode(cls, position):
+        instant = cls.getNode(position)
+        if instant:
+            return instant
+
         closest = None
         distance = 0
         for i in cls.Graph:

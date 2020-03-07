@@ -61,7 +61,8 @@ class Game:
 
         self.map = Map(self.getRealFilePath(SETTINGS.MAP_PATH), self.getRealFilePath(SETTINGS.MAP_REF))
 
-        self.font = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 18 // SETTINGS.SCREEN_WIDTH)
+        self.fontSmall = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 6 // SETTINGS.SCREEN_WIDTH)
+        self.fontRegular = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 18 // SETTINGS.SCREEN_WIDTH)
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
 
         self.entityImg = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
@@ -81,10 +82,14 @@ class Game:
 
     def update(self):
 
-        CameraInstance.followTarget(self.relative)
+        if not self.realCursorEnabled:
+            self.relative = CameraInstance.centeredVec( vec2(self.cursor.X , self.cursor.Y) )
+            CameraInstance.followTarget(self.agents[0].position)
+
+            temp = pygame.mouse.get_pos()
+            self.cursor = vec2(temp[0], temp[1])
 
         # mouse relative coords
-        self.relative = vec2(self.cursor.X - CameraInstance.center.X, self.cursor.Y - CameraInstance.center.Y)
         for agent in self.agents:
             agent.update()
             #agent.moveTo(self.relative)
@@ -98,35 +103,33 @@ class Game:
                                        "{:.0f}".format(self.clock.get_fps()) +
                                        " | Date: " + GameTime.timeElapsed())
 
-        if not self.realCursorEnabled:
-            temp = pygame.mouse.get_pos()
-            self.cursor = vec2(temp[0], temp[1])
-
     def draw(self):
-
         self.renderer.clear()
 
         for tile in SETTINGS.TilesAll:
             self.renderer.renderTile(tile)
 
-        self.drawEntitiesInfo()
+        #self.drawEntitiesInfo()
 
         #for col in range(len(SETTINGS.Graph)):
             #for row in range(len(SETTINGS.Graph[col])):
                 #node = SETTINGS.Graph[col][row]
-                #self.renderer.renderText(str(col) + ":" + str(row), node.position + vec2(10, 10), self.font)
+                #self.renderer.renderText(str(row), node.position + vec2(8, 8), self.fontRegular)
 
-       #a self.renderer.renderGrid()
+        self.renderer.renderGrid()
 
         if not self.realCursorEnabled:
-            intersection = SETTINGS.closestNode(self.relative)
+            intersection = SETTINGS.getNode(self.relative)
             if intersection:
                 x = intersection.position
-                self.renderer.renderRect(SETTINGS.TILE_SCALE, x.tuple, (52,52,57), 200)
+                self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple, (x).tuple, (52,52,57), 200)
                 for neighbour in intersection.neighbours:
-                    self.renderer.renderRect(SETTINGS.TILE_SCALE, neighbour.tuple, (0, 128, 128), 128)
+                    self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple, (neighbour).tuple, (0, 128, 128), 128)
 
-            self.renderer.renderRect((8, 8), (self.relative.X - self.cursorSize+8, self.relative.Y - self.cursorSize+8), (37, 37, 38), 200)
+                self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple,
+                                         self.relative.tuple,
+                                         (37, 37, 38),
+                                         200)
 
         for entity in self.agents:
             self.surface.blit(entity.image, CameraInstance.centeredSprite(entity))
@@ -135,16 +138,16 @@ class Game:
                 self.renderer.renderRect([10, 10], entity.waypoints[-1].position)
 
             for i in range(0, len(entity.waypoints) - 1):
-                self.renderer.renderLine(entity.waypoints[i].position, entity.waypoints[i + 1].position, (255, 255, 255), 5)
+                self.renderer.renderLine(entity.waypoints[i].position, entity.waypoints[i + 1].position)
 
             (x, y) = (entity.position.X, entity.position.Y + SETTINGS.TILE_SCALE[1] - 5)
             self.renderer.renderRect((60, 18), (x - 30, y - 9), (0, 0, 0), 170)
-            self.renderer.renderText(entity.name, (x, y), self.font)
+            self.renderer.renderText(entity.name, (x, y), self.fontSmall)
 
-        #for building in self.buildings:
-        #    self.renderer.renderText(building.name,
-        #                             (building.position.X, building.position.Y - SETTINGS.TILE_SCALE[1] * 5),
-        #                             self.fontBold)
+        for building in self.buildings:
+            self.renderer.renderText(building.name,
+                                     (building.position.X, building.position.Y - SETTINGS.TILE_SCALE[1] * 5),
+                                     self.fontBold)
 
         self.clock.tick(SETTINGS.MAX_FPS)
 
@@ -160,7 +163,7 @@ class Game:
             self.renderer.append("Hunger: {0}%".format("{:.0f}".format(float(entity.hunger))))
             self.renderer.append("Thirst: {0}%".format("{:.0f}".format(float(entity.thirst))))
             self.renderer.append("Bank: {0}$".format("{:.0f}".format(float(entity.bank))))
-            self.renderer.renderTexts((25 + SETTINGS.SCREEN_WIDTH * 0.05 + 150 * count, SETTINGS.SCREEN_HEIGHT * 0.10), self.font,
+            self.renderer.renderTexts((25 + SETTINGS.SCREEN_WIDTH * 0.05 + 150 * count, SETTINGS.SCREEN_HEIGHT * 0.10), self.fontRegular,
                                       (255, 255, 255))
 
             count += 1
