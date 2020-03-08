@@ -55,7 +55,7 @@ class vec2:
         if isinstance(other, tuple):
             return vec2(self.X / other[0], self.Y / other[1])
         if isinstance(other, vec2):
-            return vec2(self.X // other.X, self.Y // other.Y)
+            return vec2(self.X / max(1, other.X), max(1, self.Y / other.Y))
         if isinstance(other, float):
             return vec2(self.X // other, self.Y // other)
         if isinstance(other, numbers.Number):
@@ -77,13 +77,6 @@ class vec2:
     def log(self, header=""):
         print(header + " (" + str(self.X) + ", " + str(self.Y) + ") | Local: (" + str(self.LocalX) + ", " + str(self.LocalY) + ")")
 
-    def break_tie(self, start, goal):
-        dx1 = self.X - goal.X
-        dy1 = self.Y - goal.Y
-        dx2 = start.X - goal.X
-        dy2 = start.Y - goal.Y
-        return abs(dx1 * dy2 - dx2 * dy1) * 0.001
-
     def __eq__(self, other):
         if isinstance(other, vec2):
             if self.X != other.X:
@@ -94,6 +87,10 @@ class vec2:
 
     def __hash__(self):
         return hash(self.X) + hash(self.Y)
+
+    @property
+    def transposed(self):
+        return vec2(self.Y, self.X)
 
     @property
     def isZero(self):

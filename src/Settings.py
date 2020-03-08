@@ -2,6 +2,7 @@ from copy import copy
 
 
 class SETTINGS:
+    SCREEN_RESOLUTION = None
     TITLE = "S0006D Strategic AI - Philip Lindh"
 
     SCREEN_WIDTH = 1024
@@ -15,8 +16,8 @@ class SETTINGS:
     MAX_FPS = 200
 
     # Resource files direct path
-    MAP_PATH = "map/Map4.tmx"
-    MAP_REF = "map/MapRef.txt"
+    MAP_PATH = "map/Map5.tmx"
+    MAP_REF = "map/Map5Ref.txt"
     TILES_B = []
     TILES_M = []
     TILES_T = []
@@ -48,8 +49,6 @@ class SETTINGS:
         cls.MAP_WIDTH = mapWidth
         cls.MAP_HEIGHT = mapHeight
 
-        cls.SCREEN_RESOLUTION = [cls.SCREEN_WIDTH, cls.SCREEN_HEIGHT]
-
         # upscaled tilesize
         scalex = max(16, SETTINGS.SCREEN_WIDTH // (cls.MAP_WIDTH // 16))
         scaley = max(16, SETTINGS.SCREEN_HEIGHT // (cls.MAP_HEIGHT // 16))
@@ -57,16 +56,27 @@ class SETTINGS:
         from src.code.math.Vector import vec2
         cls.TILE_SCALE = vec2(scalex, scaley)
 
+        cls.SCREEN_RESOLUTION = vec2(cls.SCREEN_WIDTH, cls.SCREEN_HEIGHT)
+
         cls.GRID_BOUNDS = (cls.SCREEN_WIDTH + scalex / 2, cls.SCREEN_HEIGHT + scaley / 2)
 
     @classmethod
-    def getNode(cls, position):
+    def getNode(cls, position, doCopy=True):
         try:
-            return copy(cls.Graph[int(position.LocalY-1)][int(position.LocalX-1)])
+            if doCopy:
+                return copy(cls.Graph[int(position.LocalY-1)][int(position.LocalX-1)])
+            else:
+                return cls.Graph[int(position.LocalY - 1)][int(position.LocalX - 1)]
         except IndexError:
             pass
 
         return cls.closestNode(position, False)
+
+    @classmethod
+    def setNode(cls, position, enabled):
+        node = cls.getNode(position, False)
+        if node:
+            node.isWalkable = enabled
 
     @classmethod
     def closestNode(cls, position, allowInstant=True):
@@ -100,3 +110,4 @@ class SETTINGS:
                 closest = tile
 
         return closest
+

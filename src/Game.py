@@ -16,6 +16,7 @@ from src.code.environment.AllBuildings import *
 from src.code.environment.Map import Map
 from src.code.environment.Tile import Tile
 from src.code.math.Vector import vec2
+from src.code.math.cMath import lerp
 
 
 class Game:
@@ -72,28 +73,36 @@ class Game:
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
         self.characterAlex = Entity("Alex", Sleep(), Global(), SETTINGS.closestNode(vec2(495, 410)).position, sensei)  #
-        #self.characterWendy = Entity("Wendy", Collect(), Global(), self.buildings[1].position, sensei)
-        #self.characterJohn = Entity("John", Purchase(), Global(), self.buildings[2].position, sensei)
-        #self.characterJames = Entity("James", Collect(), Global(), self.buildings[3].position, sensei)
+        self.characterWendy = Entity("Wendy", Sleep(), Global(), SETTINGS.closestNode(vec2(150, 610)).position, sensei)
+        self.characterJohn = Entity("John", Purchase(), Global(), SETTINGS.closestNode(vec2(700, 380)).position, sensei)
+        self.characterJames = Entity("James", Collect(), Global(), SETTINGS.closestNode(vec2(940, 400)).position, sensei)
 
-        self.agents = [self.characterAlex ]
+        self.agents = [self.characterWendy] # , self.characterWendy, self.characterJohn, self.characterJames
 
         CameraInstance.init()
 
     def update(self):
-        self.relative = CameraInstance.center + vec2(self.cursor.X - SETTINGS.TILE_SCALE[0],
-                                                     self.cursor.Y - SETTINGS.TILE_SCALE[1])
 
         if not self.realCursorEnabled:
-            CameraInstance.followTarget(self.relative)
-
             temp = pygame.mouse.get_pos()
             self.cursor = vec2(temp[0], temp[1])
 
+            # Todo: Scale with map size
+            size = vec2(SETTINGS.MAP_WIDTH, SETTINGS.MAP_HEIGHT) + SETTINGS.SCREEN_RESOLUTION
+            raw = self.cursor
+            deltaX = min(1.0, max(1e-6, raw.X / size.X))
+            deltaY = min(1.0, max(1e-6, raw.Y / size.Y))
+
+            raw.X = lerp(raw.X, size.X, deltaX)
+            raw.Y = lerp(raw.Y, size.Y, deltaY)
+
+            self.relative = raw
+
         # mouse relative coords
         for agent in self.agents:
+            CameraInstance.followTarget(self.relative)
             agent.update()
-            #agent.moveTo(self.relative)
+            agent.moveTo(self.relative)
 
         if not self.paused:
 
@@ -110,16 +119,21 @@ class Game:
         for tile in SETTINGS.TilesAll:
             self.renderer.renderTile(tile)
 
-        self.renderer.renderGrid()
+       # self.renderer.renderGrid()
+       # self.renderer.renderRectOutline()
 
         if not self.realCursorEnabled:
             intersection = SETTINGS.getNode(self.relative)
             if intersection:
                 x = intersection.position
-                self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple, (x - vec2(8, 16)).tuple, (52,52,57), 200)
+                self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple, x.tuple, (52, 52, 57), 200)
 
                 for neighbour in intersection.neighbours:
-                    self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple, (neighbour - vec2(8, 16)).tuple, (0, 128, 128), 128)
+                    node = SETTINGS.getNode(neighbour)
+                    if node and node.isWalkable:
+                        self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple, neighbour.tuple, (0, 255, 128), 128)
+                    else:
+                        self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple, neighbour.tuple, (255, 0, 128), 128)
 
                 self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple,
                                          self.relative.tuple,

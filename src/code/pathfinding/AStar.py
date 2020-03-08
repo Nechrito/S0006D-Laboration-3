@@ -31,12 +31,15 @@ class AStar(IPath):
             currentIndex = 0
 
             for index, node in enumerate(openList):
-                if node.f < currentNode.f:
+                if node.f < currentNode.f and node.isWalkable:
                     currentNode = node
                     currentIndex = index
 
             openList.pop(currentIndex)
             closedList.append(currentNode)
+
+            if not currentNode.isWalkable:
+                continue
 
             # complete, now reverse fill path
             if currentNode == endNode:
@@ -44,7 +47,7 @@ class AStar(IPath):
 
             for pos in currentNode.neighbours:
                 neighbour = SETTINGS.getNode(pos)
-                if not neighbour or neighbour in closedList:
+                if not neighbour or neighbour in closedList or not neighbour.isWalkable:
                     continue
 
                 neighbour.parent = currentNode
@@ -69,16 +72,13 @@ class AStar(IPath):
                 # print("g: " + str(neighbour.g) + " h: " + str(neighbour.h))
 
         # if computation is completed, traverse list (todo: heap)
-        if currentNode:
-            path = []
-            while currentNode:
-                path.append(currentNode)
-                currentNode = currentNode.parent
+        path = self.backTrace(currentNode)
 
-            self.timeElapsed = (time.time() - self.timerStart) * 1000
-            self.computeAverage(self.timeElapsed, PathType.AStar)
-            print("[A*] Elapsed: " + str( truncate(self.timeElapsed)) +
-                  "ms (Avg. " + str( truncate(self.getAverage(PathType.AStar)) ) +
-                  "ms) | Path Length: " + str(len(path)))
+        self.timeElapsed = (time.time() - self.timerStart) * 1000
+        self.computeAverage(self.timeElapsed, PathType.AStar)
+        print("[A*] Elapsed: " + str(truncate(self.timeElapsed)) +
+              "ms (Avg. " + str(truncate(self.getAverage(PathType.AStar))) +
+              "ms) | Path Length: " + str(len(path)))
 
-            return path[::-1]
+        return path
+

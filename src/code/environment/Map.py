@@ -66,10 +66,7 @@ class Map:
                     row.append(y)
             if len(row) > 0:
                 temp.append(row)
-
         SETTINGS.Graph = temp
-        for x in SETTINGS.Graph:
-            print(x)
 
     def printLoadingProgress(self, inner, outer, innerSize, outerSize):
         print("Loading... " + str(int(outer/max(1, outerSize))) + "% " + str(outer) + '/' + str(outerSize) + " -> " + str(inner) + '/' + str(innerSize))
@@ -85,26 +82,35 @@ class Map:
                 for char in line:
                     tileObj = Tile(vec2(x * SETTINGS.TILE_SCALE[0], y * SETTINGS.TILE_SCALE[1]))
 
+                    if char != 'M':
+                        SETTINGS.ObstacleTiles.append(tileObj)
+                        SETTINGS.setNode(tileObj.position, False)
+                       # print(str(SETTINGS.getNode(tileObj.position).isWalkable))
+
                     # NOTE: B M T G V
                     if char == 'T':  # TREE TRÄD
                         tileObj.addImage(SETTINGS.TILE_T)
                         SETTINGS.TILES_T.append(tileObj)
-                        SETTINGS.TilesAll.append(tileObj)
                     if char == 'M':  # GRASS? MARK?
                         tileObj.addImage(SETTINGS.TILE_M)
                         SETTINGS.TILES_M.append(tileObj)
-                        SETTINGS.TilesAll.append(tileObj)
                     if char == 'B':  # WALL? RIVER?
                         tileObj.addImage(SETTINGS.TILE_B)
                         SETTINGS.TILES_B.append(tileObj)
-                        SETTINGS.TilesAll.append(tileObj)
                     if char == 'G':  # COAL? GRÅTTA?
                         tileObj.addImage(SETTINGS.TILE_G)
                         SETTINGS.TILES_G.append(tileObj)
-                        SETTINGS.TilesAll.append(tileObj)
                     if char == 'V':  # IRON? VATTEN?
                         tileObj.addImage(SETTINGS.TILE_V)
                         SETTINGS.TILES_V.append(tileObj)
-                        SETTINGS.TilesAll.append(tileObj)
                     x += 1
                 y += 1
+
+            for x in SETTINGS.Graph:
+                print(x)
+
+            SETTINGS.TilesAll.extend(SETTINGS.TILES_T)
+            SETTINGS.TilesAll.extend(SETTINGS.TILES_M)
+            SETTINGS.TilesAll.extend(SETTINGS.TILES_B)
+            SETTINGS.TilesAll.extend(SETTINGS.TILES_G)
+            SETTINGS.TilesAll.extend(SETTINGS.TILES_V)

@@ -19,7 +19,7 @@ class Entity:
         self.name = name
         self.position = position
         self.rect = self.image.get_rect()
-        self.rect.center = (self.position + 8).tuple
+        self.rect.center = self.position.tuple
         self.waypoints = []
 
         self.pathfinder = PathManager(PathType.AStar)
@@ -40,12 +40,12 @@ class Entity:
         self.thirst += 0.5 * GameTime.deltaTime
         self.hunger += 0.5 * GameTime.deltaTime
         self.fatigue += 0.5 * GameTime.deltaTime
-        self.stateMachine.update()
+        #self.stateMachine.update()
 
     def update(self):
 
         self.rect = self.image.get_rect()
-        self.rect.center = (self.position - 8).tuple
+        self.rect.center = self.position.tuple
 
         if self.stateMachine is not None:
             self.updateState()
