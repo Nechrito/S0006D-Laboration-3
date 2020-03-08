@@ -72,12 +72,9 @@ class Game:
                            getHangout(), getLTU() )
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
-        self.characterAlex = Entity("Alex", Sleep(), Global(), SETTINGS.closestNode(vec2(495, 410)).position, sensei)  #
-        self.characterWendy = Entity("Wendy", Sleep(), Global(), SETTINGS.closestNode(vec2(150, 610)).position, sensei)
-        self.characterJohn = Entity("John", Purchase(), Global(), SETTINGS.closestNode(vec2(700, 380)).position, sensei)
-        self.characterJames = Entity("James", Collect(), Global(), SETTINGS.closestNode(vec2(940, 400)).position, sensei)
-
-        self.agents = [self.characterWendy] # , self.characterWendy, self.characterJohn, self.characterJames
+        self.agents = [Entity("Alex", Sleep(), Global(), sensei, vec2(800, 704)),
+                       Entity("John", Sleep(), Global(), sensei, vec2(1072, 608)),
+                       Entity("Alex", Sleep(), Global(), sensei, vec2(1040, 720))]
 
         CameraInstance.init()
 
@@ -102,7 +99,7 @@ class Game:
         for agent in self.agents:
             CameraInstance.followTarget(self.relative)
             agent.update()
-            agent.moveTo(self.relative)
+           # agent.moveTo(self.relative)
 
         if not self.paused:
 
@@ -177,6 +174,14 @@ class Game:
                                       (255, 255, 255))
 
             count += 1
+
+    def onClick(self):
+        print("CLICKED")
+        tile = self.selectedTile()
+        if tile:
+            print("??")
+            tile.position.log()
+
 
     def selectedTile(self, position: vec2 = None):
         if not position:

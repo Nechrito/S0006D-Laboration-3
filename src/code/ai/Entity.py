@@ -14,12 +14,14 @@ class Entity:
 
     waypoints: List[Node]
 
-    def __init__(self, name, state, globalState, position: vec2, image):
+    def __init__(self, name, state, globalState, image, position):
         self.image = image
         self.name = name
         self.position = position
+
         self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
+
         self.waypoints = []
 
         self.pathfinder = PathManager(PathType.AStar)
@@ -31,6 +33,8 @@ class Entity:
         self.thirst = random.randrange(0, 50)
         self.hunger = random.randrange(0, 50)
 
+        self.setStart(position)
+
         if state is not None:
             self.stateMachine = StateMachine(self, state, globalState)
         else:
@@ -40,7 +44,7 @@ class Entity:
         self.thirst += 0.5 * GameTime.deltaTime
         self.hunger += 0.5 * GameTime.deltaTime
         self.fatigue += 0.5 * GameTime.deltaTime
-        #self.stateMachine.update()
+        self.stateMachine.update()
 
     def update(self):
 
@@ -70,14 +74,18 @@ class Entity:
 
     def setStart(self, start: vec2, end: vec2 = None):
         self.waypoints = []
-
-        temp = self.pathfinder.requestPath(start, end)
-        if temp is None:
-            return
-
         self.position = start
-        self.waypoints = temp
-        self.nextNode = self.waypoints[1].position
+
+        self.rect = self.image.get_rect()
+        self.rect.center = self.position.tuple
+
+        if end:
+            temp = self.pathfinder.requestPath(start, end)
+            if temp is None:
+                return
+
+            self.waypoints = temp
+            self.nextNode = self.waypoints[1].position
 
     def setState(self, state):
         self.stateMachine.change(state)

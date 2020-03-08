@@ -31,7 +31,8 @@ class Node:
             neighbour = self.position + vec2(direction.X * SETTINGS.TILE_SCALE[0], direction.Y * SETTINGS.TILE_SCALE[1])
 
             if neighbour not in self.neighbours:
-                if 0 < neighbour.X < SETTINGS.MAP_WIDTH - SETTINGS.TILE_SCALE[0] and 0 < neighbour.Y < SETTINGS.MAP_HEIGHT - SETTINGS.TILE_SCALE[1]:
+                node = SETTINGS.getNode(neighbour)
+                if node and node.isWalkable:
                     self.neighbours.append(neighbour)
 
     def updateColors(self, distanceCovered, distanceTotal):
