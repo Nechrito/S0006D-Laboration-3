@@ -1,7 +1,12 @@
+import math
 from copy import copy
+
+from src.code.math.DynamicGraph import DynamicGraph
 
 
 class SETTINGS:
+
+    # WINDOW
     SCREEN_RESOLUTION = None
     TITLE = "S0006D Strategic AI - Philip Lindh"
 
@@ -10,25 +15,25 @@ class SETTINGS:
 
     MAP_WIDTH = None
     MAP_HEIGHT = None
-    GRID_BOUNDS = None
-    TILE_SCALE = None
+    BOUNDARIES = None
+    TILE_SIZE = None
 
     MAX_FPS = 200
 
-    # Resource files direct path
+    # RESOURCE PATHS
     MAP_PATH = "map/Map5.tmx"
     MAP_REF = "map/Map5Ref.txt"
+
+    # REFERENCE CONTAINERS
     TILES_B = []
     TILES_M = []
     TILES_T = []
     TILES_G = []
     TILES_V = []
 
-    # GAME GRID
-    Graph = {}
-    TilesAll = []
-    PathTiles = []
-    ObstacleTiles = []
+    # GRID CONTAINERS
+    Graph = None
+    Coordinates = None
 
     # ADDITIONAL TILE RESOURCES
     TILE_B = "tiles/B.png"
@@ -50,69 +55,91 @@ class SETTINGS:
         cls.MAP_HEIGHT = mapHeight
 
         # upscaled tilesize
-        scalex = max(16, SETTINGS.SCREEN_WIDTH // (cls.MAP_WIDTH // 16))
-        scaley = max(16, SETTINGS.SCREEN_HEIGHT // (cls.MAP_HEIGHT // 16))
+        scalex = max(16, cls.SCREEN_WIDTH // (cls.MAP_WIDTH // 16))
+        scaley = max(16, cls.SCREEN_HEIGHT // (cls.MAP_HEIGHT // 16))
 
         from src.code.math.Vector import vec2
-        cls.TILE_SCALE = vec2(scalex, scaley)
+        cls.TILE_SIZE = vec2(scalex, scaley)
 
         cls.SCREEN_RESOLUTION = vec2(cls.SCREEN_WIDTH, cls.SCREEN_HEIGHT)
 
-        cls.GRID_BOUNDS = (cls.SCREEN_WIDTH + scalex / 2, cls.SCREEN_HEIGHT + scaley / 2)
+        cls.BOUNDARIES = (cls.SCREEN_WIDTH + scalex / 2, cls.SCREEN_HEIGHT + scaley / 2)
 
     @classmethod
-    def getNode(cls, position, doCopy=True):
+    def getNode(cls, position, doCopy=True, allowIterate=True):
+        node = None
         try:
             if doCopy:
-                return copy(cls.Graph[int(position.LocalY-1)][int(position.LocalX-1)])
+                node = copy(cls.Graph[int(position.LocalY-1)][int(position.LocalX-1)])
             else:
-                return cls.Graph[int(position.LocalY - 1)][int(position.LocalX - 1)]
+                node = cls.Graph[int(position.LocalY - 1)][int(position.LocalX - 1)]
         except IndexError:
             pass
 
-        return cls.closestNode(position, False)
+        if node and type(node) != DynamicGraph:
+            return node
+
+        if allowIterate:
+            return cls.closestNode(position, False)
 
     @classmethod
-    def setNode(cls, position, enabled, moveSpeed=-1.0):
+    def addNode(cls, node):
+        cached = cls.getNode(node.position, False, False)
+        if not cached or type(cached) is DynamicGraph:  # add to graph if not yet added
+            cached = cls.Graph[int(node.position.LocalY - 1)][int(node.position.LocalX - 1)] = node
+
+        if len(cached.neighbours) <= 0:
+            cached.addNeighbours()
+
+        if cached.position not in cls.Coordinates:
+            cls.Coordinates.append(cached)
+        return cached
+
+    @classmethod
+    def configureNode(cls, position, enabled, moveSpeed=-1.0):
         node = cls.getNode(position, False)
         if node:
             if moveSpeed != -1.0:
                 node.moveSpeed = moveSpeed
 
             node.isWalkable = enabled
+        else:
+            from src.code.pathfinding.Node import Node
+            cls.addNode(Node(position))
 
     @classmethod
-    def closestNode(cls, position, allowInstant=True, allowIterate=True):
+    def closestNode(cls, target, allowInstant=True, allowIterate=True):
+
         if allowInstant:
-            instant = cls.getNode(position)
+            instant = cls.getNode(target, True, False)
             if instant:
                 return instant
 
         # TODO: https://stackoverflow.com/questions/53257607/get-closest-coordinate-in-2d-array
         if allowIterate:
+            
+            if len(cls.Coordinates) > 0:
+                #dist = lambda x, y: (x.position[0] - y.position[0]) ** 2 + (x.position[1] - y.position[1]) ** 2
+                close = min(cls.Coordinates, key=lambda p: math.hypot(p[0]-target[0], p[1]-target[1]))
+                if close:
+                    closeNode = cls.closestNode(close.position, True, False)
+                    if closeNode:
+                        return closeNode
+
             closest = None
             distance = 0
             for i in cls.Graph:
                 for j in i:
-                    currentDist = j.position.distance(position)
+
+                    # Could perform class type Node check, but might result in circular import
+                    # this is fine though, Graph wont contain anything else
+                    if type(j) == DynamicGraph:
+                        continue
+
+                    currentDist = j.position.distance(target)
+
                     if currentDist < distance or distance == 0:
                         distance = currentDist
                         closest = j
             return closest
-
-    @classmethod
-    def closestTile(cls, position = None):
-        node = cls.getNode(position)
-        if node:
-            return node
-
-        closest = None
-        distance = 0
-        for tile in cls.PathTiles:
-            currentDist = tile.position.distance(position)
-            if currentDist < distance or distance == 0:
-                distance = currentDist
-                closest = tile
-
-        return closest
 

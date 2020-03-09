@@ -2,9 +2,9 @@ import pygame
 import pygame.freetype
 from src.Settings import *
 from src.code.engine.Camera import CameraInstance
-from src.code.environment.Tile import Tile
 from src.code.math.Iterator import fori
 from src.code.math.Vector import vec2
+from src.code.pathfinding.Node import Node
 
 
 class Renderer:
@@ -17,8 +17,10 @@ class Renderer:
         pygame.display.update()
         self.surface.fill((200, 200, 200))
 
-    def renderTile(self, tile: Tile):
-        self.surface.blit(tile.image, CameraInstance.centeredRect(tile.rect))
+    def renderTile(self, node: Node):
+        if node and len(node.images) > 0:
+            for image in node.images:
+                self.surface.blit(image, CameraInstance.centeredRect(node.rect))
 
     def renderRect(self, size, pos, color=(255, 255, 255), alpha=128):
         surface = pygame.Surface(size)
@@ -33,8 +35,8 @@ class Renderer:
                 pygame.draw.rect(self.surface, (52, 52, 52), CameraInstance.centeredRect(y.rect))  # , 1
 
     def renderGrid(self):
-        tWidth = SETTINGS.TILE_SCALE[0]
-        tHeight = SETTINGS.TILE_SCALE[1]
+        tWidth = SETTINGS.TILE_SIZE[0]
+        tHeight = SETTINGS.TILE_SIZE[1]
         sWidth = (SETTINGS.MAP_WIDTH - tWidth)
         sHeight = (SETTINGS.MAP_HEIGHT - tHeight)
 

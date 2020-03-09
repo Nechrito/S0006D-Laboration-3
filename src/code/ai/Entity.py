@@ -18,7 +18,7 @@ class Entity:
     def __init__(self, name, state, globalState, image, position):
         self.image = image
         self.name = name
-        self.position = SETTINGS.closestNode(position).position
+        self.position = position
 
         self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
@@ -56,11 +56,11 @@ class Entity:
             self.updateState()
 
         if self.nextNode.distance(self.position) > self.radius:
-            node = SETTINGS.closestNode(self.position, False)
+            node = SETTINGS.getNode(self.position, True, False)
             moveSpeed = 1.0
             if node:
                 moveSpeed = node.moveSpeed
-            self.position += (self.nextNode - self.position).normalized * GameTime.deltaTime * 200 * moveSpeed
+            self.position += (self.nextNode - self.position).normalized * GameTime.deltaTime * 100 * moveSpeed
 
         elif len(self.waypoints) >= 2:
             self.waypoints.pop(0)

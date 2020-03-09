@@ -46,3 +46,12 @@ class CameraInstance:
 
         cls.center = vec2(xMax, yMax)
         cls.rect = pygame.Rect(cls.center.X, cls.center.Y, cls.width, cls.height)
+
+    @classmethod
+    def inCameraBounds(cls, position):
+        width = SETTINGS.SCREEN_WIDTH
+        height = SETTINGS.SCREEN_HEIGHT
+        delta = cls.center + position
+        if 0 < delta.X < width and 0 < delta.Y < height:
+            return True
+        return False

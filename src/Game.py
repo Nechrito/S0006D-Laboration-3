@@ -11,9 +11,9 @@ from src.code.engine.Camera import CameraInstance
 from src.code.engine.GameTime import GameTime
 from src.code.engine.Renderer import Renderer
 from src.code.environment.Map import Map
-from src.code.environment.Tile import Tile
 from src.code.math.Vector import vec2
 from src.code.math.cMath import lerp
+from src.code.pathfinding.Node import Node
 
 
 class Game:
@@ -72,6 +72,8 @@ class Game:
 
     def update(self):
 
+        self.checkFOW()
+
         if not self.realCursorEnabled:
             temp = pygame.mouse.get_pos()
             self.cursor = vec2(temp[0], temp[1])
@@ -91,7 +93,6 @@ class Game:
         for agent in self.agents:
             CameraInstance.followTarget(self.relative)
             agent.update()
-            agent.moveTo(self.relative)
 
         if not self.paused:
 
@@ -105,8 +106,13 @@ class Game:
     def draw(self):
         self.renderer.clear()
 
-        for tile in SETTINGS.TilesAll:
-            self.renderer.renderTile(tile)
+        #for node in SETTINGS.TilesAll:
+            #if CameraInstance.inCameraBounds(node.position):
+            #self.renderer.renderTile(node)
+
+        for i in SETTINGS.Graph:
+            for j in i:
+                self.renderer.renderTile(j)
 
        # self.renderer.renderGrid()
        # self.renderer.renderRectOutline()
@@ -115,16 +121,16 @@ class Game:
             intersection = SETTINGS.getNode(self.relative)
             if intersection:
                 x = intersection.position
-                self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple, x.tuple, (52, 52, 57), 200)
+                self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, x.tuple, (52, 52, 57), 200)
 
                 for neighbour in intersection.neighbours:
                     node = SETTINGS.getNode(neighbour)
                     if node and node.isWalkable:
-                        self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple, neighbour.tuple, (0, 255, 128), 128)
+                        self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, neighbour.tuple, (0, 255, 128), 128)
                     else:
-                        self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple, neighbour.tuple, (255, 0, 128), 128)
+                        self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, neighbour.tuple, (255, 0, 128), 128)
 
-                self.renderer.renderRect(SETTINGS.TILE_SCALE.tuple,
+                self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple,
                                          self.relative.tuple,
                                          (37, 37, 38),
                                          200)
@@ -138,38 +144,31 @@ class Game:
             for i in range(0, len(entity.waypoints) - 1):
                 self.renderer.renderLine(entity.waypoints[i].position, entity.waypoints[i + 1].position)
 
-            (x, y) = (entity.position.X, entity.position.Y + SETTINGS.TILE_SCALE[1] - 5)
+            (x, y) = (entity.position.X, entity.position.Y + SETTINGS.TILE_SIZE[1] - 5)
             self.renderer.renderRect((60, 18), (x - 30, y - 9), (0, 0, 0), 170)
             self.renderer.renderText(entity.name, (x, y), self.fontSmall)
 
         self.clock.tick(SETTINGS.MAX_FPS)
 
     def onClick(self):
-        tile = self.selectedTile()
+        tile = self.selectedNode()
         if tile:
             tile.position.log()
 
-    def selectedTile(self, position: vec2 = None):
-        if not position:
-            position = self.relative
+            for agent in self.agents:
+                agent.moveTo(tile.position)
 
-        return SETTINGS.closestTile(position)
+    def checkFOW(self):
+        for agent in self.agents:
+            node = SETTINGS.getNode(agent.position)
+            if node:
+                for neighbour in node.neighbours:
+                    neighbourNode = SETTINGS.getNode(neighbour)
+                    if not neighbourNode:
+                        SETTINGS.addNode(Node(neighbour))
+            else:
+                print("adding node to player pos")
+                SETTINGS.addNode(Node(agent.position))
 
-    def isObstacle(self, tile: Tile):
-        for obstacle in SETTINGS.ObstacleTiles:
-            if tile.rect.colliderect(obstacle.rect):
-                return obstacle
-        return None
-
-    def setObstacle(self):
-        tile = self.selectedTile()
-
-        if not tile:
-            return None
-
-        obstacle = self.isObstacle(tile)
-
-        if obstacle:
-            SETTINGS.ObstacleTiles.remove(obstacle)
-        else:
-            SETTINGS.ObstacleTiles.append(tile)
+    def selectedNode(self):
+        return SETTINGS.closestNode(self.relative)

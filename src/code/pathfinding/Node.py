@@ -6,22 +6,30 @@ from src.code.math.cMath import lerp, lerpColor
 
 
 class Node:
-    def __init__(self, position=None, parent=None):
-        self.position = position
+    def __init__(self, position=None, parent=None, gid=-1):
+        if not position:
+            self.position = vec2()
+        else:
+            self.position = position
+
         self.parent = parent
         self.g = 0
         self.h = 0
         self.f = 0
+
+        self.ID = gid
+        self.images = []
+        self.rect = pygame.Rect(self.position.X, self.position.Y, SETTINGS.TILE_SIZE[0], SETTINGS.TILE_SIZE[1])
+
         self.moveSpeed = 1.0
         self.color = (58, 58, 57)
-        self.rect = pygame.Rect(position.X, position.Y, SETTINGS.TILE_SCALE[0], SETTINGS.TILE_SCALE[1])
-        self.isWalkable = False
+        self.isWalkable = True
         self.neighbours = []
 
     def addNeighbours(self):
 
-        if 0 < self.position.X < SETTINGS.MAP_WIDTH - SETTINGS.TILE_SCALE[0] and 0 < self.position.Y < SETTINGS.MAP_HEIGHT - SETTINGS.TILE_SCALE[1]:
-            self.isWalkable = True
+        #if 0 < self.position.X < SETTINGS.MAP_WIDTH - SETTINGS.TILE_SIZE[0] and 0 < self.position.Y < SETTINGS.MAP_HEIGHT - SETTINGS.TILE_SIZE[1]:
+            #self.isWalkable = True
 
         self.neighbours.clear()
 
@@ -29,12 +37,11 @@ class Node:
                     vec2(1, 1), vec2(-1, 1), vec2(1, -1), vec2(-1, -1)]  # Diagonal
 
         for direction in adjacent:
-            neighbour = self.position + vec2(direction.X * SETTINGS.TILE_SCALE[0], direction.Y * SETTINGS.TILE_SCALE[1])
+            neighbour = self.position + vec2(direction.X * SETTINGS.TILE_SIZE[0], direction.Y * SETTINGS.TILE_SIZE[1])
 
-            if neighbour not in self.neighbours:
-                node = SETTINGS.getNode(neighbour)
-                if node and node.isWalkable:
-                    self.neighbours.append(neighbour)
+            if 0 < neighbour.X < SETTINGS.MAP_WIDTH - SETTINGS.TILE_SIZE[0] and 0 < neighbour.Y < SETTINGS.MAP_HEIGHT - SETTINGS.TILE_SIZE[1]:
+                self.neighbours.append(neighbour)
+
 
     def updateColors(self, distanceCovered, distanceTotal):
         delta = min(1.0, max(1e-4, distanceCovered / distanceTotal))
@@ -44,6 +51,15 @@ class Node:
         mergeColor = (0, 20, 252)
         self.color = lerpColor(mergeColor, colorByDist, delta)
         return self.color
+
+    def __getitem__(self, item):
+        if item == 0:
+            return self.position.X
+        if item == 1:
+            return self.position.Y
+
+    def addImage(self, img):
+        self.images = [img] + self.images
 
     def __repr__(self):
         return str(self.isWalkable) + '(x' + str(self.position.LocalX) + ', y' + str(self.position.LocalY) + ')'
