@@ -23,3 +23,4 @@ class Tile:
 
     def addImage(self, img):
         self.image = img
+

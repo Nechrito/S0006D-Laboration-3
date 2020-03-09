@@ -40,12 +40,6 @@ class Game:
         self.clock = pygame.time.Clock()
         self.paused = False
 
-        temp = pygame.mouse.get_pos()
-        self.cursor = vec2(temp[0], temp[1])
-        self.cursorSize = 9
-
-        self.relative = vec2()
-
         self.realCursorEnabled = False
         pygame.mouse.set_visible(self.realCursorEnabled)
         pygame.event.set_grab(not self.realCursorEnabled)
@@ -70,6 +64,10 @@ class Game:
                        Entity("John", IdleState(), GlobalState(), sensei, vec2(1072, 608)),
                        Entity("Alex", IdleState(), GlobalState(), sensei, vec2(1040, 720))]
 
+        self.relative = self.agents[0].position
+        self.cursor = self.relative
+        self.cursorSize = 9
+
         CameraInstance.init()
 
     def update(self):
@@ -93,7 +91,7 @@ class Game:
         for agent in self.agents:
             CameraInstance.followTarget(self.relative)
             agent.update()
-           # agent.moveTo(self.relative)
+            agent.moveTo(self.relative)
 
         if not self.paused:
 

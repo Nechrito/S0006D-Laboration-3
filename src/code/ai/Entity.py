@@ -1,5 +1,6 @@
 from typing import List
 
+from src.Settings import SETTINGS
 from src.code.ai.fsm.StateMachine import StateMachine
 from src.code.engine.GameTime import GameTime
 import random
@@ -17,7 +18,7 @@ class Entity:
     def __init__(self, name, state, globalState, image, position):
         self.image = image
         self.name = name
-        self.position = position
+        self.position = SETTINGS.closestNode(position).position
 
         self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
@@ -33,7 +34,7 @@ class Entity:
         self.thirst = random.randrange(0, 50)
         self.hunger = random.randrange(0, 50)
 
-        self.setStart(position)
+        self.setStart(self.position)
 
         if state is not None:
             self.stateMachine = StateMachine(self, state, globalState)
@@ -55,7 +56,12 @@ class Entity:
             self.updateState()
 
         if self.nextNode.distance(self.position) > self.radius:
-            self.position += (self.nextNode - self.position).normalized * GameTime.deltaTime * 200
+            node = SETTINGS.closestNode(self.position, False)
+            moveSpeed = 1.0
+            if node:
+                moveSpeed = node.moveSpeed
+            self.position += (self.nextNode - self.position).normalized * GameTime.deltaTime * 200 * moveSpeed
+
         elif len(self.waypoints) >= 2:
             self.waypoints.pop(0)
             if len(self.waypoints) >= 2:
@@ -66,6 +72,27 @@ class Entity:
             return
 
         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)
+        if temp is None:
+            return
+
+        if len(temp) <= 1:
+            targetNode = SETTINGS.closestNode(target, True, False)
+
+            if not targetNode:
+                return
+
+            if not targetNode.isWalkable:
+                for neighbour in targetNode.neighbours:
+                    neighbourNode = SETTINGS.closestNode(neighbour, True, False)
+                    if neighbourNode and neighbourNode.isWalkable:
+                        temp = self.pathfinder.requestPathCached(self.waypoints, self.position, neighbourNode.position)
+
+                if temp is None or len(temp) <= 1:
+                    return
+
+            else:
+                temp = self.pathfinder.requestPathCached(self.waypoints, self.position, targetNode.position)
+
         if temp is None or len(temp) <= 1:
             return
 

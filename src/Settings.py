@@ -73,27 +73,32 @@ class SETTINGS:
         return cls.closestNode(position, False)
 
     @classmethod
-    def setNode(cls, position, enabled):
+    def setNode(cls, position, enabled, moveSpeed=-1.0):
         node = cls.getNode(position, False)
         if node:
+            if moveSpeed != -1.0:
+                node.moveSpeed = moveSpeed
+
             node.isWalkable = enabled
 
     @classmethod
-    def closestNode(cls, position, allowInstant=True):
+    def closestNode(cls, position, allowInstant=True, allowIterate=True):
         if allowInstant:
             instant = cls.getNode(position)
             if instant:
                 return instant
 
-        closest = None
-        distance = 0
-        for i in cls.Graph:
-            for j in i:
-                currentDist = j.position.distance(position)
-                if currentDist < distance or distance == 0:
-                    distance = currentDist
-                    closest = j
-        return closest
+        # TODO: https://stackoverflow.com/questions/53257607/get-closest-coordinate-in-2d-array
+        if allowIterate:
+            closest = None
+            distance = 0
+            for i in cls.Graph:
+                for j in i:
+                    currentDist = j.position.distance(position)
+                    if currentDist < distance or distance == 0:
+                        distance = currentDist
+                        closest = j
+            return closest
 
     @classmethod
     def closestTile(cls, position = None):

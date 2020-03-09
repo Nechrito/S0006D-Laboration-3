@@ -82,25 +82,29 @@ class Map:
                 for char in line:
                     tileObj = Tile(vec2(x * SETTINGS.TILE_SCALE[0], y * SETTINGS.TILE_SCALE[1]))
 
-                    if char != 'M':
+                    if char != 'M' and char != 'G':
                         SETTINGS.ObstacleTiles.append(tileObj)
-                        SETTINGS.setNode(tileObj.position, False)
+                        moveSpeed = 1.0
+                        if char == 'G':
+                            moveSpeed = 0.5
+
+                        SETTINGS.setNode(tileObj.position, False, moveSpeed)
                        # print(str(SETTINGS.getNode(tileObj.position).isWalkable))
 
                     # NOTE: B M T G V
-                    if char == 'T':  # TREE TRÄD
+                    if char == 'T':  # TREE
                         tileObj.addImage(SETTINGS.TILE_T)
                         SETTINGS.TILES_T.append(tileObj)
-                    if char == 'M':  # GRASS? MARK?
+                    if char == 'M':  # GROUND
                         tileObj.addImage(SETTINGS.TILE_M)
                         SETTINGS.TILES_M.append(tileObj)
-                    if char == 'B':  # WALL? RIVER?
+                    if char == 'B':  # MOUNTAIN
                         tileObj.addImage(SETTINGS.TILE_B)
                         SETTINGS.TILES_B.append(tileObj)
-                    if char == 'G':  # COAL? GRÅTTA?
+                    if char == 'G':  # WETLAND
                         tileObj.addImage(SETTINGS.TILE_G)
                         SETTINGS.TILES_G.append(tileObj)
-                    if char == 'V':  # IRON? VATTEN?
+                    if char == 'V':  # WATER
                         tileObj.addImage(SETTINGS.TILE_V)
                         SETTINGS.TILES_V.append(tileObj)
                     x += 1
