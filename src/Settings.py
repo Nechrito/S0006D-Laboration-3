@@ -68,7 +68,7 @@ class SETTINGS:
         node = None
         try:
             if doCopy:
-                node = copy(cls.Graph[int(position.LocalY-1)][int(position.LocalX-1)])
+                node = copy(cls.Graph[int(position.LocalY - 1)][int(position.LocalX - 1)])
             else:
                 node = cls.Graph[int(position.LocalY - 1)][int(position.LocalX - 1)]
         except IndexError:

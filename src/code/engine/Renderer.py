@@ -15,7 +15,7 @@ class Renderer:
 
     def clear(self):
         pygame.display.update()
-        self.surface.fill((200, 200, 200))
+        self.surface.fill((109, 247, 177))
 
     def renderTile(self, node: Node):
         for image in node.images:

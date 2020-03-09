@@ -42,7 +42,6 @@ class Node:
             if 0 < neighbour.X < SETTINGS.MAP_WIDTH - SETTINGS.TILE_SIZE[0] and 0 < neighbour.Y < SETTINGS.MAP_HEIGHT - SETTINGS.TILE_SIZE[1]:
                 self.neighbours.append(neighbour)
 
-
     def updateColors(self, distanceCovered, distanceTotal):
         delta = min(1.0, max(1e-4, distanceCovered / distanceTotal))
         colorMax = 255.0

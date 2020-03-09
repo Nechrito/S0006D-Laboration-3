@@ -36,27 +36,21 @@ class Map:
 
     def loadPath(self):
         ti = self.tmx.get_tile_image_by_gid
-        backgroundLayer = self.tmx.get_layer_by_name("Background")
-        pathLayer = self.tmx.get_layer_by_name("Path")
-
-        for x, y, gid in backgroundLayer:
-            tile = ti(gid)
-            if tile:
-                nodeObj = SETTINGS.getNode(vec2(x * SETTINGS.TILE_SIZE[0], y * SETTINGS.TILE_SIZE[1]), False, False)
-                nodeObj.addImage(tile)
-        for x, y, gid in pathLayer:
-            tile = ti(gid)
-            if tile:
-                nodeObj = SETTINGS.getNode(vec2(x * SETTINGS.TILE_SIZE[0], y * SETTINGS.TILE_SIZE[1]), False, False)
-                nodeObj.addImage(tile)
+        for layer in self.tmx.visible_layers:
+            for x, y, gid in layer:
+                tile = ti(gid)
+                if tile:
+                    nodeObj = SETTINGS.getNode(vec2(x * SETTINGS.TILE_SIZE[0], y * SETTINGS.TILE_SIZE[1]), False, False)
+                    if nodeObj:
+                        nodeObj.addImage(tile)
 
     def loadReferenceMap(self, filename):
         with open(filename, 'r') as file:
-            lines = file.readlines()[1:-1]
+            lines = file.readlines()[:-1]
             y = 1
             for line in lines:
                 x = 1
-                #line = line[1:-2]
+                line = line[:-1]
                 for char in line:
                     position = vec2(x * SETTINGS.TILE_SIZE[0], y * SETTINGS.TILE_SIZE[1])
                     nodeObj = SETTINGS.addNode(Node(position))
