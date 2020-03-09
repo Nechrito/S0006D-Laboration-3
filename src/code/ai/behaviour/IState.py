@@ -6,10 +6,6 @@ from src.code.ai.Entity import Entity
 class IState(object, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
-    def __repr__(self):
-        pass
-
-    @abc.abstractmethod
     def enter(self, entity: Entity):
         pass
 

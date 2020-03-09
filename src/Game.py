@@ -5,14 +5,11 @@ import pygame.freetype
 
 from src.Settings import *
 from src.code.ai.Entity import Entity
-from src.code.ai.behaviour.Global import Global
-from src.code.ai.behaviour.states.CollectState import Collect
-from src.code.ai.behaviour.states.PurchasingState import Purchase
-from src.code.ai.behaviour.states.SleepingState import Sleep
+from src.code.ai.behaviour.GlobalState import GlobalState
+from src.code.ai.behaviour.states.IdleState import IdleState
 from src.code.engine.Camera import CameraInstance
 from src.code.engine.GameTime import GameTime
 from src.code.engine.Renderer import Renderer
-from src.code.environment.AllBuildings import *
 from src.code.environment.Map import Map
 from src.code.environment.Tile import Tile
 from src.code.math.Vector import vec2
@@ -67,14 +64,11 @@ class Game:
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
 
         self.entityImg = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
-        self.buildings = ( getClub(), getDrink(), getResturant(),
-                           getStore(), getStackHQ(), getHotel(),
-                           getHangout(), getLTU() )
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
-        self.agents = [Entity("Alex", Sleep(), Global(), sensei, vec2(800, 704)),
-                       Entity("John", Sleep(), Global(), sensei, vec2(1072, 608)),
-                       Entity("Alex", Sleep(), Global(), sensei, vec2(1040, 720))]
+        self.agents = [Entity("Alex", IdleState(), GlobalState(), sensei, vec2(800, 704)),
+                       Entity("John", IdleState(), GlobalState(), sensei, vec2(1072, 608)),
+                       Entity("Alex", IdleState(), GlobalState(), sensei, vec2(1040, 720))]
 
         CameraInstance.init()
 
@@ -150,38 +144,12 @@ class Game:
             self.renderer.renderRect((60, 18), (x - 30, y - 9), (0, 0, 0), 170)
             self.renderer.renderText(entity.name, (x, y), self.fontSmall)
 
-        for building in self.buildings:
-            self.renderer.renderText(building.name,
-                                     (building.position.X, building.position.Y - SETTINGS.TILE_SCALE[1] * 5),
-                                     self.fontBold)
-        self.drawEntitiesInfo()
-
         self.clock.tick(SETTINGS.MAX_FPS)
 
-    def drawEntitiesInfo(self):
-
-        count = 0
-        for entity in self.agents:
-
-            self.renderer.renderRect((150, 150), (count * 150, 50), (0, 0, 0), 160)
-
-            self.renderer.append(entity.name + " (" + str(entity.stateMachine.currentState) + ")")
-            self.renderer.append("Fatigue: {0}%".format("{:.0f}".format(float(entity.fatigue))))
-            self.renderer.append("Hunger: {0}%".format("{:.0f}".format(float(entity.hunger))))
-            self.renderer.append("Thirst: {0}%".format("{:.0f}".format(float(entity.thirst))))
-            self.renderer.append("Bank: {0}$".format("{:.0f}".format(float(entity.bank))))
-            self.renderer.renderTexts((25 + SETTINGS.SCREEN_WIDTH * 0.05 + 150 * count, SETTINGS.SCREEN_HEIGHT * 0.10), self.fontRegular,
-                                      (255, 255, 255))
-
-            count += 1
-
     def onClick(self):
-        print("CLICKED")
         tile = self.selectedTile()
         if tile:
-            print("??")
             tile.position.log()
-
 
     def selectedTile(self, position: vec2 = None):
         if not position:
