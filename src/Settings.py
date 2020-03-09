@@ -94,6 +94,12 @@ class SETTINGS:
         return cached
 
     @classmethod
+    def activateNode(cls, node):
+        cached = cls.getNode(node.position, False, False)
+        if cached:
+            cached.isVisible = True
+
+    @classmethod
     def configureNode(cls, position, enabled, moveSpeed=-1.0):
         node = cls.getNode(position, False)
         if node:

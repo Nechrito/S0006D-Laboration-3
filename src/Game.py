@@ -35,7 +35,7 @@ class Game:
         logo = pygame.image.load(self.getRealFilePath(SETTINGS.ICON_PATH))
         pygame.display.set_icon(logo)
 
-        pygame.display.set_caption(SETTINGS.TITLE)
+        pygame.display.set_caption(SETTINGS.TITLE + " - LOADING...")
 
         self.clock = pygame.time.Clock()
         self.paused = False
@@ -72,8 +72,6 @@ class Game:
 
     def update(self):
 
-        self.checkFOW()
-
         if not self.realCursorEnabled:
             temp = pygame.mouse.get_pos()
             self.cursor = vec2(temp[0], temp[1])
@@ -89,11 +87,15 @@ class Game:
 
             self.relative = raw
 
+        # fog of war
+        self.checkFOW()
+
         # mouse relative coords
         for agent in self.agents:
             CameraInstance.followTarget(self.relative)
             agent.update()
 
+        # window title
         if not self.paused:
 
             pygame.display.set_caption(SETTINGS.TITLE +
@@ -161,16 +163,19 @@ class Game:
                 agent.moveTo(tile.position)
 
     def checkFOW(self):
+        # Computes the FOG OF WAR
         for agent in self.agents:
-            node = SETTINGS.getNode(agent.position)
+            node = SETTINGS.getNode(agent.position, False, False)
             if node:
                 for neighbour in node.neighbours:
-                    neighbourNode = SETTINGS.getNode(neighbour)
-                    if not neighbourNode:
-                        SETTINGS.addNode(Node(neighbour))
-            else:
-                print("adding node to player pos")
-                SETTINGS.addNode(Node(agent.position))
+                    neighbourNode = SETTINGS.getNode(neighbour, True, False)
+                    if neighbourNode and not neighbourNode.isVisible:
+                        SETTINGS.activateNode(neighbourNode)
+
+                        for extNeighbour in neighbourNode.neighbours:
+                            extNeighbourNode = SETTINGS.getNode(extNeighbour, True, False)
+                            if extNeighbourNode and not extNeighbourNode.isVisible:
+                                SETTINGS.activateNode(extNeighbourNode)
 
     def selectedNode(self):
         return SETTINGS.closestNode(self.relative)

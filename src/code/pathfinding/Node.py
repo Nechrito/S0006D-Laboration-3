@@ -24,6 +24,7 @@ class Node:
         self.moveSpeed = 1.0
         self.color = (58, 58, 57)
         self.isWalkable = True
+        self.isVisible = False
         self.neighbours = []
 
     def addNeighbours(self):

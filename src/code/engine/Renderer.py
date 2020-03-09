@@ -20,6 +20,8 @@ class Renderer:
     def renderTile(self, node: Node):
         for image in node.images:
             self.surface.blit(image, CameraInstance.centeredRect(node.rect))
+        if not node.isVisible:
+            self.renderRect(SETTINGS.TILE_SIZE.tuple, node.position, (52, 52, 52), 230)
 
     def renderRect(self, size, pos, color=(255, 255, 255), alpha=128):
         surface = pygame.Surface(size)
