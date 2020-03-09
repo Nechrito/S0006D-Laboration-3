@@ -17,8 +17,8 @@ class AStar(IPath):
         self.timerStart = time.time()
         self.timeElapsed = None
 
-        startNode = SETTINGS.getNode(start, True, False)
-        endNode = SETTINGS.getNode(end, True, False)
+        startNode = SETTINGS.getNode(start, False, False)
+        endNode = SETTINGS.getNode(end, False, False)
 
         closedList = []
         openList = [startNode]

@@ -49,9 +49,8 @@ class CameraInstance:
 
     @classmethod
     def inCameraBounds(cls, position):
-        width = SETTINGS.SCREEN_WIDTH
-        height = SETTINGS.SCREEN_HEIGHT
+        bounds = SETTINGS.TILE_SIZE
+        width = SETTINGS.SCREEN_WIDTH + bounds[0]
+        height = SETTINGS.SCREEN_HEIGHT + bounds[1]
         delta = cls.center + position
-        if 0 < delta.X < width and 0 < delta.Y < height:
-            return True
-        return False
+        return -bounds[0] < delta.X < width and -bounds[1] < delta.Y < height

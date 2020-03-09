@@ -54,16 +54,14 @@ class SETTINGS:
         cls.MAP_WIDTH = mapWidth
         cls.MAP_HEIGHT = mapHeight
 
-        # upscaled tilesize
         scalex = max(16, cls.SCREEN_WIDTH // (cls.MAP_WIDTH // 16))
         scaley = max(16, cls.SCREEN_HEIGHT // (cls.MAP_HEIGHT // 16))
 
+        cls.BOUNDARIES = (cls.SCREEN_WIDTH + scalex / 2, cls.SCREEN_HEIGHT + scaley / 2)
+
         from src.code.math.Vector import vec2
         cls.TILE_SIZE = vec2(scalex, scaley)
-
         cls.SCREEN_RESOLUTION = vec2(cls.SCREEN_WIDTH, cls.SCREEN_HEIGHT)
-
-        cls.BOUNDARIES = (cls.SCREEN_WIDTH + scalex / 2, cls.SCREEN_HEIGHT + scaley / 2)
 
     @classmethod
     def getNode(cls, position, doCopy=True, allowIterate=True):

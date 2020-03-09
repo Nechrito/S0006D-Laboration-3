@@ -1,7 +1,7 @@
 import pygame
 import pygame.freetype
 from src.Settings import *
-from src.code.engine.Camera import CameraInstance
+from src.code.engine.CameraInstance import CameraInstance
 from src.code.math.Iterator import fori
 from src.code.math.Vector import vec2
 from src.code.pathfinding.Node import Node
@@ -18,9 +18,8 @@ class Renderer:
         self.surface.fill((200, 200, 200))
 
     def renderTile(self, node: Node):
-        if node and len(node.images) > 0:
-            for image in node.images:
-                self.surface.blit(image, CameraInstance.centeredRect(node.rect))
+        for image in node.images:
+            self.surface.blit(image, CameraInstance.centeredRect(node.rect))
 
     def renderRect(self, size, pos, color=(255, 255, 255), alpha=128):
         surface = pygame.Surface(size)

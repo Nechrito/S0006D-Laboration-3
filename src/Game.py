@@ -7,7 +7,7 @@ from src.Settings import *
 from src.code.ai.Entity import Entity
 from src.code.ai.behaviour.GlobalState import GlobalState
 from src.code.ai.behaviour.states.IdleState import IdleState
-from src.code.engine.Camera import CameraInstance
+from src.code.engine.CameraInstance import CameraInstance
 from src.code.engine.GameTime import GameTime
 from src.code.engine.Renderer import Renderer
 from src.code.environment.Map import Map
@@ -110,9 +110,11 @@ class Game:
             #if CameraInstance.inCameraBounds(node.position):
             #self.renderer.renderTile(node)
 
-        for i in SETTINGS.Graph:
-            for j in i:
-                self.renderer.renderTile(j)
+        for row in SETTINGS.Graph:
+            for node in row:
+                if node and len(node.images) > 0:
+                    if CameraInstance.inCameraBounds(node.position):
+                        self.renderer.renderTile(node)
 
        # self.renderer.renderGrid()
        # self.renderer.renderRectOutline()
@@ -141,8 +143,8 @@ class Game:
             if len(entity.waypoints) > 0:
                 self.renderer.renderRect([10, 10], entity.waypoints[-1].position)
 
-            for i in range(0, len(entity.waypoints) - 1):
-                self.renderer.renderLine(entity.waypoints[i].position, entity.waypoints[i + 1].position)
+            for row in range(0, len(entity.waypoints) - 1):
+                self.renderer.renderLine(entity.waypoints[row].position, entity.waypoints[row + 1].position)
 
             (x, y) = (entity.position.X, entity.position.Y + SETTINGS.TILE_SIZE[1] - 5)
             self.renderer.renderRect((60, 18), (x - 30, y - 9), (0, 0, 0), 170)

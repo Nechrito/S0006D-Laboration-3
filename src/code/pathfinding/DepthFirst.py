@@ -28,7 +28,7 @@ class DepthFirst(IPath):
                 return result
 
     def iterate(self, start, end):
-        startNode = SETTINGS.getNode(start)
+        startNode = SETTINGS.getNode(start, False, False)
         self.queue = []
         self.queue.append(startNode)
         pathDict = {startNode: False}

@@ -20,7 +20,7 @@ class BreadthFirst(IPath):
         self.timerStart = time.time()
         self.timeElapsed = None
 
-        startNode = SETTINGS.getNode(start)
+        startNode = SETTINGS.getNode(start, False, False)
         self.queue = []
         self.queue.append(startNode)
 

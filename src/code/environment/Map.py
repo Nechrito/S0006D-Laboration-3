@@ -56,7 +56,7 @@ class Map:
             y = 1
             for line in lines:
                 x = 1
-                line = line[1:-2]
+                #line = line[1:-2]
                 for char in line:
                     position = vec2(x * SETTINGS.TILE_SIZE[0], y * SETTINGS.TILE_SIZE[1])
                     nodeObj = SETTINGS.addNode(Node(position))
