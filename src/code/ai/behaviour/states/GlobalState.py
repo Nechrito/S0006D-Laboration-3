@@ -1,5 +1,5 @@
 from src.code.ai.Entity import Entity
-from src.code.ai.behaviour.IState import IState
+from code.ai.behaviour.states.IState import IState
 from src.code.engine.GameTime import GameTime
 
 

@@ -1,4 +1,4 @@
-from src.code.ai.behaviour.IState import IState
+from code.ai.behaviour.states.IState import IState
 
 
 class StateTransition:

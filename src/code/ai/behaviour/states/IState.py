@@ -1,20 +1,18 @@
 import abc
 
-from src.code.ai.Entity import Entity
-
 
 class IState(object, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
-    def enter(self, entity: Entity):
+    def enter(self, entity):
         pass
 
     @abc.abstractmethod
-    def execute(self, entity: Entity):
+    def execute(self, entity):
         pass
 
     @abc.abstractmethod
-    def exit(self, entity: Entity):
+    def exit(self, entity):
         pass
 
 

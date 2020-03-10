@@ -119,31 +119,11 @@ class SETTINGS:
             if instant:
                 return instant
 
-        # TODO: https://stackoverflow.com/questions/53257607/get-closest-coordinate-in-2d-array
         if allowIterate:
-            
             if len(cls.Coordinates) > 0:
-                #dist = lambda x, y: (x.position[0] - y.position[0]) ** 2 + (x.position[1] - y.position[1]) ** 2
-                close = min(cls.Coordinates, key=lambda p: math.hypot(p[0]-target[0], p[1]-target[1]))
+                close = min(cls.Coordinates, key=lambda p: p.position.distance(target))
                 if close:
                     closeNode = cls.closestNode(close.position, True, False)
                     if closeNode:
                         return closeNode
-
-            closest = None
-            distance = 0
-            for i in cls.Graph:
-                for j in i:
-
-                    # Could perform class type Node check, but might result in circular import
-                    # this is fine though, Graph wont contain anything else
-                    if type(j) == DynamicGraph:
-                        continue
-
-                    currentDist = j.position.distance(target)
-
-                    if currentDist < distance or distance == 0:
-                        distance = currentDist
-                        closest = j
-            return closest
-
+        return None

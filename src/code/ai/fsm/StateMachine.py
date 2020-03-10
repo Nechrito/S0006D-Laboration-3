@@ -1,11 +1,11 @@
 class StateMachine:
 
-    def __init__(self, entity, currentstate, globalState):
+    def __init__(self, entity, startState, globalState):
         self.owner = entity
         self.globalState = globalState
         self.locked = False
         self.previousState = None
-        self.currentState = currentstate
+        self.currentState = startState
         self.currentState.enter(self.owner)
 
     def update(self):

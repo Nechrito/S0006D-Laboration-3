@@ -1,23 +1,23 @@
-from typing import List
+import random
 
+from code.ai.behaviour.states.IState import IState
+from enums.EntityType import EntityType
 from src.Settings import SETTINGS
 from src.code.ai.fsm.StateMachine import StateMachine
 from src.code.engine.GameTime import GameTime
-import random
-
 from src.code.math.Vector import vec2
-from src.code.pathfinding.Node import Node
 from src.code.pathfinding.PathManager import PathManager
 from src.enums.PathType import PathType
 
 
 class Entity:
 
-    waypoints: List[Node]
-
-    def __init__(self, state, globalState, image, position):
+    def __init__(self, characterType: EntityType, position, image, startState: IState, globalState: IState):
+        self.characterType = characterType
         self.image = image
         self.position = position
+
+        self.name = str(characterType)
 
         self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
@@ -28,15 +28,10 @@ class Entity:
         self.nextNode = self.position
         self.radius = 16
 
-        self.fatigue = random.randrange(0, 70)
-        self.bank = random.randrange(0, 120)
-        self.thirst = random.randrange(0, 50)
-        self.hunger = random.randrange(0, 50)
-
         self.setStart(self.position)
 
-        if state is not None:
-            self.stateMachine = StateMachine(self, state, globalState)
+        if startState:
+            self.stateMachine = StateMachine(self, startState, globalState)
         else:
             self.stateMachine = None
 

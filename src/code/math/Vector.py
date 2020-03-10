@@ -1,6 +1,6 @@
 import numbers
 import math
-from random import random
+import random
 
 from src.Settings import SETTINGS
 
@@ -25,10 +25,13 @@ class vec2:
     def LocalY(self):
         return self.Y // (SETTINGS.TILE_SIZE[1])
 
-    @property
-    def Randomized(self):
-        threshold = 10
-        return vec2(self.position.X + random.randrange(-threshold, threshold), self.position.Y + random.randrange(-threshold, threshold / 2))
+    def randomized(self, threshold=10, attempts=3):
+        for i in range(attempts):
+            rand = vec2(self.X + random.randrange(-threshold, threshold),
+                        self.Y + random.randrange(-threshold, threshold))
+            node = SETTINGS.getNode(rand)
+            if node:
+                return node.position
 
     def __getitem__(self, item):
         if item == 0:
@@ -78,8 +81,7 @@ class vec2:
             return vec2(self.X * other, self.Y * other)
 
     def distance(self, other):
-        return math.hypot(self.X-other.X, self.Y-other.Y)
-        #return math.sqrt(((self.X - other[0]) ** 2) + ((self.Y - other[1]) ** 2))
+        return math.hypot(self.X - other.X, self.Y - other.Y)
 
     def log(self, header=""):
         print(header + " (" + str(self.X) + ", " + str(self.Y) + ") | Local: (" + str(self.LocalX) + ", " + str(self.LocalY) + ")")

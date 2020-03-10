@@ -1,4 +1,4 @@
-from src.code.ai.behaviour.IState import IState
+from code.ai.behaviour.states.IState import IState
 from src.code.ai.messaging.Message import Message
 
 
@@ -10,6 +10,7 @@ class BuildingState(IState):
         Message.sendConsole(entity, "We could use some new buildings, I'll take care of it!")
 
     def execute(self, entity):
+        #Todo: Build at camp
         pass
 
     def exit(self, entity):

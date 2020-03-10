@@ -3,9 +3,11 @@ from os import path
 import pygame
 import pygame.freetype
 
+from code.engine.Vars import Vars
+from enums.EntityType import EntityType
 from src.Settings import *
 from src.code.ai.Entity import Entity
-from src.code.ai.behaviour.GlobalState import GlobalState
+from code.ai.behaviour.states.GlobalState import GlobalState
 from src.code.ai.behaviour.states.IdleState import IdleState
 from src.code.engine.CameraInstance import CameraInstance
 from src.code.engine.GameTime import GameTime
@@ -13,7 +15,6 @@ from src.code.engine.Renderer import Renderer
 from src.code.environment.Map import Map
 from src.code.math.Vector import vec2
 from src.code.math.cMath import lerp
-from src.code.pathfinding.Node import Node
 
 
 class Game:
@@ -40,10 +41,6 @@ class Game:
         self.clock = pygame.time.Clock()
         self.paused = False
 
-        self.realCursorEnabled = False
-        pygame.mouse.set_visible(self.realCursorEnabled)
-        pygame.event.set_grab(not self.realCursorEnabled)
-
         # Yes this is some next level fuckery, I'm on a deadline lol
         SETTINGS.TILE_B = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_B))
         SETTINGS.TILE_M = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_M))
@@ -59,10 +56,17 @@ class Game:
 
         self.entityImg = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
 
+        Vars.init(vec2(1280, 640))
+
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
-        self.agents = [Entity(IdleState(), GlobalState(), sensei, vec2(800, 704)),
-                       Entity(IdleState(), GlobalState(), sensei, vec2(1072, 608)),
-                       Entity(IdleState(), GlobalState(), sensei, vec2(1040, 720))]
+        self.agents = [ Entity(EntityType.Worker,   vec2(944, 608),  sensei, IdleState(), GlobalState()),
+                        Entity(EntityType.Explorer, vec2(976, 608), sensei, IdleState(), GlobalState()),
+                        Entity(EntityType.Worker,   vec2(912, 640),  sensei, IdleState(), GlobalState()),
+                        Entity(EntityType.Worker,   vec2(976, 640),  sensei, IdleState(), GlobalState()) ]
+
+        self.realCursorEnabled = False
+        pygame.mouse.set_visible(self.realCursorEnabled)
+        pygame.event.set_grab(not self.realCursorEnabled)
 
         self.relative = self.agents[0].position
         self.cursor = self.relative
@@ -152,7 +156,7 @@ class Game:
             if not node.isWalkable:
                 return
             for agent in self.agents:
-                agent.moveTo(node.position)
+                agent.moveTo(node.position.randomized(50))
 
     def checkFOW(self):
         # Computes the FOG OF WAR

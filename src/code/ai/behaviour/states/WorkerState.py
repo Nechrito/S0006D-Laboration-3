@@ -2,15 +2,15 @@ from code.ai.behaviour.states.IState import IState
 from src.code.ai.messaging.Message import Message
 
 
-class EducationState(IState):
+class WorkerState(IState):
     def __init__(self):
-        pass
+        self.isDoingWork = False
 
     def enter(self, entity):
-        Message.sendConsole(entity, "Need to educate myself some more")
+        Message.sendConsole(entity, "Ok!")
 
     def execute(self, entity):
-        pass
+
 
     def exit(self, entity):
         pass
