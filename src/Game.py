@@ -60,9 +60,9 @@ class Game:
         self.entityImg = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
-        self.agents = [Entity("Alex", IdleState(), GlobalState(), sensei, vec2(800, 704)),
-                       Entity("John", IdleState(), GlobalState(), sensei, vec2(1072, 608)),
-                       Entity("Alex", IdleState(), GlobalState(), sensei, vec2(1040, 720))]
+        self.agents = [Entity(IdleState(), GlobalState(), sensei, vec2(800, 704)),
+                       Entity(IdleState(), GlobalState(), sensei, vec2(1072, 608)),
+                       Entity(IdleState(), GlobalState(), sensei, vec2(1040, 720))]
 
         self.relative = self.agents[0].position
         self.cursor = self.relative
@@ -76,7 +76,6 @@ class Game:
             temp = pygame.mouse.get_pos()
             self.cursor = vec2(temp[0], temp[1])
 
-            # Todo: Scale with map size
             size = vec2(SETTINGS.MAP_WIDTH, SETTINGS.MAP_HEIGHT) + SETTINGS.SCREEN_RESOLUTION
             raw = self.cursor
             deltaX = min(1.0, max(1e-6, raw.X / size.X))
@@ -108,15 +107,11 @@ class Game:
     def draw(self):
         self.renderer.clear()
 
-        #for node in SETTINGS.TilesAll:
-            #if CameraInstance.inCameraBounds(node.position):
-            #self.renderer.renderTile(node)
-
         for row in SETTINGS.Graph:
             for node in row:
-                if node and len(node.images) > 0:
-                    if CameraInstance.inCameraBounds(node.position):
-                        self.renderer.renderTile(node)
+                if node and node.isVisible:
+                    #if CameraInstance.inCameraBounds(node.position):
+                    self.renderer.renderTile(node)
 
        # self.renderer.renderGrid()
        # self.renderer.renderRectOutline()
@@ -148,19 +143,16 @@ class Game:
             for row in range(0, len(entity.waypoints) - 1):
                 self.renderer.renderLine(entity.waypoints[row].position, entity.waypoints[row + 1].position)
 
-            (x, y) = (entity.position.X, entity.position.Y + SETTINGS.TILE_SIZE[1] - 5)
-            self.renderer.renderRect((60, 18), (x - 30, y - 9), (0, 0, 0), 170)
-            self.renderer.renderText(entity.name, (x, y), self.fontSmall)
-
         self.clock.tick(SETTINGS.MAX_FPS)
 
     def onClick(self):
-        tile = self.selectedNode()
-        if tile:
-            tile.position.log()
-
+        node = self.selectedNode()
+        if node:
+            node.position.log()
+            if not node.isWalkable:
+                return
             for agent in self.agents:
-                agent.moveTo(tile.position)
+                agent.moveTo(node.position)
 
     def checkFOW(self):
         # Computes the FOG OF WAR

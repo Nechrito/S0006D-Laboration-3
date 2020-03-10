@@ -31,8 +31,13 @@ class Map:
 
         self.loadPath()
 
+        col = 0
+        for x in SETTINGS.Graph:
+            print(str(col) + " " + str(x))
+            col += 1
+
         timeElapsed = time.time() - startTime
-        print("Loaded map in: " + str(truncate(timeElapsed * 1000)) + "ms")
+        print("\nLoaded map in: " + str(truncate(timeElapsed * 1000)) + "ms \n")
 
     def loadPath(self):
         ti = self.tmx.get_tile_image_by_gid
@@ -81,14 +86,3 @@ class Map:
 
                     x += 1
                 y += 1
-
-            col = 0
-            for x in SETTINGS.Graph:
-                print(str(col) + " " + str(x))
-                col += 1
-
-            #SETTINGS.TilesAll.extend(SETTINGS.TILES_T)
-            #SETTINGS.TilesAll.extend(SETTINGS.TILES_M)
-            #SETTINGS.TilesAll.extend(SETTINGS.TILES_B)
-            #SETTINGS.TilesAll.extend(SETTINGS.TILES_G)
-            #SETTINGS.TilesAll.extend(SETTINGS.TILES_V)

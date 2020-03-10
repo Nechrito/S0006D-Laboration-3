@@ -15,9 +15,8 @@ class Entity:
 
     waypoints: List[Node]
 
-    def __init__(self, name, state, globalState, image, position):
+    def __init__(self, state, globalState, image, position):
         self.image = image
-        self.name = name
         self.position = position
 
         self.rect = self.image.get_rect()
@@ -42,9 +41,7 @@ class Entity:
             self.stateMachine = None
 
     def updateState(self):
-        self.thirst += 0.5 * GameTime.deltaTime
-        self.hunger += 0.5 * GameTime.deltaTime
-        self.fatigue += 0.5 * GameTime.deltaTime
+        # Todo: update resources / stats
         self.stateMachine.update()
 
     def update(self):
