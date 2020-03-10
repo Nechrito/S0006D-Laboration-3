@@ -1,3 +1,9 @@
+from typing import List, Any
+
+from code.items.IPickupItem import IPickupItem
+from code.items.IronIngot import IronIngot
+from code.items.IronOre import IronOre
+from code.items.Tree import Tree
 from code.math.Vector import vec2
 
 
@@ -10,10 +16,11 @@ class Vars:
     swordCount     = 0
     soldierCount   = 0
 
-    treesContainer     = []
-    buildingsContainer = []
-    ingotsContainer    = []
-    oresContainer      = []
+    # contains all items which may be picked up
+    itemsContainer:     List[IPickupItem] = []
+    treesContainer:     List[Tree]        = []
+    ingotsContainer:    List[IronIngot]   = []
+    oresContainer:      List[IronOre]     = []
 
     @classmethod
     def init(cls, campPos: vec2):

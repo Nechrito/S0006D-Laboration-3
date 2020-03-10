@@ -1,6 +1,9 @@
+from code.items.IPickupItem import IPickupItem
 
-class IronOre:
+
+class IronOre(IPickupItem):
     def __init__(self, spawnPoint):
+        super().__init__()
         self.position = spawnPoint
 
     def update(self):

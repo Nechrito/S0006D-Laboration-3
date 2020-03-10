@@ -60,7 +60,7 @@ class Game:
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
         self.agents = [ Entity(EntityType.Worker,   vec2(944, 608),  sensei, IdleState(), GlobalState()),
-                        Entity(EntityType.Explorer, vec2(976, 608), sensei, IdleState(), GlobalState()),
+                        Entity(EntityType.Explorer, vec2(976, 608),  sensei, IdleState(), GlobalState()),
                         Entity(EntityType.Worker,   vec2(912, 640),  sensei, IdleState(), GlobalState()),
                         Entity(EntityType.Worker,   vec2(976, 640),  sensei, IdleState(), GlobalState()) ]
 
@@ -156,7 +156,7 @@ class Game:
             if not node.isWalkable:
                 return
             for agent in self.agents:
-                agent.moveTo(node.position.randomized(50))
+                agent.moveTo(node.position.randomized())
 
     def checkFOW(self):
         # Computes the FOG OF WAR

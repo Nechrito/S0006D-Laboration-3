@@ -4,13 +4,16 @@ import time
 class Tree:
     def __init__(self, spawnPoint):
         self.position = spawnPoint
-        self.duration = 30  # the time to cut down the tree
+        self.duration = 30  # the time it takes to cut down the tree
         self.timerStart = None
-        self.isAlive = True
+        self.isChopped = False
 
     def startTimer(self):
         self.timerStart = time.time()
 
     def update(self):
+        if not self.timerStart or self.isChopped:
+            return
+
         if time.time() - self.timerStart > self.duration:
-            self.isAlive = False
+            self.isChopped = True

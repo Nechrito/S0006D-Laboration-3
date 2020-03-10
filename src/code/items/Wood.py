@@ -1,7 +1,6 @@
+from code.items.IPickupItem import IPickupItem
 
-class Wood:
+
+class Wood(IPickupItem):
     def __init__(self, spawnPoint):
-        self.position = spawnPoint
-
-    def update(self):
-        pass
+        super().__init__(spawnPoint)

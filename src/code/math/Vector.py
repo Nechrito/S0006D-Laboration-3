@@ -25,60 +25,13 @@ class vec2:
     def LocalY(self):
         return self.Y // (SETTINGS.TILE_SIZE[1])
 
-    def randomized(self, threshold=10, attempts=3):
+    def randomized(self, threshold=8, attempts=5):
         for i in range(attempts):
-            rand = vec2(self.X + random.randrange(-threshold, threshold),
-                        self.Y + random.randrange(-threshold, threshold))
+            rand = vec2(self.X + random.randrange(-threshold * attempts, threshold * attempts),
+                        self.Y + random.randrange(-threshold * attempts, threshold * attempts))
             node = SETTINGS.getNode(rand)
             if node:
                 return node.position
-
-    def __getitem__(self, item):
-        if item == 0:
-            return self.X
-        if item == 1:
-            return self.Y
-
-    def __getattr__(self, name):
-        return self[name]
-
-    def __add__(self, other):
-        if isinstance(other, tuple):
-            return vec2(self.X + other[0], self.Y + other[1])
-        if isinstance(other, vec2):
-            return vec2(self.X + other.X, self.Y + other.Y)
-        if isinstance(other, int):
-            return vec2(int(self.X + other), int(self.Y + other))
-        if isinstance(other, numbers.Number):
-            return vec2(self.X + other, self.Y + other)
-
-    def __sub__(self, other):
-        if isinstance(other, tuple):
-            return vec2(self.X - other[0], self.Y - other[1])
-        if isinstance(other, vec2):
-            return vec2(self.X - other.X, self.Y - other.Y)
-        if isinstance(other, numbers.Number):
-            return vec2(self.X - other, self.Y - other)
-
-    def __truediv__(self, other):
-        if isinstance(other, tuple):
-            return vec2(self.X / other[0], self.Y / other[1])
-        if isinstance(other, vec2):
-            return vec2(self.X / max(1, other.X), max(1, self.Y / other.Y))
-        if isinstance(other, float):
-            return vec2(self.X // other, self.Y // other)
-        if isinstance(other, numbers.Number):
-            return vec2(self.X // other, self.Y // other)
-
-    def __mul__(self, other):
-        if isinstance(other, tuple):
-            return vec2(self.X * other[0], self.Y * other[1])
-        if isinstance(other, vec2):
-            return vec2(self.X * other.X, self.Y * other.Y)
-        if isinstance(other, float):
-            return vec2(self.X * other, self.Y * other)
-        if isinstance(other, numbers.Number):
-            return vec2(self.X * other, self.Y * other)
 
     def distance(self, other):
         return math.hypot(self.X - other.X, self.Y - other.Y)
@@ -130,3 +83,50 @@ class vec2:
     @property
     def tuple(self):
         return self.X, self.Y
+
+    def __getitem__(self, item):
+        if item == 0:
+            return self.X
+        if item == 1:
+            return self.Y
+
+    def __getattr__(self, name):
+        return self[name]
+
+    def __add__(self, other):
+        if isinstance(other, tuple):
+            return vec2(self.X + other[0], self.Y + other[1])
+        if isinstance(other, vec2):
+            return vec2(self.X + other.X, self.Y + other.Y)
+        if isinstance(other, int):
+            return vec2(int(self.X + other), int(self.Y + other))
+        if isinstance(other, numbers.Number):
+            return vec2(self.X + other, self.Y + other)
+
+    def __sub__(self, other):
+        if isinstance(other, tuple):
+            return vec2(self.X - other[0], self.Y - other[1])
+        if isinstance(other, vec2):
+            return vec2(self.X - other.X, self.Y - other.Y)
+        if isinstance(other, numbers.Number):
+            return vec2(self.X - other, self.Y - other)
+
+    def __truediv__(self, other):
+        if isinstance(other, tuple):
+            return vec2(self.X / other[0], self.Y / other[1])
+        if isinstance(other, vec2):
+            return vec2(self.X / max(1, other.X), max(1, self.Y / other.Y))
+        if isinstance(other, float):
+            return vec2(self.X // other, self.Y // other)
+        if isinstance(other, numbers.Number):
+            return vec2(self.X // other, self.Y // other)
+
+    def __mul__(self, other):
+        if isinstance(other, tuple):
+            return vec2(self.X * other[0], self.Y * other[1])
+        if isinstance(other, vec2):
+            return vec2(self.X * other.X, self.Y * other.Y)
+        if isinstance(other, float):
+            return vec2(self.X * other, self.Y * other)
+        if isinstance(other, numbers.Number):
+            return vec2(self.X * other, self.Y * other)

@@ -29,20 +29,20 @@ class IPath(object, metaclass=abc.ABCMeta):
 
     #  Diagonal Manhattan
     @staticmethod
-    def heuristic(node1, node2):
-        dx = abs(node1.X - node2.X)
-        dy = abs(node1.Y - node2.Y)
+    def heuristic(startPos, endPos):
+        dx = abs(startPos.X - endPos.X)
+        dy = abs(startPos.Y - endPos.Y)
         D = 1
         D2 = math.sqrt(2)
         return D * (dx + dy) + (D2 - 2 * D) * min(dx, dy)
 
     @staticmethod
-    def getCost(node1: Node, node2: Node):
-        if int(node2.position.X - node1.position.X) == 0 or int(node2.position.Y - node1.position.Y) == 0:
+    def getCost(startNode: Node, endNode: Node):
+        if int(endNode.position.X - startNode.position.X) == 0 or int(endNode.position.Y - startNode.position.Y) == 0:
             cost = 1  # horizontal/vertical cost
         else:
-            cost = math.sqrt(2)  # diagonal cost
-        return node1.g + cost
+            cost = 1.4  # diagonal cost
+        return startNode.g + cost
 
     @staticmethod
     def backTrace(node):

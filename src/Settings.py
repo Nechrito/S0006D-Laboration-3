@@ -127,3 +127,26 @@ class SETTINGS:
                     if closeNode:
                         return closeNode
         return None
+
+    @classmethod
+    def getClosestFOWNode(cls, position):
+        if not cls.Graph:
+            return None
+
+        closest = None
+        distance = 0
+
+        for i in cls.Graph:
+            for j in i:
+
+                # Could perform class type Node check, but might result in circular import
+                # this is fine though, Graph wont contain anything else
+                if type(j) == DynamicGraph or j.isVisible:
+                    continue
+
+                currentDist = j.position.distance(position)
+
+                if currentDist < distance or distance == 0:
+                    distance = currentDist
+                    closest = j
+        return closest

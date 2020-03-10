@@ -14,10 +14,10 @@ class Entity:
 
     def __init__(self, characterType: EntityType, position, image, startState: IState, globalState: IState):
         self.characterType = characterType
-        self.image = image
+        self.stateMachine = StateMachine(self, startState, globalState)
         self.position = position
-
-        self.name = str(characterType)
+        self.image = image
+        self.name = str(characterType).replace("EntityType.", "")
 
         self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
@@ -30,10 +30,6 @@ class Entity:
 
         self.setStart(self.position)
 
-        if startState:
-            self.stateMachine = StateMachine(self, startState, globalState)
-        else:
-            self.stateMachine = None
 
     def updateState(self):
         # Todo: update resources / stats
@@ -44,8 +40,7 @@ class Entity:
         self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
 
-        if self.stateMachine is not None:
-            self.updateState()
+        self.updateState()
 
         if self.nextNode.distance(self.position) > self.radius:
             node = SETTINGS.getNode(self.position, True, False)
@@ -67,25 +62,25 @@ class Entity:
         if temp is None:
             return
 
-        if len(temp) <= 1:
-            targetNode = SETTINGS.closestNode(target, True, False)
+        if len(temp) <= 2:
+            targetNode = SETTINGS.getNode(target, False, False)
 
             if not targetNode:
                 return
 
             if not targetNode.isWalkable:
                 for neighbour in targetNode.neighbours:
-                    neighbourNode = SETTINGS.closestNode(neighbour, True, False)
+                    neighbourNode = SETTINGS.getNode(neighbour, False, False)
                     if neighbourNode and neighbourNode.isWalkable:
                         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, neighbourNode.position)
 
-                if temp is None or len(temp) <= 1:
+                if temp is None or len(temp) <= 2:
                     return
 
             else:
                 temp = self.pathfinder.requestPathCached(self.waypoints, self.position, targetNode.position)
 
-        if temp is None or len(temp) <= 1:
+        if not temp or len(temp) <= 1:
             return
 
         self.waypoints = temp

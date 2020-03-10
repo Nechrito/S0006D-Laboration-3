@@ -29,8 +29,8 @@ class Node:
 
     def addNeighbours(self):
 
-        #if 0 < self.position.X < SETTINGS.MAP_WIDTH - SETTINGS.TILE_SIZE[0] and 0 < self.position.Y < SETTINGS.MAP_HEIGHT - SETTINGS.TILE_SIZE[1]:
-            #self.isWalkable = True
+        if 0 < self.position.X < SETTINGS.MAP_WIDTH - SETTINGS.TILE_SIZE[0] and 0 < self.position.Y < SETTINGS.MAP_HEIGHT - SETTINGS.TILE_SIZE[1]:
+            self.isWalkable = True
 
         self.neighbours.clear()
 
