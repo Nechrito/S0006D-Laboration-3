@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List
 
 from code.items.IPickupItem import IPickupItem
 from code.items.IronIngot import IronIngot
@@ -17,10 +17,10 @@ class Vars:
     soldierCount   = 0
 
     # contains all items which may be picked up
-    itemsContainer:     List[IPickupItem] = []
-    treesContainer:     List[Tree]        = []
-    ingotsContainer:    List[IronIngot]   = []
-    oresContainer:      List[IronOre]     = []
+    itemsContainer:  List[IPickupItem] = []
+    treesContainer:  List[Tree]        = []
+    ingotsContainer: List[IronIngot]   = []
+    oresContainer:   List[IronOre]     = []
 
     @classmethod
     def init(cls, campPos: vec2):

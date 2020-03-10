@@ -1,5 +1,4 @@
 import time
-from copy import copy
 
 from src.Settings import SETTINGS
 from src.code.math.Vector import vec2

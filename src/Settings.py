@@ -1,6 +1,4 @@
-import math
 from copy import copy
-
 from src.code.math.DynamicGraph import DynamicGraph
 
 
@@ -105,6 +103,7 @@ class SETTINGS:
         if not cls.Graph:
             return None  # WHYYYY
 
+        print("NOT NULL YAY")
         closest = None
         distance = 0
 

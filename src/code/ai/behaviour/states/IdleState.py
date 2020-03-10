@@ -1,6 +1,5 @@
 from code.ai.behaviour.states.IState import IState
 from enums.EntityType import EntityType
-from src.code.ai.messaging.Message import Message
 
 
 class IdleState(IState):
@@ -9,7 +8,6 @@ class IdleState(IState):
 
     def enter(self, entity):
         pass
-        #Message.sendConsole(entity, "Nothing to do...")
 
     def execute(self, entity):
 
@@ -18,8 +16,8 @@ class IdleState(IState):
             entity.setState(state())
 
         elif entity.characterType == EntityType.Explorer:
-            from .ExploreState import ExploreState as state
-            entity.setState(state())
+            from .ExploreState import ExploreState
+            entity.setState(ExploreState())
 
         elif entity.characterType == EntityType.Builder:
             from .BuildingState import BuildingState as state

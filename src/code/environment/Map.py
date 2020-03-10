@@ -1,6 +1,3 @@
-import math
-import sys
-
 import pytmx
 import time
 from src.Settings import *

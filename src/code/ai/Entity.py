@@ -1,8 +1,7 @@
 import random
 
-from code.ai.behaviour.states.IState import IState
 from enums.EntityType import EntityType
-from src.Settings import SETTINGS
+from src.Settings import *
 from src.code.ai.fsm.StateMachine import StateMachine
 from src.code.engine.GameTime import GameTime
 from src.code.math.Vector import vec2
@@ -12,7 +11,7 @@ from src.enums.PathType import PathType
 
 class Entity:
 
-    def __init__(self, characterType: EntityType, position, image, startState: IState, globalState: IState):
+    def __init__(self, characterType: EntityType, position, image, startState, globalState):
         self.characterType = characterType
         self.stateMachine = StateMachine(self, startState, globalState)
         self.position = position

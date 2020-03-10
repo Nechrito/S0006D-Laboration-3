@@ -62,7 +62,7 @@ class Game:
         self.agents = [ #Entity(EntityType.Worker,   vec2(944, 608),  sensei, IdleState(), GlobalState()),
                         #Entity(EntityType.Explorer, vec2(976, 608),  sensei, IdleState(), GlobalState()),
                         #Entity(EntityType.Worker,   vec2(912, 640),  sensei, IdleState(), GlobalState()),
-                        Entity(EntityType.Explorer,   vec2(976, 640),  sensei, IdleState(), GlobalState()) ]
+                        Entity(EntityType.Explorer,  vec2(976, 640),  sensei, IdleState(), GlobalState()) ]
 
         self.realCursorEnabled = False
         pygame.mouse.set_visible(self.realCursorEnabled)
@@ -98,8 +98,6 @@ class Game:
             CameraInstance.followTarget(self.relative)
             agent.update()
 
-
-
         # window title
         if not self.paused:
 
@@ -116,8 +114,8 @@ class Game:
         for row in SETTINGS.Graph:
             for node in row:
                 if node and node.isVisible:
-                    #if CameraInstance.inCameraBounds(node.position):
-                    self.renderer.renderTile(node)
+                    if CameraInstance.inCameraBounds(node.position):
+                        self.renderer.renderTile(node)
 
        # self.renderer.renderGrid()
        # self.renderer.renderRectOutline()
