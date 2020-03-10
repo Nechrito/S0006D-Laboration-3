@@ -18,6 +18,7 @@ class Entity:
         self.position = position
         self.image = image
         self.name = str(characterType).replace("EntityType.", "")
+        self.moveSpeed = random.randrange(75, 150)
 
         self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
@@ -30,29 +31,25 @@ class Entity:
 
         self.setStart(self.position)
 
-
-    def updateState(self):
-        # Todo: update resources / stats
-        self.stateMachine.update()
-
     def update(self):
+
+        self.stateMachine.update()
 
         self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
 
-        self.updateState()
-
         if self.nextNode.distance(self.position) > self.radius:
             node = SETTINGS.getNode(self.position, True, False)
-            moveSpeed = 1.0
+            moveSpeedMultiplier = 1.0
             if node:
-                moveSpeed = node.moveSpeed
-            self.position += (self.nextNode - self.position).normalized * GameTime.deltaTime * 100 * moveSpeed
+                moveSpeedMultiplier = node.moveSpeed
+            self.position += (self.nextNode - self.position).normalized * self.moveSpeed * GameTime.deltaTime * moveSpeedMultiplier
 
         elif len(self.waypoints) >= 2:
             self.waypoints.pop(0)
             if len(self.waypoints) >= 2:
                 self.nextNode = self.waypoints[1].position
+
 
     def moveTo(self, target: vec2):
         if target.distance(self.position) <= self.radius:

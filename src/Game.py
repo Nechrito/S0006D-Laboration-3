@@ -59,10 +59,10 @@ class Game:
         Vars.init(vec2(1280, 640))
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
-        self.agents = [ Entity(EntityType.Worker,   vec2(944, 608),  sensei, IdleState(), GlobalState()),
-                        Entity(EntityType.Explorer, vec2(976, 608),  sensei, IdleState(), GlobalState()),
-                        Entity(EntityType.Worker,   vec2(912, 640),  sensei, IdleState(), GlobalState()),
-                        Entity(EntityType.Worker,   vec2(976, 640),  sensei, IdleState(), GlobalState()) ]
+        self.agents = [ #Entity(EntityType.Worker,   vec2(944, 608),  sensei, IdleState(), GlobalState()),
+                        #Entity(EntityType.Explorer, vec2(976, 608),  sensei, IdleState(), GlobalState()),
+                        #Entity(EntityType.Worker,   vec2(912, 640),  sensei, IdleState(), GlobalState()),
+                        Entity(EntityType.Explorer,   vec2(976, 640),  sensei, IdleState(), GlobalState()) ]
 
         self.realCursorEnabled = False
         pygame.mouse.set_visible(self.realCursorEnabled)
@@ -97,6 +97,8 @@ class Game:
         for agent in self.agents:
             CameraInstance.followTarget(self.relative)
             agent.update()
+
+
 
         # window title
         if not self.paused:
