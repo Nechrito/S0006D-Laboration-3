@@ -1,10 +1,10 @@
 import pytmx
 import time
 from src.Settings import *
-from src.debug.math.DynamicGraph import DynamicGraph
-from src.debug.math.Vector import vec2
-from src.debug.math.cMath import truncate
-from src.debug.pathfinding.Node import Node
+from src.dir.math.DynamicGraph import DynamicGraph
+from src.dir.math.Vector import vec2
+from src.dir.math.cMath import truncate
+from src.dir.pathfinding.Node import Node
 
 
 class Map:

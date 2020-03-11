@@ -1,8 +1,8 @@
 import math
 import abc
 
-from src.debug.math.Vector import vec2
-from src.debug.pathfinding.Node import Node
+from src.dir.math.Vector import vec2
+from src.dir.pathfinding.Node import Node
 from src.enums.PathType import PathType
 
 

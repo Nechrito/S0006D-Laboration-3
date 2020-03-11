@@ -1,10 +1,10 @@
 import pygame
 import pygame.freetype
 from src.Settings import *
-from src.debug.engine.CameraInstance import CameraInstance
-from src.debug.math.Iterator import fori
-from src.debug.math.Vector import vec2
-from src.debug.pathfinding.Node import Node
+from src.dir.engine.CameraInstance import CameraInstance
+from src.dir.math.Iterator import fori
+from src.dir.math.Vector import vec2
+from src.dir.pathfinding.Node import Node
 
 
 class Renderer:

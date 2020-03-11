@@ -1,6 +1,6 @@
 from copy import copy
 
-from src.debug.math.DynamicGraph import DynamicGraph
+from src.dir.math.DynamicGraph import DynamicGraph
 
 
 class SETTINGS:
@@ -61,7 +61,7 @@ class SETTINGS:
 
         cls.BOUNDARIES = (cls.SCREEN_WIDTH + scalex / 2, cls.SCREEN_HEIGHT + scaley / 2)
 
-        from src.debug.math.Vector import vec2
+        from src.dir.math.Vector import vec2
         cls.TILE_SIZE = vec2(scalex, scaley)
         cls.SCREEN_RESOLUTION = vec2(cls.SCREEN_WIDTH, cls.SCREEN_HEIGHT)
 
@@ -134,7 +134,7 @@ class SETTINGS:
 
             node.isWalkable = enabled
         else:
-            from src.debug.pathfinding.Node import Node
+            from src.dir.pathfinding.Node import Node
             cls.addNode(Node(position))
 
     @classmethod

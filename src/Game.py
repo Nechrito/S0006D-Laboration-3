@@ -3,18 +3,18 @@ from os import path
 import pygame
 import pygame.freetype
 
-from debug.engine.Vars import Vars
+from dir.engine.Vars import Vars
 from enums.EntityType import EntityType
 from src.Settings import *
-from src.debug.ai.Entity import Entity
-from debug.ai.behaviour.GlobalState import GlobalState
-from debug.ai.behaviour.IdleState import IdleState
-from src.debug.engine.CameraInstance import CameraInstance
-from src.debug.engine.GameTime import GameTime
-from src.debug.engine.Renderer import Renderer
-from src.debug.environment.Map import Map
-from src.debug.math.Vector import vec2
-from src.debug.math.cMath import lerp
+from src.dir.ai.Entity import Entity
+from dir.ai.behaviour.GlobalState import GlobalState
+from dir.ai.behaviour.IdleState import IdleState
+from src.dir.engine.CameraInstance import CameraInstance
+from src.dir.engine.GameTime import GameTime
+from src.dir.engine.Renderer import Renderer
+from src.dir.environment.Map import Map
+from src.dir.math.Vector import vec2
+from src.dir.math.cMath import lerp
 
 
 class Game:

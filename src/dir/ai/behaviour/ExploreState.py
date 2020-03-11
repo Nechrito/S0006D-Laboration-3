@@ -1,9 +1,9 @@
 import time
 
-from debug.ai.behaviour.IState import IState
-from debug.ai.Message import Message
-from debug.engine.Vars import Vars
-from src.debug.ai.Entity import SETTINGS
+from dir.ai.behaviour.IState import IState
+from dir.ai.Message import Message
+from dir.engine.Vars import Vars
+from src.dir.ai.Entity import SETTINGS
 
 
 class ExploreState(IState):

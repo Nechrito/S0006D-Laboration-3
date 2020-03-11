@@ -1,5 +1,5 @@
-from debug.ai.behaviour.IState import IState
-from debug.ai.Message import Message
+from dir.ai.behaviour.IState import IState
+from dir.ai.Message import Message
 
 
 class EducationState(IState):

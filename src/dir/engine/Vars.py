@@ -1,10 +1,10 @@
 from typing import List
 
-from debug.items.IPickupItem import IPickupItem
-from debug.items.IronIngot import IronIngot
-from debug.items.IronOre import IronOre
-from debug.items.Tree import Tree
-from debug.math.Vector import vec2
+from dir.items.IPickupItem import IPickupItem
+from dir.items.IronIngot import IronIngot
+from dir.items.IronOre import IronOre
+from dir.items.Tree import Tree
+from dir.math.Vector import vec2
 
 
 class Vars:

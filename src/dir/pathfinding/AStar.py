@@ -1,9 +1,9 @@
 import time
 
 from src.Settings import SETTINGS
-from src.debug.math.Vector import vec2
-from src.debug.math.cMath import truncate
-from src.debug.pathfinding.IPath import IPath
+from src.dir.math.Vector import vec2
+from src.dir.math.cMath import truncate
+from src.dir.pathfinding.IPath import IPath
 from src.enums.PathType import PathType
 
 
@@ -73,7 +73,7 @@ class AStar(IPath):
         avg = truncate(self.getAverage(PathType.AStar))
 
         if self.timeElapsed > 400:
-            print("SLOW!") # breakpoint for debug
+            print("SLOW!") # breakpoint for dir
 
         self.computeAverage(self.timeElapsed, PathType.AStar)
 

@@ -1,55 +1,61 @@
 import time
+from copy import copy
 
 from src.Settings import SETTINGS
-from src.debug.math.Vector import vec2
-from src.debug.math.cMath import truncate
-from src.debug.pathfinding.Node import Node
-from src.debug.pathfinding.IPath import IPath
+from src.dir.math.cMath import truncate
+from src.dir.pathfinding.Node import Node
+from src.dir.pathfinding.IPath import IPath
 from src.enums.PathType import PathType
 
 
-class BreadthFirst(IPath):
+class DepthFirst(IPath):
+
     def __init__(self):
         super().__init__()
         self.queue = []
         self.timerStart = time.time()
         self.timeElapsed = None
 
-    def getPath(self, start: vec2, end: vec2):
+    def getPath(self, start, end):
 
         self.timerStart = time.time()
         self.timeElapsed = None
 
+        #  might get back to same node, thus we use a set of booleans for visited nodes
+        for i in range(50):
+            result = self.iterate(start, end)
+            if result is not None:
+                return result
+
+    def iterate(self, start, end):
         startNode = SETTINGS.getNode(start, False, False)
         self.queue = []
         self.queue.append(startNode)
-
         pathDict = {startNode: False}
         currentNode = None
-
-        while self.queue:
+        while len(self.queue):
 
             currentNode = self.queue.pop(0)
             self.childNodes.append(currentNode)
 
-            if currentNode is None or currentNode.position == end:
+            if currentNode.position == end:
                 break
 
+            temp = []
             for childPos in currentNode.neighbours:
                 neighbour = SETTINGS.getNode(childPos)
-                if not neighbour:
-                    continue
-
                 neighbour.parent = currentNode
 
                 if neighbour.isWalkable and neighbour not in pathDict:
-                    self.queue.append(neighbour)
+                    temp.append(neighbour)
                     pathDict[neighbour] = currentNode.position - neighbour.position
+
+            self.queue.extend(temp)
 
         path = self.backTrace(currentNode)
 
         self.timeElapsed = (time.time() - self.timerStart) * 1000
-        self.computeAverage(self.timeElapsed, PathType.BFS)
-        print("[BFS] Elapsed: " + str(truncate(self.timeElapsed)) + "ms (Avg. " + str(truncate(self.getAverage(PathType.BFS))) + "ms) | Path Length: " + str(len(path)))
+        self.computeAverage(self.timeElapsed, PathType.DFS)
+        print("[DFS] Elapsed: " + str(truncate(self.timeElapsed)) + "ms (Avg. " + str(truncate(self.getAverage(PathType.DFS))) + "ms) | Path Length: " + str(len(path)))
 
         return path

@@ -4,8 +4,8 @@ from os import path
 import pygame
 
 from src.Game import Game
-from src.debug.engine.GameTime import GameTime
-from src.debug.engine.UserInput import UserInput
+from src.dir.engine.GameTime import GameTime
+from src.dir.engine.UserInput import UserInput
 
 # Only executes the main method if this module is executed as the main script
 if __name__ == "__main__":

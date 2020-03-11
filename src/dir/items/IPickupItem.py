@@ -1,6 +1,6 @@
 import abc
 
-from debug.math.Vector import vec2
+from dir.math.Vector import vec2
 
 
 class IPickupItem(object, metaclass=abc.ABCMeta):

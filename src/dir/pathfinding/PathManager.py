@@ -1,7 +1,7 @@
-from src.debug.math.Vector import vec2
-from src.debug.pathfinding.AStar import AStar
-from src.debug.pathfinding.BreadthFirst import BreadthFirst
-from src.debug.pathfinding.DepthFirst import DepthFirst
+from src.dir.math.Vector import vec2
+from src.dir.pathfinding.AStar import AStar
+from src.dir.pathfinding.BreadthFirst import BreadthFirst
+from src.dir.pathfinding.DepthFirst import DepthFirst
 from src.enums.PathType import PathType
 
 

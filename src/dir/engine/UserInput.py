@@ -2,8 +2,8 @@ import sys
 
 import pygame
 
-from src.debug.engine.GameTime import GameTime
-from src.debug.pathfinding.PathManager import PathManager
+from src.dir.engine.GameTime import GameTime
+from src.dir.pathfinding.PathManager import PathManager
 
 
 class UserInput:

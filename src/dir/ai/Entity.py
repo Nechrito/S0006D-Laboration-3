@@ -2,10 +2,10 @@ import random
 
 from enums.EntityType import EntityType
 from src.Settings import *
-from debug.ai.StateMachine import StateMachine
-from src.debug.engine.GameTime import GameTime
-from src.debug.math.Vector import vec2
-from src.debug.pathfinding.PathManager import PathManager
+from dir.ai.StateMachine import StateMachine
+from src.dir.engine.GameTime import GameTime
+from src.dir.math.Vector import vec2
+from src.dir.pathfinding.PathManager import PathManager
 from src.enums.PathType import PathType
 
 

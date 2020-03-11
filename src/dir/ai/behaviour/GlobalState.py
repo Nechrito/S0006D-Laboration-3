@@ -1,6 +1,6 @@
-from src.debug.ai.Entity import Entity
-from debug.ai.behaviour.IState import IState
-from src.debug.engine.GameTime import GameTime
+from src.dir.ai.Entity import Entity
+from dir.ai.behaviour.IState import IState
+from src.dir.engine.GameTime import GameTime
 
 
 class GlobalState(IState):

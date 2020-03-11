@@ -1,4 +1,4 @@
-from debug.ai.behaviour.IState import IState
+from dir.ai.behaviour.IState import IState
 from enums.EntityType import EntityType
 
 

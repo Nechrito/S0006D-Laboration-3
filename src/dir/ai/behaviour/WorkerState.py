@@ -1,8 +1,8 @@
 import time
 
-from debug.ai.behaviour.IState import IState
-from debug.engine.Vars import Vars
-from debug.ai.Message import Message
+from dir.ai.behaviour.IState import IState
+from dir.engine.Vars import Vars
+from dir.ai.Message import Message
 
 
 class WorkerState(IState):

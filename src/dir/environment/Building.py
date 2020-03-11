@@ -1,7 +1,7 @@
 import random
 
 from src.Settings import SETTINGS
-from src.debug.math.Vector import vec2
+from src.dir.math.Vector import vec2
 
 
 class Building:

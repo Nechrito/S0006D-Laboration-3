@@ -1,5 +1,5 @@
-from src.debug.ai.Entity import Entity
-from src.debug.engine.GameTime import GameTime
+from src.dir.ai.Entity import Entity
+from src.dir.engine.GameTime import GameTime
 
 
 class Message:

@@ -1,7 +1,7 @@
 import pygame
 from src.Settings import *
-from src.debug.engine.GameTime import GameTime
-from src.debug.math.Vector import vec2
+from src.dir.engine.GameTime import GameTime
+from src.dir.math.Vector import vec2
 
 
 class CameraInstance:
