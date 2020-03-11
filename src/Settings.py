@@ -1,5 +1,6 @@
 from copy import copy
-from src.code.math.DynamicGraph import DynamicGraph
+
+from src.debug.math.DynamicGraph import DynamicGraph
 
 
 class SETTINGS:
@@ -52,12 +53,15 @@ class SETTINGS:
         cls.MAP_WIDTH = mapWidth
         cls.MAP_HEIGHT = mapHeight
 
+        cls.Graph = DynamicGraph()
+        cls.Coordinates = []
+
         scalex = max(16, cls.SCREEN_WIDTH // (cls.MAP_WIDTH // 16))
         scaley = max(16, cls.SCREEN_HEIGHT // (cls.MAP_HEIGHT // 16))
 
         cls.BOUNDARIES = (cls.SCREEN_WIDTH + scalex / 2, cls.SCREEN_HEIGHT + scaley / 2)
 
-        from src.code.math.Vector import vec2
+        from src.debug.math.Vector import vec2
         cls.TILE_SIZE = vec2(scalex, scaley)
         cls.SCREEN_RESOLUTION = vec2(cls.SCREEN_WIDTH, cls.SCREEN_HEIGHT)
 
@@ -89,6 +93,7 @@ class SETTINGS:
 
         if cached.position not in cls.Coordinates:
             cls.Coordinates.append(cached)
+
         return cached
 
     @classmethod
@@ -98,12 +103,7 @@ class SETTINGS:
             cached.isVisible = True
 
     @classmethod
-    def getClosestFOWNode(cls, position):
-
-        if not cls.Graph:
-            return None  # WHYYYY
-
-        print("NOT NULL YAY")
+    def getClosestFOWNode(cls, position, camp, maxRange=200):
         closest = None
         distance = 0
 
@@ -112,12 +112,15 @@ class SETTINGS:
 
                 # Could perform class type Node check, but might result in circular import
                 # this is fine though, Graph wont contain anything else
-                if type(j) == DynamicGraph or j.isVisible:
+                if type(j) == DynamicGraph or j.isVisible or not j.isWalkable:
+                    continue
+
+                if j.position.distance(camp) > maxRange:
                     continue
 
                 currentDist = j.position.distance(position)
 
-                if currentDist < distance or distance == 0:
+                if 16 * 3 <= currentDist < distance or distance == 0:
                     distance = currentDist
                     closest = j
         return closest
@@ -131,7 +134,7 @@ class SETTINGS:
 
             node.isWalkable = enabled
         else:
-            from src.code.pathfinding.Node import Node
+            from src.debug.pathfinding.Node import Node
             cls.addNode(Node(position))
 
     @classmethod

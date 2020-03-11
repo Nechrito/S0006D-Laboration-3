@@ -3,18 +3,18 @@ from os import path
 import pygame
 import pygame.freetype
 
-from code.engine.Vars import Vars
+from debug.engine.Vars import Vars
 from enums.EntityType import EntityType
 from src.Settings import *
-from src.code.ai.Entity import Entity
-from code.ai.behaviour.states.GlobalState import GlobalState
-from src.code.ai.behaviour.states.IdleState import IdleState
-from src.code.engine.CameraInstance import CameraInstance
-from src.code.engine.GameTime import GameTime
-from src.code.engine.Renderer import Renderer
-from src.code.environment.Map import Map
-from src.code.math.Vector import vec2
-from src.code.math.cMath import lerp
+from src.debug.ai.Entity import Entity
+from debug.ai.behaviour.GlobalState import GlobalState
+from debug.ai.behaviour.IdleState import IdleState
+from src.debug.engine.CameraInstance import CameraInstance
+from src.debug.engine.GameTime import GameTime
+from src.debug.engine.Renderer import Renderer
+from src.debug.environment.Map import Map
+from src.debug.math.Vector import vec2
+from src.debug.math.cMath import lerp
 
 
 class Game:
@@ -56,11 +56,11 @@ class Game:
 
         self.entityImg = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
 
-        Vars.init(vec2(1280, 640))
+        Vars.init(vec2(912, 640))
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
         self.agents = [ #Entity(EntityType.Worker,   vec2(944, 608),  sensei, IdleState(), GlobalState()),
-                        #Entity(EntityType.Explorer, vec2(976, 608),  sensei, IdleState(), GlobalState()),
+                        Entity(EntityType.Explorer, vec2(976, 608),  sensei, IdleState(), GlobalState()),
                         #Entity(EntityType.Worker,   vec2(912, 640),  sensei, IdleState(), GlobalState()),
                         Entity(EntityType.Explorer,  vec2(976, 640),  sensei, IdleState(), GlobalState()) ]
 
@@ -163,6 +163,7 @@ class Game:
         for agent in self.agents:
             node = SETTINGS.getNode(agent.position, False, False)
             if node:
+
                 for neighbour in node.neighbours:
                     neighbourNode = SETTINGS.getNode(neighbour, True, False)
                     if neighbourNode and not neighbourNode.isVisible:
@@ -172,6 +173,11 @@ class Game:
                             extNeighbourNode = SETTINGS.getNode(extNeighbour, True, False)
                             if extNeighbourNode and not extNeighbourNode.isVisible:
                                 SETTINGS.activateNode(extNeighbourNode)
+
+                                for ext2Neighbour in extNeighbourNode.neighbours:
+                                    ext2NeighbourNode = SETTINGS.getNode(ext2Neighbour, True, False)
+                                    if ext2NeighbourNode and not ext2NeighbourNode.isVisible:
+                                        SETTINGS.activateNode(ext2NeighbourNode)
 
     def selectedNode(self):
         return SETTINGS.closestNode(self.relative)
