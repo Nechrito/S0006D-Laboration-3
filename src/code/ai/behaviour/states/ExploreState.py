@@ -1,14 +1,12 @@
 from Settings import *
 from code.ai.behaviour.states.IState import IState
-from src.code.ai.messaging.Message import Message
+from code.ai.Message import Message
 
 
 class ExploreState(IState):
 
     def __init__(self):
         self.currentTarget = None
-        if not SETTINGS.Graph:
-            print("NULLLLLL")
 
     def enter(self, entity):
         Message.sendConsole(entity, "Guess I'll explore the world!")

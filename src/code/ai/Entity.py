@@ -2,7 +2,7 @@ import random
 
 from enums.EntityType import EntityType
 from src.Settings import *
-from src.code.ai.fsm.StateMachine import StateMachine
+from code.ai.StateMachine import StateMachine
 from src.code.engine.GameTime import GameTime
 from src.code.math.Vector import vec2
 from src.code.pathfinding.PathManager import PathManager

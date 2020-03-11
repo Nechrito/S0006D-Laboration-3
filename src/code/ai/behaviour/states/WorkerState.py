@@ -2,7 +2,7 @@ import time
 
 from code.ai.behaviour.states.IState import IState
 from code.engine.Vars import Vars
-from src.code.ai.messaging.Message import Message
+from code.ai.Message import Message
 
 
 class WorkerState(IState):

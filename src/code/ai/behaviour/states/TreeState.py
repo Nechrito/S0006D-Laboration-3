@@ -1,5 +1,5 @@
 from code.ai.behaviour.states.IState import IState
-from src.code.ai.messaging.Message import Message
+from code.ai.Message import Message
 
 
 class TreeState(IState):
