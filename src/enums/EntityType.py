@@ -1,10 +1,9 @@
-from enum import IntEnum
+from enum import Enum, auto
 
 
-class EntityType(IntEnum):
-    Worker = 0
-    Explorer = 1,
-    Soldier = 2
-    Builder = 3
+class EntityType(Enum):
+    Worker = auto()
+    Explorer = auto()
+    Builder = auto()
 
 

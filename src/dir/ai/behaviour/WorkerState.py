@@ -3,36 +3,56 @@ import time
 from dir.ai.behaviour.IState import IState
 from dir.engine.Vars import Vars
 from dir.ai.Message import Message
+from dir.items.Wood import Wood
 
 
 class WorkerState(IState):
     def __init__(self):
         self.isDoingWork = False
         self.primaryTarget = None
+        self.targetPos = None
         self.subTargets = []
         self.searchRadius = 16 * 4
-        self.lastTick = time.time()
+        self.lastTick = 0
         self.tickThreshold = 500
 
     def enter(self, entity):
-        Message.sendConsole(entity, "Ok!")
+        Message.sendConsole(entity, "Sure could make use of more wood, will fetch some")
 
     def execute(self, entity):
+
+        if self.primaryTarget:
+            self.primaryTarget.update()
+
         if self.isDoingWork:
-            return
+            if self.primaryTarget.isChopped:
+                Vars.treesContainer.remove(self.primaryTarget)
+
+                wood = Wood(self.targetPos)
+                Vars.itemsContainer.append(wood)
+
+                self.primaryTarget = None
+                self.isDoingWork = False
+            else:
+                return
 
         distanceToPrimary = 0
         if self.primaryTarget:
-            distanceToPrimary = self.primaryTarget.position.distance(entity.position)
 
+            distanceToPrimary = self.targetPos.distance(entity.position)
+            if self.targetPos.distance(entity.position) <= entity.radius:
+                self.isDoingWork = True
+                self.primaryTarget.startTimer()
+            else:
+                entity.moveTo(self.targetPos)
 
-        closestDistance = 0
         selectedPrimary = None
 
         # limit the amount of sub-tasks checks
         currentTime = time.time()
-        if currentTime - self.lastTick > self.tickThreshold:
+        if currentTime - self.lastTick >= self.tickThreshold or self.lastTick == 0:
             self.lastTick = currentTime
+            closestDistance = 0
 
             for item in Vars.itemsContainer:
                 if self.primaryTarget:
@@ -50,7 +70,20 @@ class WorkerState(IState):
                             selectedPrimary = item
 
         if not self.primaryTarget:
-            self.primaryTarget = selectedPrimary
+            if selectedPrimary:
+                self.primaryTarget = selectedPrimary
+            else:
+                distToTree = 0
+                selectedTree = None
+                for tree in Vars.treesContainer:
+                    cachedDist = tree.position.distance(entity.position)
+                    if cachedDist < distToTree and cachedDist <= 300 or distToTree == 0:
+                        selectedTree = tree
+                        distToTree = cachedDist
+
+                if selectedTree:
+                    self.primaryTarget = selectedTree
+                    self.targetPos = self.primaryTarget.position
 
     def exit(self, entity):
         pass

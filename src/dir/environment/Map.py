@@ -1,7 +1,6 @@
 import pytmx
 import time
 from src.Settings import *
-from src.dir.math.DynamicGraph import DynamicGraph
 from src.dir.math.Vector import vec2
 from src.dir.math.cMath import truncate
 from src.dir.pathfinding.Node import Node
@@ -71,7 +70,7 @@ class Map:
                         nodeObj.addImage(SETTINGS.TILE_V)
                         SETTINGS.TILES_V.append(nodeObj)
 
-                    if char != 'M' and char != 'G':
+                    if char != 'M' and char != 'G' and char != 'T':
                         moveSpeed = 1.0
                         if char == 'G':
                             moveSpeed = 0.5

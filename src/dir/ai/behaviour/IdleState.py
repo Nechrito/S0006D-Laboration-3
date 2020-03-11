@@ -12,7 +12,7 @@ class IdleState(IState):
     def execute(self, entity):
 
         if entity.characterType == EntityType.Worker:
-            from .TreeState import TreeState as state
+            from .WorkerState import WorkerState as state
             entity.setState(state())
 
         elif entity.characterType == EntityType.Explorer:
@@ -23,9 +23,6 @@ class IdleState(IState):
             from .BuildingState import BuildingState as state
             entity.setState(state())
 
-        elif entity.characterType == EntityType.Soldier:
-            from .TreeState import TreeState as state
-            entity.setState(state())
 
     def exit(self, entity):
         pass

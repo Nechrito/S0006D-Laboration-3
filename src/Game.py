@@ -4,6 +4,7 @@ import pygame
 import pygame.freetype
 
 from dir.engine.Vars import Vars
+from dir.items.Tree import Tree
 from enums.EntityType import EntityType
 from src.Settings import *
 from src.dir.ai.Entity import Entity
@@ -56,13 +57,17 @@ class Game:
 
         self.entityImg = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
 
-        Vars.init(vec2(912, 640))
+        Vars.init(vec2(912, 740))
+
+        for treeTile in SETTINGS.TILES_T:
+            tree = Tree(treeTile.position)
+            Vars.treesContainer.append(tree)
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
         self.agents = [ #Entity(EntityType.Worker,   vec2(944, 608),  sensei, IdleState(), GlobalState()),
-                        Entity(EntityType.Explorer, vec2(976, 608),  sensei, IdleState(), GlobalState()),
+                        #Entity(EntityType.Explorer, vec2(976, 608),  sensei, IdleState(), GlobalState()),
                         #Entity(EntityType.Worker,   vec2(912, 640),  sensei, IdleState(), GlobalState()),
-                        Entity(EntityType.Explorer,  vec2(976, 640),  sensei, IdleState(), GlobalState()) ]
+                        Entity(EntityType.Worker, vec2(976, 640),  sensei, IdleState(), GlobalState()) ]
 
         self.realCursorEnabled = False
         pygame.mouse.set_visible(self.realCursorEnabled)

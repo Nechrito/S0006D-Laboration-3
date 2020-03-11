@@ -4,7 +4,7 @@ import time
 class Tree:
     def __init__(self, spawnPoint):
         self.position = spawnPoint
-        self.duration = 30  # the time it takes to cut down the tree
+        self.duration = 1  # the time it takes to cut down the tree
         self.timerStart = None
         self.isChopped = False
 
@@ -16,4 +16,5 @@ class Tree:
             return
 
         if time.time() - self.timerStart > self.duration:
+            print("CHOPPED")
             self.isChopped = True

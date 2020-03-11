@@ -23,6 +23,7 @@ class Entity:
         self.rect.center = self.position.tuple
 
         self.waypoints = []
+        self.pathAttempts = 0
 
         self.pathfinder = PathManager(PathType.AStar)
         self.nextNode = self.position
@@ -53,14 +54,16 @@ class Entity:
 
         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)
         if not temp or len(temp) <= 1:
-            temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(4), target)
-
-        if not temp:
-            return
+            if self.pathAttempts <= 2:
+                temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(4, 3), target)
+                if not temp or len(temp) <= 1:
+                    self.pathAttempts += 1
+                    return
 
         if not temp or len(temp) <= 1:
             return
 
+        self.pathAttempts = 0
         self.waypoints = temp
         self.nextNode = self.waypoints[1].position
 
