@@ -1,5 +1,8 @@
+import pygame
+
 from typing import List
 
+from dir.engine.GameTime import GameTime
 from dir.items.IPickupItem import IPickupItem
 from dir.items.IronIngot import IronIngot
 from dir.items.IronOre import IronOre
@@ -7,10 +10,15 @@ from dir.items.Tree import Tree
 from dir.math.Vector import vec2
 
 
-class Vars:
+class Camp:
 
-    campPosition: vec2 = None
-    campRadius = 200
+    level = 1
+    radius = 200
+    position: vec2 = None
+    image: pygame.Surface
+    rect: pygame.Rect
+
+    lastLevelUpTick = 0
 
     treeCount      = 0
     charcoalCount  = 0
@@ -26,8 +34,22 @@ class Vars:
     oresContainer:   List[IronOre]     = []
 
     @classmethod
-    def init(cls, campPos: vec2):
-        cls.campPosition = campPos
+    def init(cls, campPos: vec2, image):
+        cls.position = campPos
+        cls.image = image
+        cls.rect = cls.image.get_rect()
+        cls.rect.center = cls.position.tuple
+        cls.lastLevelUpTick = GameTime.ticks
+
+    @classmethod
+    def levelUp(cls, entities):
+        cls.level += 1
+        cls.radius *= 3
+        cls.lastLevelUpTick = GameTime.ticks
+
+        #for entity in entities:
+        #    if entity.characterType == EntityType.Explorer:
+        #        StateTransition.setState(entity, StateType.ExploreState)
 
     @classmethod
     def canProduceCharcoal(cls):

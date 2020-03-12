@@ -4,9 +4,8 @@ from os import path
 import pygame
 import pygame.freetype
 
-from dir.engine.Vars import Vars
+from dir.engine.Camp import Camp
 from dir.items.Tree import Tree
-from dir.math.Iterator import fori
 from enums.EntityType import EntityType
 from src.Settings import *
 from src.dir.ai.Entity import Entity
@@ -57,25 +56,25 @@ class Game:
         self.fontRegular = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 18 // SETTINGS.SCREEN_WIDTH)
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
 
-        self.entityImg = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
+        campImg = pygame.image.load(self.getRealFilePath(SETTINGS.BUILDING_IMG))
+        Camp.init(vec2(288, 432), campImg)
 
-        Vars.init(vec2(288, 432))
 
         for treeTile in SETTINGS.TILES_T:
             tree = Tree(treeTile.position)
-            Vars.treesContainer.append(tree)
+            Camp.treesContainer.append(tree)
 
-        sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
-        self.agents = [ #Entity(EntityType.Worker,   vec2(944, 608),  sensei, IdleState(), GlobalState()),
-                        Entity(EntityType.Worker,   sensei, IdleState(), GlobalState()),
-                        Entity(EntityType.Explorer, sensei, IdleState(), GlobalState()),
-                        Entity(EntityType.Explorer,   sensei, IdleState(), GlobalState()) ]
+        senseiImg = pygame.image.load(self.getRealFilePath(SETTINGS.SENSEI_IMG))
+        self.entities = [ Entity(EntityType.Worker,   Camp.position, senseiImg, IdleState(), GlobalState()),
+                          Entity(EntityType.Worker,   Camp.position, senseiImg, IdleState(), GlobalState()),
+                          Entity(EntityType.Explorer, Camp.position, senseiImg, IdleState(), GlobalState()),
+                          Entity(EntityType.Explorer, Camp.position, senseiImg, IdleState(), GlobalState()) ]
 
         self.realCursorEnabled = False
         pygame.mouse.set_visible(self.realCursorEnabled)
         pygame.event.set_grab(not self.realCursorEnabled)
 
-        self.relative = Vars.campPosition
+        self.relative = Camp.position
         self.cursor = self.relative
         self.cursorSize = 9
 
@@ -101,8 +100,12 @@ class Game:
         # fog of war
         self.checkFOW()
 
+        if Camp.treeCount >= 4 and Camp.level == 1 or \
+           Camp.treeCount >= 8 and Camp.level == 2:
+            Camp.levelUp(self.entities)
+
         # mouse relative coords
-        for agent in self.agents:
+        for agent in self.entities:
             CameraInstance.followTarget(self.relative)
             agent.update()
 
@@ -128,6 +131,8 @@ class Game:
        # self.renderer.renderGrid()
        # self.renderer.renderRectOutline()
 
+        self.surface.blit(Camp.image, CameraInstance.centeredRect(Camp.rect))
+
         if not self.realCursorEnabled:
             intersection = SETTINGS.getNode(self.relative)
             if intersection:
@@ -146,7 +151,7 @@ class Game:
                                          (37, 37, 38),
                                          200)
 
-        for entity in self.agents:
+        for entity in self.entities:
             self.surface.blit(entity.image, CameraInstance.centeredSprite(entity))
 
             if len(entity.waypoints) > 0:
@@ -163,12 +168,12 @@ class Game:
             node.position.log()
             if not node.isWalkable:
                 return
-            for agent in self.agents:
+            for agent in self.entities:
                 agent.moveTo(node.position.randomized())
 
     def checkFOW(self):
         # Computes the FOG OF WAR
-        for agent in self.agents:
+        for agent in self.entities:
             node = SETTINGS.getNode(agent.position, False, False)
 
             i = 0
@@ -178,8 +183,8 @@ class Game:
 
             while node and i <= searchRadius:
 
-                if not node.isVisible:
-                    SETTINGS.activateNode(node)
+                #if not node.isVisible:
+                    #SETTINGS.activateNode(node)
 
                 for neighbour in node.neighbours:
                     if neighbour and neighbour.parent:

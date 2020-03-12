@@ -1,4 +1,9 @@
+from dir.ai.StateTransition import StateTransition
 from dir.ai.behaviour.IState import IState
+from dir.engine.Camp import Camp
+from enums.StateType import StateType
+
+from dir.engine.GameTime import GameTime
 from enums.EntityType import EntityType
 
 
@@ -12,16 +17,16 @@ class IdleState(IState):
     def execute(self, entity):
 
         if entity.characterType == EntityType.Worker:
-            from .WorkerState import WorkerState as state
-            entity.setState(state())
+            StateTransition.setState(entity, StateType.WorkState)
 
         elif entity.characterType == EntityType.Explorer:
-            from .ExploreState import ExploreState
-            entity.setState(ExploreState())
+            # a bit hacky, but essentially when an agent is done exploring
+            # the agent will go back into idle and wait for the Camp to level up
+            if GameTime.ticks - Camp.lastLevelUpTick <= 1000:
+                StateTransition.setState(entity, StateType.ExploreState)
 
         elif entity.characterType == EntityType.Builder:
-            from .BuildingState import BuildingState as state
-            entity.setState(state())
+            StateTransition.setState(entity, StateType.BuildState)
 
 
     def exit(self, entity):

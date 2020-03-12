@@ -41,7 +41,8 @@ class SETTINGS:
     TILE_G = "tiles/G.png"
     TILE_V = "tiles/V.png"
 
-    ENTITY_SENSEI = "img/sensei.png"
+    SENSEI_IMG = "img/sensei.png"
+    BUILDING_IMG = "img/Building.png"
 
     ICON_PATH = "icon/Game.png"
     FONT_BLACK = "fonts/Roboto-Black.ttf"

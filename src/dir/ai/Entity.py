@@ -1,6 +1,5 @@
 import random
 
-from dir.engine.Vars import Vars
 from enums.EntityType import EntityType
 from src.Settings import *
 from dir.ai.StateMachine import StateMachine
@@ -12,10 +11,10 @@ from src.enums.PathType import PathType
 
 class Entity:
 
-    def __init__(self, characterType: EntityType, image, startState, globalState):
+    def __init__(self, characterType: EntityType, campPos, image, startState, globalState):
         self.characterType = characterType
         self.stateMachine = StateMachine(self, startState, globalState)
-        self.position = Vars.campPosition.randomized(10)
+        self.position = campPos.randomized(10)
         self.image = image
         self.name = str(characterType).replace("EntityType.", "")
         self.moveSpeed = random.randrange(20, 50)

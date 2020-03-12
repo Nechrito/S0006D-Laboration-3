@@ -1,44 +1,33 @@
+from dir.ai.StateTransition import StateTransition
 from dir.ai.behaviour.IState import IState
 from dir.ai.Message import Message
-from dir.engine.GameTime import GameTime
-from dir.engine.Vars import Vars
+from enums.StateType import StateType
 from src.dir.ai.Entity import SETTINGS, DynamicGraph
-
+from Game import Camp
 
 class ExploreState(IState):
 
     def __init__(self):
         self.currentTarget = None
-        self.isIdle = False
-        self.lastTick = 0
-        self.threshold = 1000
 
     def enter(self, entity):
         Message.sendConsole(entity, "Guess I'll explore the world!")
 
     def execute(self, entity):
 
-        if self.isIdle:
-            if GameTime.ticks - self.lastTick < self.threshold:
-                return
+        if self.currentTarget:
+            entity.moveTo(self.currentTarget)
 
-            self.lastTick = GameTime.ticks
-
-        if self.currentTarget and self.currentTarget.position:
-            entity.moveTo(self.currentTarget.position)
-
-            if self.currentTarget.position.distance(entity.position) > entity.radius:
-                return
-
-        nearestNode = self.getClosestFOWNode(entity.position, Vars.campPosition, Vars.campRadius)
-        if nearestNode and nearestNode is not self.currentTarget:
-            self.currentTarget = nearestNode
-            self.isIdle = False
+            if self.currentTarget.distance(entity.position) <= entity.radius:
+                self.currentTarget = None
         else:
-            self.isIdle = True
-            Message.sendConsole(entity, "Done exploring, for now")
+            nearestNode = self.getUnmarkedNode()
+            if nearestNode:
+                self.currentTarget = nearestNode.position.randomized()
+            else:
+                StateTransition.setState(entity, StateType.IdleState)
 
-    def getClosestFOWNode(self, position, camp, maxRange=100):
+    def getUnmarkedNode(self):
         closest = None
         distance = 0
 
@@ -50,14 +39,16 @@ class ExploreState(IState):
                 if type(j) == DynamicGraph or j.isVisible or not j.isWalkable:
                     continue
 
-                if j.position.distance(camp) > maxRange:
+                if j.position.distance(Camp.position) > Camp.radius:
                     continue
 
-                currentDist = j.position.distance(position)
+                currentDist = j.position.distance(Camp.position)
 
-                if 16 * 3 <= currentDist < distance or distance == 0:
+                # the min check makes sure multiple explorers don't trace after eachother
+                if 16 * 4 <= currentDist < distance or distance == 0:
                     distance = currentDist
                     closest = j
+
         return closest
 
     def exit(self, entity):
