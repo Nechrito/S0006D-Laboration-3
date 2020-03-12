@@ -1,7 +1,6 @@
-import time
-
 from dir.ai.behaviour.IState import IState
 from dir.ai.Message import Message
+from dir.engine.GameTime import GameTime
 from dir.engine.Vars import Vars
 from src.dir.ai.Entity import SETTINGS, DynamicGraph
 
@@ -20,10 +19,10 @@ class ExploreState(IState):
     def execute(self, entity):
 
         if self.isIdle:
-            if time.time() - self.lastTick < self.threshold:
+            if GameTime.ticks - self.lastTick < self.threshold:
                 return
 
-            self.lastTick = time.time()
+            self.lastTick = GameTime.ticks
 
         if self.currentTarget and self.currentTarget.position:
             entity.moveTo(self.currentTarget.position)

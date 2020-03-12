@@ -17,5 +17,4 @@ class Tree:
             return
 
         if time.time() - self.timerStart > self.duration:
-            print("CHOPPED")
             self.isChopped = True

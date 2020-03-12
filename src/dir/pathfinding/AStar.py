@@ -1,5 +1,4 @@
-import time
-
+from dir.engine.GameTime import GameTime
 from src.Settings import SETTINGS
 from src.dir.math.Vector import vec2
 from src.dir.math.cMath import truncate
@@ -13,7 +12,7 @@ class AStar(IPath):
         super().__init__()
 
     def getPath(self, start: vec2, end: vec2):
-        self.timerStart = time.time()
+        self.timerStart = GameTime.ticks
         self.timeElapsed = None
 
         startNode = SETTINGS.getNode(start, False, True)
@@ -74,7 +73,7 @@ class AStar(IPath):
         # if computation is completed, traverse list (todo: heap)
         path = self.backTrace(currentNode)
 
-        self.timeElapsed = truncate((time.time() - self.timerStart) * 1000)
+        self.timeElapsed = truncate((GameTime.ticks - self.timerStart) * 1000)
         avg = truncate(self.getAverage(PathType.AStar))
 
         if self.timeElapsed > 400:

@@ -69,17 +69,18 @@ class Game:
         self.agents = [ #Entity(EntityType.Worker,   vec2(944, 608),  sensei, IdleState(), GlobalState()),
                         Entity(EntityType.Worker,   sensei, IdleState(), GlobalState()),
                         Entity(EntityType.Explorer, sensei, IdleState(), GlobalState()),
-                        Entity(EntityType.Worker,   sensei, IdleState(), GlobalState()) ]
+                        Entity(EntityType.Explorer,   sensei, IdleState(), GlobalState()) ]
 
         self.realCursorEnabled = False
         pygame.mouse.set_visible(self.realCursorEnabled)
         pygame.event.set_grab(not self.realCursorEnabled)
 
-        self.relative = self.agents[0].position
+        self.relative = Vars.campPosition
         self.cursor = self.relative
         self.cursorSize = 9
 
         CameraInstance.init()
+        CameraInstance.followTarget(self.relative)
 
     def update(self):
 

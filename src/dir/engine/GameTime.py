@@ -16,12 +16,11 @@ class GameTime:
 
     gameDate: datetime
     cachedTime: time
-    currentTime: time
 
     @classmethod
     def init(cls):
         cls.gameDate = datetime.datetime.now()
-        cls.cachedTime = cls.currentTime = time.time()
+        cls.cachedTime = time.time()
 
     @classmethod
     def setScale(cls, scale):
@@ -32,7 +31,6 @@ class GameTime:
     def updateTicks(cls):
 
         cls.ticks = pygame.time.get_ticks()
-        cls.currentTime = time.time() # todo: merge these
 
         cls.deltaTime = cls.fixedDeltaTime = ((cls.ticks - cls.lastFrame) / 1000.0)
         cls.deltaTime *= cls.timeScale  # post multiplying only here prevents fixedDeltaTime from scaling
@@ -42,7 +40,7 @@ class GameTime:
         elapsed = (time.time() - cls.cachedTime) * cls.deltaTime
         if elapsed * cls.timeScale >= cls.deltaTime:  # for each second in the game, add 1 minute to the game-time
             cls.gameDate = (cls.gameDate + datetime.timedelta(minutes=1))
-            cls.cachedTime = cls.currentTime
+            cls.cachedTime = cls.ticks
 
     @classmethod
     def timeElapsed(cls):
