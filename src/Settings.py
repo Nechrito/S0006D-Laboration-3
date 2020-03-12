@@ -103,29 +103,6 @@ class SETTINGS:
             cached.isVisible = True
 
     @classmethod
-    def getClosestFOWNode(cls, position, camp, maxRange=200):
-        closest = None
-        distance = 0
-
-        for i in cls.Graph:
-            for j in i:
-
-                # Could perform class type Node check, but might result in circular import
-                # this is fine though, Graph wont contain anything else
-                if type(j) == DynamicGraph or j.isVisible or not j.isWalkable:
-                    continue
-
-                if j.position.distance(camp) > maxRange:
-                    continue
-
-                currentDist = j.position.distance(position)
-
-                if 16 * 3 <= currentDist < distance or distance == 0:
-                    distance = currentDist
-                    closest = j
-        return closest
-
-    @classmethod
     def configureNode(cls, position, enabled, moveSpeed=-1.0):
         node = cls.getNode(position, False)
         if node:

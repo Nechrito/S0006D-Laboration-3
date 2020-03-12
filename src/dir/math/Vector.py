@@ -2,6 +2,7 @@ import numbers
 import math
 import random
 
+from dir.math.Iterator import fori
 from src.Settings import SETTINGS
 
 
@@ -13,24 +14,28 @@ class vec2:
         else:
             self.X = X
             self.Y = Y
+        self.parent = None # to ease the FOW iteration
 
     def Local(self):
         return vec2(self.LocalX, self.LocalY)
 
     @property
     def LocalX(self):
-        return self.X // (SETTINGS.TILE_SIZE[0])
+        return self.X // SETTINGS.TILE_SIZE[0]
 
     @property
     def LocalY(self):
-        return self.Y // (SETTINGS.TILE_SIZE[1])
+        return self.Y // SETTINGS.TILE_SIZE[1]
 
-    def randomized(self, threshold=8, attempts=5):
-        for i in range(attempts):
-            rand = vec2(self.X + random.randrange(-threshold * attempts, threshold * attempts),
-                        self.Y + random.randrange(-threshold * attempts, threshold * attempts))
-            node = SETTINGS.getNode(rand)
-            if node:
+    def randomized(self, iterations=8, maxDist=6):
+        maxDist *= 16
+        for _ in fori(1, iterations, 1):
+
+            rand = vec2(self.X + random.randrange(-maxDist, maxDist),
+                        self.Y + random.randrange(-maxDist, maxDist))
+
+            node = SETTINGS.getNode(rand, False, False)
+            if node and node.isWalkable:
                 return node.position
 
     def distance(self, other):

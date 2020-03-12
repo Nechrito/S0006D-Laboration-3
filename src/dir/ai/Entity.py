@@ -1,5 +1,6 @@
 import random
 
+from dir.engine.Vars import Vars
 from enums.EntityType import EntityType
 from src.Settings import *
 from dir.ai.StateMachine import StateMachine
@@ -11,13 +12,17 @@ from src.enums.PathType import PathType
 
 class Entity:
 
-    def __init__(self, characterType: EntityType, position, image, startState, globalState):
+    def __init__(self, characterType: EntityType, image, startState, globalState):
         self.characterType = characterType
         self.stateMachine = StateMachine(self, startState, globalState)
-        self.position = position
+        self.position = Vars.campPosition.randomized(10)
         self.image = image
         self.name = str(characterType).replace("EntityType.", "")
-        self.moveSpeed = random.randrange(30, 50)
+        self.moveSpeed = random.randrange(20, 50)
+
+        # increase movement speed by 20% if entity is an explorer
+        if characterType == EntityType.Explorer:
+            self.moveSpeed *= 1.20
 
         self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
@@ -38,7 +43,7 @@ class Entity:
         self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
 
-        if self.nextNode.distance(self.position) >= 4:
+        if self.nextNode.distance(self.position) >= 8:
             node = SETTINGS.getNode(self.position, True, False)
             moveSpeedMultiplier = 1.0
             if node:
@@ -55,13 +60,11 @@ class Entity:
         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)
         if not temp or len(temp) <= 1:
             if self.pathAttempts <= 2:
-                temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(4, 3), target)
+                temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(), target.randomized())
+
                 if not temp or len(temp) <= 1:
                     self.pathAttempts += 1
                     return
-
-        if not temp or len(temp) <= 1:
-            return
 
         self.pathAttempts = 0
         self.waypoints = temp

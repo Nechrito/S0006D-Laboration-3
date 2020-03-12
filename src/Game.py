@@ -1,3 +1,4 @@
+import time
 from os import path
 
 import pygame
@@ -5,6 +6,7 @@ import pygame.freetype
 
 from dir.engine.Vars import Vars
 from dir.items.Tree import Tree
+from dir.math.Iterator import fori
 from enums.EntityType import EntityType
 from src.Settings import *
 from src.dir.ai.Entity import Entity
@@ -57,7 +59,7 @@ class Game:
 
         self.entityImg = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
 
-        Vars.init(vec2(912, 740))
+        Vars.init(vec2(288, 432))
 
         for treeTile in SETTINGS.TILES_T:
             tree = Tree(treeTile.position)
@@ -65,9 +67,9 @@ class Game:
 
         sensei = pygame.image.load(self.getRealFilePath(SETTINGS.ENTITY_SENSEI))
         self.agents = [ #Entity(EntityType.Worker,   vec2(944, 608),  sensei, IdleState(), GlobalState()),
-                        #Entity(EntityType.Explorer, vec2(976, 608),  sensei, IdleState(), GlobalState()),
-                        #Entity(EntityType.Worker,   vec2(912, 640),  sensei, IdleState(), GlobalState()),
-                        Entity(EntityType.Worker, vec2(976, 640),  sensei, IdleState(), GlobalState()) ]
+                        Entity(EntityType.Worker,   sensei, IdleState(), GlobalState()),
+                        Entity(EntityType.Explorer, sensei, IdleState(), GlobalState()),
+                        Entity(EntityType.Worker,   sensei, IdleState(), GlobalState()) ]
 
         self.realCursorEnabled = False
         pygame.mouse.set_visible(self.realCursorEnabled)
@@ -167,22 +169,28 @@ class Game:
         # Computes the FOG OF WAR
         for agent in self.agents:
             node = SETTINGS.getNode(agent.position, False, False)
-            if node:
+
+            i = 0
+            searchRadius = 4 # the amount of neighbouring tiles to check
+            if agent.characterType == EntityType.Explorer:
+                searchRadius = 6
+
+            while node and i <= searchRadius:
+
+                if not node.isVisible:
+                    SETTINGS.activateNode(node)
 
                 for neighbour in node.neighbours:
-                    neighbourNode = SETTINGS.getNode(neighbour, True, False)
-                    if neighbourNode and not neighbourNode.isVisible:
-                        SETTINGS.activateNode(neighbourNode)
+                    if neighbour and neighbour.parent:
+                        neighbourNode = SETTINGS.getNode(neighbour, False, False)
+                        if neighbourNode and not neighbourNode.isVisible:
+                            SETTINGS.activateNode(neighbourNode)
+                            node = neighbourNode
+                    else:
+                        node = node.parent
 
-                        for extNeighbour in neighbourNode.neighbours:
-                            extNeighbourNode = SETTINGS.getNode(extNeighbour, True, False)
-                            if extNeighbourNode and not extNeighbourNode.isVisible:
-                                SETTINGS.activateNode(extNeighbourNode)
+                i += 1
 
-                                for ext2Neighbour in extNeighbourNode.neighbours:
-                                    ext2NeighbourNode = SETTINGS.getNode(ext2Neighbour, True, False)
-                                    if ext2NeighbourNode and not ext2NeighbourNode.isVisible:
-                                        SETTINGS.activateNode(ext2NeighbourNode)
 
     def selectedNode(self):
         return SETTINGS.closestNode(self.relative)

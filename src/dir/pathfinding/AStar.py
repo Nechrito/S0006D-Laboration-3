@@ -35,7 +35,7 @@ class AStar(IPath):
                     currentIndex = index
 
             openList.pop(currentIndex)
-            closedList.append(currentNode)
+            closedList.append(currentNode.position)
 
             if not currentNode.isWalkable:
                 continue
@@ -45,8 +45,13 @@ class AStar(IPath):
                 break
 
             for pos in currentNode.neighbours:
+
+                if pos in closedList:
+                    continue
+
                 neighbour = SETTINGS.getNode(pos)
-                if not neighbour or neighbour in closedList or not neighbour.isWalkable:
+
+                if not neighbour or not neighbour.isWalkable:
                     continue
 
                 neighbour.parent = currentNode

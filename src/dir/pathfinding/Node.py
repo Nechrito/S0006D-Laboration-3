@@ -28,7 +28,6 @@ class Node:
         self.neighbours = []
 
     def addNeighbours(self):
-
         if 0 < self.position.X < SETTINGS.MAP_WIDTH - SETTINGS.TILE_SIZE[0] and 0 < self.position.Y < SETTINGS.MAP_HEIGHT - SETTINGS.TILE_SIZE[1]:
             self.isWalkable = True
 
@@ -41,6 +40,7 @@ class Node:
             neighbour = self.position + vec2(direction.X * SETTINGS.TILE_SIZE[0], direction.Y * SETTINGS.TILE_SIZE[1])
 
             if 0 < neighbour.X < SETTINGS.MAP_WIDTH - SETTINGS.TILE_SIZE[0] and 0 < neighbour.Y < SETTINGS.MAP_HEIGHT - SETTINGS.TILE_SIZE[1]:
+                neighbour.parent = self
                 self.neighbours.append(neighbour)
 
     def updateColors(self, distanceCovered, distanceTotal):
