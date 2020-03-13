@@ -14,7 +14,7 @@ class Entity:
     def __init__(self, characterType: EntityType, campPos, image, startState, globalState):
         self.characterType = characterType
         self.stateMachine = StateMachine(self, startState, globalState)
-        self.position = campPos.randomized(10)
+        self.position = campPos.randomized(9)
         self.image = image
         self.name = str(characterType).replace("EntityType.", "")
         self.moveSpeed = random.randrange(20, 50)
@@ -26,14 +26,11 @@ class Entity:
         self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
 
-        self.waypoints = []
-        self.pathAttempts = 0
-
         self.pathfinder = PathManager(PathType.AStar)
+        self.waypoints = []
         self.nextNode = self.position
-        self.radius = 8
 
-        self.setStart(self.position)
+        self.radius = 8
 
     def update(self):
 
@@ -58,31 +55,13 @@ class Entity:
 
         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)
         if not temp or len(temp) <= 1:
-            if self.pathAttempts <= 2:
-                temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(), target.randomized())
+            temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(3), target.randomized(6, 7))
 
-                if not temp or len(temp) <= 1:
-                    self.pathAttempts += 1
-                    return
-
-        self.pathAttempts = 0
-        self.waypoints = temp
-        self.nextNode = self.waypoints[1].position
-
-    def setStart(self, start: vec2, end: vec2 = None):
-        self.waypoints = []
-        self.position = start
-
-        self.rect = self.image.get_rect()
-        self.rect.center = self.position.tuple
-
-        if end:
-            temp = self.pathfinder.requestPath(start, end)
-            if temp is None:
+            if not temp or len(temp) <= 1:
                 return
 
-            self.waypoints = temp
-            self.nextNode = self.waypoints[1].position
+        self.waypoints = temp
+        self.nextNode = self.waypoints[1].position
 
     def setState(self, state):
         self.stateMachine.change(state)

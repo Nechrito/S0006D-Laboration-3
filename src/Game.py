@@ -1,11 +1,10 @@
-import time
 from os import path
 
 import pygame
 import pygame.freetype
 
 from dir.engine.Camp import Camp
-from dir.items.Tree import Tree
+from dir.environment.Tree import Tree
 from enums.EntityType import EntityType
 from src.Settings import *
 from src.dir.ai.Entity import Entity
@@ -57,16 +56,17 @@ class Game:
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
 
         campImg = pygame.image.load(self.getRealFilePath(SETTINGS.BUILDING_IMG))
-        Camp.init(vec2(288, 432), campImg)
-
+        Camp.init(vec2(1120, 200), campImg)
 
         for treeTile in SETTINGS.TILES_T:
             tree = Tree(treeTile.position)
             Camp.treesContainer.append(tree)
 
+        hatguyImg = pygame.image.load(self.getRealFilePath(SETTINGS.HATGUY_IMG))
         senseiImg = pygame.image.load(self.getRealFilePath(SETTINGS.SENSEI_IMG))
-        self.entities = [ Entity(EntityType.Worker,   Camp.position, senseiImg, IdleState(), GlobalState()),
-                          Entity(EntityType.Worker,   Camp.position, senseiImg, IdleState(), GlobalState()),
+
+        self.entities = [ Entity(EntityType.Worker,   Camp.position, hatguyImg, IdleState(), GlobalState()),
+                          Entity(EntityType.Worker,   Camp.position, hatguyImg, IdleState(), GlobalState()),
                           Entity(EntityType.Explorer, Camp.position, senseiImg, IdleState(), GlobalState()),
                           Entity(EntityType.Explorer, Camp.position, senseiImg, IdleState(), GlobalState()) ]
 
@@ -79,11 +79,13 @@ class Game:
         self.cursorSize = 9
 
         CameraInstance.init()
-        CameraInstance.followTarget(self.relative)
+        CameraInstance.followTarget(Camp.position)
 
     def update(self):
 
         if not self.realCursorEnabled:
+            CameraInstance.followTarget(self.relative)
+
             temp = pygame.mouse.get_pos()
             self.cursor = vec2(temp[0], temp[1])
 
@@ -96,17 +98,18 @@ class Game:
             raw.Y = lerp(raw.Y, size.Y, deltaY)
 
             self.relative = raw
+        else:
+            CameraInstance.followTarget(Camp.position)
 
         # fog of war
         self.checkFOW()
 
-        if Camp.treeCount >= 4 and Camp.level == 1 or \
-           Camp.treeCount >= 8 and Camp.level == 2:
+        if Camp.woodCount >= 4 and Camp.level == 1 or \
+           Camp.woodCount >= 8 and Camp.level == 2:
             Camp.levelUp(self.entities)
 
         # mouse relative coords
         for agent in self.entities:
-            CameraInstance.followTarget(self.relative)
             agent.update()
 
         # window title
@@ -179,7 +182,7 @@ class Game:
             i = 0
             searchRadius = 4 # the amount of neighbouring tiles to check
             if agent.characterType == EntityType.Explorer:
-                searchRadius = 6
+                searchRadius = 9
 
             while node and i <= searchRadius:
 

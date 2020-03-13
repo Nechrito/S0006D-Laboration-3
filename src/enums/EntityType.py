@@ -2,8 +2,9 @@ from enum import Enum, auto
 
 
 class EntityType(Enum):
-    Worker = auto()
+    Worker   = auto()
     Explorer = auto()
-    Builder = auto()
+    Builder  = auto()
+    Artisan  = auto() # <- todo: 4 character traits for Artisans
 
 

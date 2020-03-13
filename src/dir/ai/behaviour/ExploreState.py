@@ -5,6 +5,7 @@ from enums.StateType import StateType
 from src.dir.ai.Entity import SETTINGS, DynamicGraph
 from Game import Camp
 
+
 class ExploreState(IState):
 
     def __init__(self):

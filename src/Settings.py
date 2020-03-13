@@ -23,7 +23,7 @@ class SETTINGS:
     MAP_PATH = "map/Map5.tmx"
     MAP_REF = "map/Map5Ref.txt"
 
-    # REFERENCE CONTAINERS
+    # REFERENCE CONTAINERS, BARELY USED
     TILES_B = []
     TILES_M = []
     TILES_T = []
@@ -42,6 +42,8 @@ class SETTINGS:
     TILE_V = "tiles/V.png"
 
     SENSEI_IMG = "img/sensei.png"
+    HATGUY_IMG = "img/hat-guy.png"
+
     BUILDING_IMG = "img/Building.png"
 
     ICON_PATH = "icon/Game.png"

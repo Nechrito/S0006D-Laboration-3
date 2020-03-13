@@ -3,10 +3,8 @@ import pygame
 from typing import List
 
 from dir.engine.GameTime import GameTime
-from dir.items.IPickupItem import IPickupItem
-from dir.items.IronIngot import IronIngot
-from dir.items.IronOre import IronOre
-from dir.items.Tree import Tree
+from dir.environment.Item import Item
+from dir.environment.Tree import Tree
 from dir.math.Vector import vec2
 
 
@@ -20,7 +18,7 @@ class Camp:
 
     lastLevelUpTick = 0
 
-    treeCount      = 0
+    woodCount      = 0
     charcoalCount  = 0
     ironIngotCount = 0
     ironOreCount   = 0
@@ -28,10 +26,8 @@ class Camp:
     soldierCount   = 0
 
     # contains all items which may be picked up
-    itemsContainer:  List[IPickupItem] = []
-    treesContainer:  List[Tree]        = []
-    ingotsContainer: List[IronIngot]   = []
-    oresContainer:   List[IronOre]     = []
+    itemsContainer:  List[Item] = []
+    treesContainer:  List[Tree] = []
 
     @classmethod
     def init(cls, campPos: vec2, image):
@@ -53,7 +49,7 @@ class Camp:
 
     @classmethod
     def canProduceCharcoal(cls):
-        return cls.treeCount >= 2
+        return cls.woodCount >= 2
 
     @classmethod
     def canProduceIronIngot(cls):

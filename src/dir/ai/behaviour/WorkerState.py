@@ -1,9 +1,10 @@
 from Game import Camp
+from dir.environment.Item import Item
+from enums.ItemType import ItemType
 
 from src.dir.ai.Entity import SETTINGS
 from dir.ai.behaviour.IState import IState
 from dir.ai.Message import Message
-from dir.items.Wood import Wood
 
 
 class WorkerState(IState):
@@ -12,8 +13,6 @@ class WorkerState(IState):
         self.treeTarget = None
         self.itemTarget = None
         self.searchRadius = 16 * 4
-        self.lastTick = 0
-        self.tickThreshold = 500 # <- For sub-tasks, no need to check this each tick
 
     def enter(self, entity):
         Message.sendConsole(entity, "Sure could make use of more wood, will fetch some")
@@ -27,22 +26,26 @@ class WorkerState(IState):
                 self.itemTarget.position = entity.position
 
                 if entity.position.distance(Camp.position) <= entity.radius:
-                    Camp.itemsContainer.remove(self.itemTarget)
-                    Camp.treeCount += 1
-                    print("Trees chopped: " + str(Camp.treeCount))
+                    if self.itemTarget.itemType == ItemType.Wood:
+                        Camp.woodCount += 1
 
+                    elif self.itemTarget.itemType == ItemType.IronIngot:
+                        Camp.ironIngotCount += 1
+
+                    elif self.itemTarget.itemType == ItemType.IronOre:
+                        Camp.ironOreCount += 1
+
+                    Camp.itemsContainer.remove(self.itemTarget)
                     self.itemTarget = None
             else:
                 entity.moveTo(self.itemTarget.position)
                 if entity.position.distance(Camp.position) <= 16:
                     self.itemTarget.isPickedUp = True
 
-
         elif self.treeTarget:
 
             # busy chopping down tree
             if self.isChoppingTree:
-
                 # update tree timer
                 self.treeTarget.update()
 
@@ -50,8 +53,8 @@ class WorkerState(IState):
                 if self.treeTarget.isChopped and self.treeTarget in Camp.treesContainer:
                     Camp.treesContainer.remove(self.treeTarget)
 
-                    wood = Wood(self.treeTarget.position)
-                    Camp.itemsContainer.append(wood)
+                    item = Item(self.treeTarget.position, ItemType.Wood)
+                    Camp.itemsContainer.append(item)
 
                     self.treeTarget = None
                     self.isChoppingTree = False

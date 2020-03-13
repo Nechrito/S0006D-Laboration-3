@@ -1,5 +1,7 @@
 import time
 
+from dir.engine.GameTime import GameTime
+
 
 class Tree:
     def __init__(self, spawnPoint):
@@ -11,10 +13,8 @@ class Tree:
 
     def startTimer(self):
         self.timerStart = time.time()
+        print("Timer started")
 
     def update(self):
-        if not self.timerStart or self.isChopped:
-            return
-
         if time.time() - self.timerStart > self.duration:
             self.isChopped = True
