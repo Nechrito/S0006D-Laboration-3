@@ -19,5 +19,6 @@ class GlobalState(IState):
 
         self.lastTick = GameTime.ticks
 
+
     def exit(self, entity: Entity):
         pass

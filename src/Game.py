@@ -172,12 +172,14 @@ class Game:
 
         # draw information
         self.renderer.append("Camp Level: " + str(int(Camp.level)))
-        self.renderer.append("Trees chopped: " + str(len(SETTINGS.TILES_T) - len(Camp.treesContainer)))
         self.renderer.append("Items to be collected: " + str(len(Camp.itemsContainer)))
         self.renderer.append("Wood: " + str(Camp.woodCount))
         self.renderer.append("Charcoal: " + str(Camp.charcoalCount))
         self.renderer.append("IronOres: " + str(Camp.ironOreCount))
         self.renderer.append("IronIngots: " + str(Camp.ironIngotCount))
+        self.renderer.append("")
+        self.renderer.append("Entities: " + str(len(self.entities)))
+
 
         centered = vec2(SETTINGS.SCREEN_WIDTH * 0.10, SETTINGS.SCREEN_HEIGHT * 0.10)
         self.renderer.renderTexts(centered, self.fontBold, (255, 255, 255))

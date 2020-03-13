@@ -1,16 +1,19 @@
+from dir.engine.Camp import Camp
+from dir.environment.Item import Item
+from enums.ItemType import ItemType
+
 from dir.ai.behaviour.IState import IState
 from dir.ai.Message import Message
 
 
-class BuildingState(IState):
+class CraftState(IState):
     def __init__(self):
         pass
 
     def enter(self, entity):
-        Message.sendConsole(entity, "We could use some new buildings, I'll take care of it!")
+        Message.sendConsole(entity, "What to build today..")
 
     def execute(self, entity):
-        #Todo: Build at camp
         pass
 
     def exit(self, entity):

@@ -26,6 +26,8 @@ class Entity:
         self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
 
+        self.isBeingUpgraded = False
+
         self.pathfinder = PathManager(PathType.AStar)
         self.waypoints = []
         self.nextNode = self.position

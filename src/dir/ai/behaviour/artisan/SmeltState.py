@@ -12,21 +12,21 @@ class MineState(IState):
         self.reached = False
 
     def enter(self, entity):
-        Message.sendConsole(entity, "Headin' over to the mines")
+        Message.sendConsole(entity, "I wonder how many ingots I can produce today")
 
     def execute(self, entity):
         if not self.selected:
-            for mine in Camp.mines:
-                if not mine.owner:
-                    mine.owner = entity
-                    self.selected = mine
+            for complex in Camp.smeltingComplexes:
+                if not complex.owner:
+                    complex.owner = entity
+                    self.selected = complex
 
         if not self.selected:
             return
 
         if self.reached:
             if self.selected.isProduced:
-                Camp.itemsContainer.append(Item(self.selected.position, ItemType.Charcoal))
+                Camp.itemsContainer.append(Item(self.selected.position, ItemType.Sword))
                 self.selected.isProduced = False
             else:
                 self.selected.update()
