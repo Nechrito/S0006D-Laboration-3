@@ -39,7 +39,7 @@ class WorkerState(IState):
                     self.itemTarget = None
             else:
                 entity.moveTo(self.itemTarget.position)
-                if entity.position.distance(Camp.position) <= 16:
+                if entity.position.distance(self.itemTarget.position) <= 16:
                     self.itemTarget.isPickedUp = True
 
         elif self.treeTarget:

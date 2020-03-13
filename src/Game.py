@@ -56,7 +56,7 @@ class Game:
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
 
         campImg = pygame.image.load(self.getRealFilePath(SETTINGS.BUILDING_IMG))
-        Camp.init(vec2(1120, 200), campImg)
+        Camp.init(vec2(1024, 224), campImg)
 
         for treeTile in SETTINGS.TILES_T:
             tree = Tree(treeTile.position)
