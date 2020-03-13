@@ -36,6 +36,7 @@ class WorkerState(IState):
                         Camp.ironOreCount += 1
 
                     Camp.itemsContainer.remove(self.itemTarget)
+
                     self.itemTarget = None
             else:
                 entity.moveTo(self.itemTarget.position)
@@ -52,6 +53,10 @@ class WorkerState(IState):
                 # if chopped, remove tree and swap into wood
                 if self.treeTarget.isChopped and self.treeTarget in Camp.treesContainer:
                     Camp.treesContainer.remove(self.treeTarget)
+
+                    node = SETTINGS.getNode(self.treeTarget.position, False)
+                    if node:
+                        node.images.pop(0)
 
                     item = Item(self.treeTarget.position, ItemType.Wood)
                     Camp.itemsContainer.append(item)

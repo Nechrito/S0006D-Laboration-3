@@ -43,15 +43,6 @@ class Node:
                 neighbour.parent = self
                 self.neighbours.append(neighbour)
 
-    def updateColors(self, distanceCovered, distanceTotal):
-        delta = min(1.0, max(1e-4, distanceCovered / distanceTotal))
-        colorMax = 255.0
-        colorMin = 0.0
-        colorByDist = ((lerp(colorMax * 0.00, colorMax * 1.00, delta)), 0, 0)
-        mergeColor = (0, 20, 252)
-        self.color = lerpColor(mergeColor, colorByDist, delta)
-        return self.color
-
     def __getitem__(self, item):
         if item == 0:
             return self.position.X
