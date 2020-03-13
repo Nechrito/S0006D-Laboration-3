@@ -6,5 +6,9 @@ class StateType(Enum):
     WorkState = auto()
     ExploreState = auto()
     BuildState = auto()
+    ArtisanMiner = auto()
+    ArtisanCraftsman = auto()
+    ArtisanSmelter = auto()
+    ArtisanSmith = auto()
 
 
