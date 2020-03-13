@@ -13,7 +13,6 @@ class Tree:
 
     def startTimer(self):
         self.timerStart = time.time()
-        print("Timer started")
 
     def update(self):
         if time.time() - self.timerStart > self.duration:

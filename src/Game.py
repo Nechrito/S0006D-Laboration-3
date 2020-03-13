@@ -3,6 +3,7 @@ from os import path
 import pygame
 import pygame.freetype
 
+from dir.ai.behaviour.WorkerState import WorkerState
 from dir.engine.Camp import Camp
 from dir.environment.Tree import Tree
 from enums.EntityType import EntityType
@@ -65,8 +66,8 @@ class Game:
         hatguyImg = pygame.image.load(self.getRealFilePath(SETTINGS.HATGUY_IMG))
         senseiImg = pygame.image.load(self.getRealFilePath(SETTINGS.SENSEI_IMG))
 
-        self.entities = [ Entity(EntityType.Worker,   Camp.position, hatguyImg, IdleState(), GlobalState()),
-                          Entity(EntityType.Worker,   Camp.position, hatguyImg, IdleState(), GlobalState()),
+        self.entities = [ Entity(EntityType.Worker,   Camp.position, hatguyImg, WorkerState(), GlobalState()),
+                          Entity(EntityType.Worker,   Camp.position, hatguyImg, WorkerState(), GlobalState()),
                           Entity(EntityType.Explorer, Camp.position, senseiImg, IdleState(), GlobalState()),
                           Entity(EntityType.Explorer, Camp.position, senseiImg, IdleState(), GlobalState()) ]
 

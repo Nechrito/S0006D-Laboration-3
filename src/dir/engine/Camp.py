@@ -1,11 +1,16 @@
+import time
+
 import pygame
 
 from typing import List
 
+from dir.ai.StateTransition import StateTransition
 from dir.engine.GameTime import GameTime
 from dir.environment.Item import Item
 from dir.environment.Tree import Tree
 from dir.math.Vector import vec2
+from enums.EntityType import EntityType
+from enums.StateType import StateType
 
 
 class Camp:
@@ -35,17 +40,17 @@ class Camp:
         cls.image = image
         cls.rect = cls.image.get_rect()
         cls.rect.center = cls.position.tuple
-        cls.lastLevelUpTick = GameTime.ticks
+        cls.lastLevelUpTick = time.time()
 
     @classmethod
     def levelUp(cls, entities):
         cls.level += 1
-        cls.radius *= 3
+        cls.radius *= 1.50
         cls.lastLevelUpTick = GameTime.ticks
 
-        #for entity in entities:
-        #    if entity.characterType == EntityType.Explorer:
-        #        StateTransition.setState(entity, StateType.ExploreState)
+        for entity in entities:
+            if entity.characterType == EntityType.Explorer:
+                StateTransition.setState(entity, StateType.ExploreState)
 
     @classmethod
     def canProduceCharcoal(cls):

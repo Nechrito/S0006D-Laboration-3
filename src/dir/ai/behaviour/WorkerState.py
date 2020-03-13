@@ -1,4 +1,4 @@
-from Game import Camp
+from dir.engine.Camp import Camp
 from dir.environment.Item import Item
 from enums.ItemType import ItemType
 
