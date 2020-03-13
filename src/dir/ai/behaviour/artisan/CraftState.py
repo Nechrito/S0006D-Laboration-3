@@ -11,7 +11,7 @@ class CraftState(IState):
         pass
 
     def enter(self, entity):
-        Message.sendConsole(entity, "What to build today..")
+        Message.sendConsole(entity, "What to build today..") # (training camps lol)
 
     def execute(self, entity):
         pass

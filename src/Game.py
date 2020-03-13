@@ -42,10 +42,13 @@ class Game:
         self.clock = pygame.time.Clock()
         self.paused = False
 
+        treeImg = pygame.image.load(self.getRealFilePath(SETTINGS.TREE_IMG))
+        treeImg = pygame.transform.scale(treeImg, (32, 48))
+
         # Yes this is some next level fuckery, I'm on a deadline lol
         SETTINGS.TILE_B = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_B))
         SETTINGS.TILE_M = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_M))
-        SETTINGS.TILE_T = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_T))
+        SETTINGS.TILE_T = treeImg # pygame.image.load(self.getRealFilePath(SETTINGS.TILE_T))
         SETTINGS.TILE_G = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_G))
         SETTINGS.TILE_V = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_V))
 
