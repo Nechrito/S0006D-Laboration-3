@@ -17,16 +17,19 @@ class ExploreState(IState):
     def execute(self, entity):
 
         if self.currentTarget:
-            entity.moveTo(self.currentTarget)
+            node = SETTINGS.getNode(self.currentTarget)
+            if node and not node.isVisible and node.position.distance(entity.position) <= Camp.radius:
+                entity.moveTo(self.currentTarget)
 
-            if self.currentTarget.distance(entity.position) <= entity.radius:
-                self.currentTarget = None
+                if self.currentTarget.distance(entity.position) <= entity.radius:
+                    self.currentTarget = None
+                return
+
+        nearestNode = self.getUnmarkedNode()
+        if nearestNode:
+            self.currentTarget = nearestNode.position.randomized()
         else:
-            nearestNode = self.getUnmarkedNode()
-            if nearestNode:
-                self.currentTarget = nearestNode.position.randomized()
-            else:
-                StateTransition.setState(entity, StateType.IdleState)
+            StateTransition.setState(entity, StateType.IdleState)
 
     def getUnmarkedNode(self):
         closest = None
@@ -40,13 +43,10 @@ class ExploreState(IState):
                 if type(j) == DynamicGraph or j.isVisible or not j.isWalkable:
                     continue
 
-                if j.position.distance(Camp.position) > Camp.radius:
-                    continue
-
                 currentDist = j.position.distance(Camp.position)
 
                 # the min check makes sure multiple explorers don't trace after eachother
-                if 16 * 4 <= currentDist < distance or distance == 0:
+                if currentDist < distance and currentDist < Camp.radius or distance == 0:
                     distance = currentDist
                     closest = j
 

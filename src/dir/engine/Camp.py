@@ -17,9 +17,11 @@ class Camp:
 
     level = 1
     radius = 200
-    position: vec2 = None
+    position: vec2
     image: pygame.Surface
+    imageScale: vec2
     rect: pygame.Rect
+
 
     lastLevelUpTick = 0
 
@@ -37,6 +39,7 @@ class Camp:
     @classmethod
     def init(cls, campPos: vec2, image):
         cls.position = campPos
+        cls.imageScale = vec2(32, 32)
         cls.image = image
         cls.rect = cls.image.get_rect()
         cls.rect.center = cls.position.tuple
@@ -47,6 +50,8 @@ class Camp:
         cls.level += 1
         cls.radius *= 1.50
         cls.lastLevelUpTick = GameTime.ticks
+        cls.imageScale = vec2(32, 32) * (cls.level + 1)
+        cls.image = pygame.transform.scale(cls.image, cls.imageScale.tuple)
 
         for entity in entities:
             if entity.characterType == EntityType.Explorer:
