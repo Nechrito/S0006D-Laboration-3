@@ -57,14 +57,11 @@ class Renderer:
         self.surface.blit(fontRendered, (v1.X - fontRect[2] / 2, v1.Y - fontRect[3] / 2))
 
     def renderTexts(self, position, font, color=(0, 0, 0)):
-        if len(self.texts) <= 0:
-            raise Exception("Use method .append(...) first to render multiple lines of text!")
-
-        pos = (position[0], position[1])
         for line in range(len(self.texts)):
             msg = self.texts[line]
-            self.renderText(msg, pos, font, color)
-            pos = (pos[0], pos[1] + font.size + 2)
+            fontRendered, fontRect = font.render(msg, color)
+            self.surface.blit(fontRendered, (position.X - fontRect[2] / 2, position.Y - fontRect[3] / 2))
+            position.Y += font.size + 2
 
         self.texts.clear()
 

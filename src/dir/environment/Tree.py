@@ -1,13 +1,11 @@
 import time
 
-from dir.engine.GameTime import GameTime
-
 
 class Tree:
     def __init__(self, spawnPoint):
         self.position = spawnPoint
-        self.duration = 1  # the time it takes to cut down the tree
-        self.timerStart = None
+        self.duration = 0.5
+        self.timerStart = 0
         self.isChopped = False
         self.isTarget = False
 

@@ -17,16 +17,16 @@ class IdleState(IState):
 
     def execute(self, entity):
 
-        if entity.characterType == EntityType.Worker:
+        if entity.entityType == EntityType.Worker:
             StateTransition.setState(entity, StateType.WorkState)
 
-        elif entity.characterType == EntityType.Explorer:
+        elif entity.entityType == EntityType.Explorer:
             # a bit hacky, but essentially when an agent is done exploring
             # the agent will go back into idle and wait for the Camp to level up
             if time.time() - Camp.lastLevelUpTick <= GameTime.relativeDuration(1):
                 StateTransition.setState(entity, StateType.ExploreState)
 
-        elif entity.characterType == EntityType.Builder:
+        elif entity.entityType == EntityType.Builder:
             StateTransition.setState(entity, StateType.BuildState)
 
 

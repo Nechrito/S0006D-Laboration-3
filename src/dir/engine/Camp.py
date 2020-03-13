@@ -7,6 +7,10 @@ from typing import List
 from dir.ai.StateTransition import StateTransition
 from dir.engine.GameTime import GameTime
 from dir.environment.Item import Item
+from dir.environment.Mine import Mine
+from dir.environment.Smelting import Smelting
+from dir.environment.Smith import Smith
+from dir.environment.Training import TrainingCamp
 from dir.environment.Tree import Tree
 from dir.math.Vector import vec2
 from enums.EntityType import EntityType
@@ -16,7 +20,7 @@ from enums.StateType import StateType
 class Camp:
 
     level = 1
-    radius = 200
+    radius = 250
     position: vec2
     image: pygame.Surface
     imageScale: vec2
@@ -33,8 +37,14 @@ class Camp:
     soldierCount   = 0
 
     # contains all items which may be picked up
-    itemsContainer:  List[Item] = []
-    treesContainer:  List[Tree] = []
+    itemsContainer: List[Item] = []
+    treesContainer: List[Tree] = []
+
+    # complexes which may be used by artisans
+    mines:             List[Mine]         = []
+    smithComplexes:    List[Smith]        = []
+    smeltingComplexes: List[Smelting]     = []
+    trainingCamps:     List[TrainingCamp] = []
 
     @classmethod
     def init(cls, campPos: vec2, image):
@@ -50,11 +60,13 @@ class Camp:
         cls.level += 1
         cls.radius *= 1.50
         cls.lastLevelUpTick = GameTime.ticks
-        cls.imageScale = vec2(32, 32) * (cls.level + 1)
-        cls.image = pygame.transform.scale(cls.image, cls.imageScale.tuple)
+        cls.imageScale = vec2(32, 32) * (cls.level + 0.5)
+        cls.image = pygame.transform.scale(cls.image, cls.imageScale.toInt.tuple)
+        cls.rect = cls.image.get_rect()
+        cls.rect.center = cls.position.tuple
 
         for entity in entities:
-            if entity.characterType == EntityType.Explorer:
+            if entity.entityType == EntityType.Explorer:
                 StateTransition.setState(entity, StateType.ExploreState)
 
     @classmethod

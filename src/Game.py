@@ -51,7 +51,7 @@ class Game:
 
         self.map = Map(self.getRealFilePath(SETTINGS.MAP_PATH), self.getRealFilePath(SETTINGS.MAP_REF))
 
-        self.fontSmall = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 12 // SETTINGS.SCREEN_WIDTH)
+        self.fontSmall = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 16 // SETTINGS.SCREEN_WIDTH)
         self.fontRegular = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 18 // SETTINGS.SCREEN_WIDTH)
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
 
@@ -65,8 +65,10 @@ class Game:
         hatguyImg = pygame.image.load(self.getRealFilePath(SETTINGS.HATGUY_IMG))
         senseiImg = pygame.image.load(self.getRealFilePath(SETTINGS.SENSEI_IMG))
 
-        self.entities = [ Entity(EntityType.Worker,   Camp.position, hatguyImg, IdleState(), GlobalState()),
-                          Entity(EntityType.Worker,   Camp.position, hatguyImg, IdleState(), GlobalState()),
+        self.entities = [ Entity(EntityType.Worker, Camp.position, hatguyImg, IdleState(), GlobalState()),
+                          Entity(EntityType.Worker, Camp.position, hatguyImg, IdleState(), GlobalState()),
+                          Entity(EntityType.Worker, Camp.position, hatguyImg, IdleState(), GlobalState()),
+                          Entity(EntityType.Explorer, Camp.position, senseiImg, IdleState(), GlobalState()),
                           Entity(EntityType.Explorer, Camp.position, senseiImg, IdleState(), GlobalState()) ]
 
         self.realCursorEnabled = False
@@ -103,8 +105,9 @@ class Game:
         # fog of war
         self.checkFOW()
 
-        if Camp.woodCount >= 1 and Camp.level == 1 or \
-           Camp.woodCount >= 8 and Camp.level == 2:
+        if Camp.woodCount >= 2 and Camp.level == 1 or \
+           Camp.woodCount >= 6 and Camp.level == 2 or \
+           Camp.woodCount >= 12 and Camp.level == 3:
             Camp.levelUp(self.entities)
 
         # mouse relative coords
@@ -154,13 +157,30 @@ class Game:
                                          200)
 
         for entity in self.entities:
+            # draw entity
             self.surface.blit(entity.image, CameraInstance.centeredSprite(entity))
 
-            if len(entity.waypoints) > 0:
-                self.renderer.renderRect([10, 10], entity.waypoints[-1].position)
-
+            # draw waypoints
             for row in range(0, len(entity.waypoints) - 1):
                 self.renderer.renderLine(entity.waypoints[row].position, entity.waypoints[row + 1].position)
+
+            # draw entity type
+            self.renderer.renderText(entity.name, entity.position + vec2(0, 16), self.fontSmall)
+
+        # draw camp level
+        #self.renderer.renderText("Camp (Lv. " + str(Camp.level) + ")", Camp.position - vec2(0, 32), self.fontBold)
+
+        # draw information
+        self.renderer.append("Camp Level: " + str(int(Camp.level)))
+        self.renderer.append("Trees chopped: " + str(len(SETTINGS.TILES_T) - len(Camp.treesContainer)))
+        self.renderer.append("Items to be collected: " + str(len(Camp.itemsContainer)))
+        self.renderer.append("Wood: " + str(Camp.woodCount))
+        self.renderer.append("Charcoal: " + str(Camp.charcoalCount))
+        self.renderer.append("IronOres: " + str(Camp.ironOreCount))
+        self.renderer.append("IronIngots: " + str(Camp.ironIngotCount))
+
+        centered = vec2(SETTINGS.SCREEN_WIDTH * 0.10, SETTINGS.SCREEN_HEIGHT * 0.10)
+        self.renderer.renderTexts(centered, self.fontBold, (255, 255, 255))
 
         self.clock.tick(SETTINGS.MAX_FPS)
 
@@ -171,7 +191,8 @@ class Game:
             if not node.isWalkable:
                 return
             for agent in self.entities:
-                agent.moveTo(node.position.randomized())
+                if agent.entityType == EntityType.Explorer:
+                    agent.moveTo(node.position.randomized())
 
     def checkFOW(self):
         # Computes the FOG OF WAR
@@ -180,7 +201,7 @@ class Game:
 
             i = 0
             searchRadius = 4 # the amount of neighbouring tiles to check
-            if agent.characterType == EntityType.Explorer:
+            if agent.entityType == EntityType.Explorer:
                 searchRadius = 9
 
             while node and i <= searchRadius:

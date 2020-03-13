@@ -12,7 +12,7 @@ from src.enums.PathType import PathType
 class Entity:
 
     def __init__(self, characterType: EntityType, campPos, image, startState, globalState):
-        self.characterType = characterType
+        self.entityType = characterType
         self.name = str(characterType).replace("EntityType.", "")
         self.stateMachine = StateMachine(self, startState, globalState)
         self.position = campPos.randomized(9)
