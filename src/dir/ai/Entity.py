@@ -1,4 +1,6 @@
 import random
+import threading
+import time
 
 from enums.EntityType import EntityType
 from src.Settings import *
@@ -17,7 +19,8 @@ class Entity:
         self.stateMachine = StateMachine(self, startState, globalState)
         self.position = campPos.randomized(9)
         self.image = image
-        self.moveSpeed = random.randrange(20, 50)
+        self.moveSpeed = random.randrange(20, 30)
+        self.createdTime = time.time()
 
         # increase movement speed by 20% if entity is an explorer
         if characterType == EntityType.Explorer:
@@ -35,7 +38,6 @@ class Entity:
         self.radius = 8
 
     def update(self):
-
         self.stateMachine.update()
 
         self.rect = self.image.get_rect()
@@ -54,7 +56,6 @@ class Entity:
                 self.nextNode = self.waypoints[1].position
 
     def moveTo(self, target: vec2):
-
         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)
         if not temp or len(temp) <= 1:
             temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(3), target.randomized(6, 7))
@@ -64,6 +65,10 @@ class Entity:
 
         self.waypoints = temp
         self.nextNode = self.waypoints[1].position
+
+    def setType(self, entityType):
+        self.entityType = entityType
+        self.name = str(self.entityType).replace("EntityType.", "")
 
     def setState(self, state):
         self.stateMachine.change(state)

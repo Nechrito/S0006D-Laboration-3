@@ -1,5 +1,6 @@
 from dir.engine.Camp import Camp
 from dir.environment.Item import Item
+from enums.EntityType import EntityType
 from enums.ItemType import ItemType
 
 from dir.ai.behaviour.IState import IState
@@ -12,6 +13,7 @@ class MineState(IState):
         self.reached = False
 
     def enter(self, entity):
+        entity.setType(EntityType.Miner)
         Message.sendConsole(entity, "Headin' over to the mines")
 
     def execute(self, entity):

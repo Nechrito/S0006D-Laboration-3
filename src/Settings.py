@@ -37,7 +37,8 @@ class SETTINGS:
     # ADDITIONAL TILE RESOURCES
     TILE_B = "tiles/B.png"
     TILE_M = "tiles/M.png"
-    TILE_T = "tiles/TreeBlue.png"
+    TILE_T1 = "tiles/TreeBlue.png"
+    TILE_T2 = "tiles/TreeRed.png"
     TILE_G = "tiles/G.png"
     TILE_V = "tiles/V.png"
 
@@ -45,7 +46,8 @@ class SETTINGS:
     HATGUY_IMG = "img/hat-guy.png"
 
     BUILDING_IMG = "img/Building.png"
-    TREE_IMG = "img/TreeBlue.png"
+    TREE_IMG1 = "img/TreeBlue.png"
+    TREE_IMG2 = "img/TreeRed.png"
 
     ICON_PATH = "icon/Game.png"
     FONT_BLACK = "fonts/Roboto-Black.ttf"

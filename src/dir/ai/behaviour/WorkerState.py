@@ -1,3 +1,5 @@
+import threading
+
 from dir.engine.Camp import Camp
 from dir.environment.Item import Item
 from enums.ItemType import ItemType
@@ -21,8 +23,9 @@ class WorkerState(IState):
 
         if self.itemTarget:
             if self.itemTarget.isPickedUp:
+                t = threading.Thread(target=entity.moveTo, args=(Camp.position,))
+                t.start()
 
-                entity.moveTo(Camp.position)
                 self.itemTarget.position = entity.position
 
                 if entity.position.distance(Camp.position) <= entity.radius:
@@ -70,7 +73,9 @@ class WorkerState(IState):
                     self.isChoppingTree = True
                     self.treeTarget.startTimer()
                 else:
-                    entity.moveTo(self.treeTarget.position)
+
+                    t = threading.Thread(target=entity.moveTo, args=(self.treeTarget.position,))
+                    t.start()
 
         else:
             # locate items
@@ -84,8 +89,9 @@ class WorkerState(IState):
 
                     if closestDistance == 0 or distanceToSub < closestDistance:
                         closestDistance = distanceToSub
+                        item.isTarget = True
+                        item.isPickedUp = True
                         selectedItem = item
-                        selectedItem.isPickedUp = True
 
             if selectedItem:
                 self.itemTarget = selectedItem
@@ -94,8 +100,8 @@ class WorkerState(IState):
             if not self.itemTarget:
                 distToTree = 0
                 for tree in Camp.treesContainer:
-                    if tree.isChopped or tree.isTarget:
-                        continue
+                    #if tree.isChopped or tree.isTarget:
+                        #continue
 
                     treeNode = SETTINGS.getNode(tree.position)
                     if not treeNode or not treeNode.isVisible:
@@ -104,8 +110,8 @@ class WorkerState(IState):
                     distTreeToEnt = tree.position.distance(entity.position)
 
                     if distTreeToEnt < distToTree or distToTree == 0:
+                        tree.isTarget = True
                         self.treeTarget = tree
-                        self.treeTarget.isTarget = True
 
     def exit(self, entity):
         pass

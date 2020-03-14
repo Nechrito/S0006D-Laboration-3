@@ -75,18 +75,15 @@ class AStar(IPath):
         # if computation is completed, traverse list (todo: heap)
         path = self.backTrace(currentNode)
 
-        #self.timeElapsed = truncate((time.time() - self.timerStart) * 1000)
-        #avg = truncate(self.getAverage(PathType.AStar))
+        self.timeElapsed = truncate((time.time() - self.timerStart) * 1000)
+        avg = truncate(self.getAverage(PathType.AStar))
 
-        #if self.timeElapsed > 400:
-        #    print("SLOW!") # breakpoint for dir
+        self.computeAverage(self.timeElapsed, PathType.AStar)
 
-        #self.computeAverage(self.timeElapsed, PathType.AStar)
-
-        #if self.timeElapsed > 0:
-        #    print("[A*] Elapsed: " + str(self.timeElapsed) +
-        #          "ms (Avg. " + str(avg) +
-        #          "ms) | Path Length: " + str(len(path)))
+        if self.timeElapsed > 0:
+            print("[A*] Elapsed: " + str(self.timeElapsed) +
+                  "ms (Avg. " + str(avg) +
+                  "ms) | Path Length: " + str(len(path)))
 
         return path
 

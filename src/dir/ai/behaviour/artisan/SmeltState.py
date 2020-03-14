@@ -1,17 +1,19 @@
 from dir.engine.Camp import Camp
 from dir.environment.Item import Item
+from enums.EntityType import EntityType
 from enums.ItemType import ItemType
 
 from dir.ai.behaviour.IState import IState
 from dir.ai.Message import Message
 
 
-class MineState(IState):
+class SmeltState(IState):
     def __init__(self):
         self.selected = None
         self.reached = False
 
     def enter(self, entity):
+        entity.setType(EntityType.Smelter)
         Message.sendConsole(entity, "I wonder how many ingots I can produce today")
 
     def execute(self, entity):

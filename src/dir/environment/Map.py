@@ -1,3 +1,5 @@
+import random
+
 import pytmx
 import time
 from src.Settings import *
@@ -18,11 +20,11 @@ class Map:
 
         self.start = vec2(0, 0)
         self.end = vec2(0, 0)
+        self.loadPath()
 
         if reference:
             self.loadReferenceMap(reference)
 
-        self.loadPath()
 
         col = 0
         for x in SETTINGS.Graph:
@@ -55,7 +57,12 @@ class Map:
 
                     # NOTE: B M T G V
                     if char == 'T':  # TREE
-                        nodeObj.addImage(SETTINGS.TILE_T)
+                        i = random.randint(1, 2)
+                        if i == 1:
+                            treeImg = SETTINGS.TILE_T1
+                        else:
+                            treeImg = SETTINGS.TILE_T2
+                        nodeObj.addImage(treeImg)
                         SETTINGS.TILES_T.append(nodeObj)
                     if char == 'M':  # GROUND
                         nodeObj.addImage(SETTINGS.TILE_M)

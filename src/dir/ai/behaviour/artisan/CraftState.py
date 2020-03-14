@@ -1,5 +1,6 @@
 from dir.engine.Camp import Camp
 from dir.environment.Item import Item
+from enums.EntityType import EntityType
 from enums.ItemType import ItemType
 
 from dir.ai.behaviour.IState import IState
@@ -11,6 +12,7 @@ class CraftState(IState):
         pass
 
     def enter(self, entity):
+        entity.setType(EntityType.Craftsman)
         Message.sendConsole(entity, "What to build today..") # (training camps lol)
 
     def execute(self, entity):

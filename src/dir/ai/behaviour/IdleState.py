@@ -29,16 +29,16 @@ class IdleState(IState):
         elif entity.entityType == EntityType.Builder:
             StateTransition.setState(entity, StateType.BuildState)
 
-        elif entity.entityType == EntityType.ArtisanMiner:
+        elif entity.entityType == EntityType.Miner:
             StateTransition.setState(entity, StateType.ArtisanMiner)
 
-        elif entity.entityType == EntityType.ArtisanCraftsman:
+        elif entity.entityType == EntityType.Craftsman:
             StateTransition.setState(entity, StateType.ArtisanCraftsman)
 
-        elif entity.entityType == EntityType.ArtisanSmelt:
+        elif entity.entityType == EntityType.Smelter:
             StateTransition.setState(entity, StateType.ArtisanSmelter)
 
-        elif entity.entityType == EntityType.ArtisanSmith:
+        elif entity.entityType == EntityType.Smith:
             StateTransition.setState(entity, StateType.ArtisanSmith)
 
     def exit(self, entity):

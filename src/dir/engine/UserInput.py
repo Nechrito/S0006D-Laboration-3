@@ -12,6 +12,7 @@ class UserInput:
         self.timeScaleCurrent = GameTime.timeScale
 
     def update(self):
+
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:

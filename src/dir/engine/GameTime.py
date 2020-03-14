@@ -30,6 +30,7 @@ class GameTime:
 
     @classmethod
     def updateTicks(cls):
+
         cls.ticks = pygame.time.get_ticks()
 
         cls.deltaTime = cls.fixedDeltaTime = ((cls.ticks - cls.lastFrame) / 1000)

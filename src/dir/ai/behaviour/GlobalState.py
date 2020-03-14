@@ -1,3 +1,10 @@
+import random
+import time
+
+from dir.ai.behaviour.artisan.CraftState import CraftState
+from dir.ai.behaviour.artisan.MineState import MineState
+from dir.ai.behaviour.artisan.SmeltState import SmeltState
+from dir.ai.behaviour.artisan.SmithState import SmithState
 from enums.EntityType import EntityType
 from src.dir.ai.Entity import Entity
 from dir.ai.behaviour.IState import IState
@@ -14,11 +21,8 @@ class GlobalState(IState):
         pass
 
     def execute(self, entity: Entity):
-        if GameTime.timeSince(self.lastTick) < GameTime.relativeDuration(1):
-            return
-
         self.lastTick = GameTime.ticks
-
+        pass
 
     def exit(self, entity: Entity):
         pass

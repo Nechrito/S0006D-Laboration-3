@@ -1,8 +1,14 @@
+import threading
 from os import path
+import random
 
 import pygame
 import pygame.freetype
 
+from dir.ai.behaviour.artisan.CraftState import CraftState
+from dir.ai.behaviour.artisan.MineState import MineState
+from dir.ai.behaviour.artisan.SmeltState import SmeltState
+from dir.ai.behaviour.artisan.SmithState import SmithState
 from dir.engine.Camp import Camp
 from dir.environment.Tree import Tree
 from enums.EntityType import EntityType
@@ -42,13 +48,16 @@ class Game:
         self.clock = pygame.time.Clock()
         self.paused = False
 
-        treeImg = pygame.image.load(self.getRealFilePath(SETTINGS.TREE_IMG))
-        treeImg = pygame.transform.scale(treeImg, (32, 48))
+        treeImgBlue = pygame.image.load(self.getRealFilePath(SETTINGS.TREE_IMG1))
+        treeImgRed = pygame.image.load(self.getRealFilePath(SETTINGS.TREE_IMG2))
+        treeImgBlue = pygame.transform.scale(treeImgBlue, (32, 48))
+        treeImgRed = pygame.transform.scale(treeImgRed, (32, 48))
 
         # Yes this is some next level fuckery, I'm on a deadline lol
         SETTINGS.TILE_B = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_B))
         SETTINGS.TILE_M = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_M))
-        SETTINGS.TILE_T = treeImg # pygame.image.load(self.getRealFilePath(SETTINGS.TILE_T))
+        SETTINGS.TILE_T1 = treeImgBlue # pygame.image.load(self.getRealFilePath(SETTINGS.TILE_T))
+        SETTINGS.TILE_T2 = treeImgRed # pygame.image.load(self.getRealFilePath(SETTINGS.TILE_T))
         SETTINGS.TILE_G = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_G))
         SETTINGS.TILE_V = pygame.image.load(self.getRealFilePath(SETTINGS.TILE_V))
 
@@ -65,14 +74,11 @@ class Game:
             tree = Tree(treeTile.position)
             Camp.treesContainer.append(tree)
 
-        hatguyImg = pygame.image.load(self.getRealFilePath(SETTINGS.HATGUY_IMG))
-        senseiImg = pygame.image.load(self.getRealFilePath(SETTINGS.SENSEI_IMG))
+        self.hatguyImg = pygame.image.load(self.getRealFilePath(SETTINGS.HATGUY_IMG))
+        self.senseiImg = pygame.image.load(self.getRealFilePath(SETTINGS.SENSEI_IMG))
 
-        self.entities = [ Entity(EntityType.Worker, Camp.position, hatguyImg, IdleState(), GlobalState()),
-                          Entity(EntityType.Worker, Camp.position, hatguyImg, IdleState(), GlobalState()),
-                          Entity(EntityType.Worker, Camp.position, hatguyImg, IdleState(), GlobalState()),
-                          Entity(EntityType.Explorer, Camp.position, senseiImg, IdleState(), GlobalState()),
-                          Entity(EntityType.Explorer, Camp.position, senseiImg, IdleState(), GlobalState()) ]
+        self.entities = [ Entity(EntityType.Worker,   Camp.position, self.hatguyImg, IdleState(), GlobalState()),
+                          Entity(EntityType.Explorer, Camp.position, self.senseiImg, IdleState(), GlobalState()) ]
 
         self.realCursorEnabled = False
         pygame.mouse.set_visible(self.realCursorEnabled)
@@ -108,9 +114,23 @@ class Game:
         # fog of war
         self.checkFOW()
 
-        if Camp.woodCount >= 2 and Camp.level == 1 or \
-           Camp.woodCount >= 6 and Camp.level == 2 or \
-           Camp.woodCount >= 12 and Camp.level == 3:
+        if Camp.woodCount / Camp.level == 4:
+            for entity in self.entities:
+                if entity.entityType == EntityType.Worker:
+                    rand = random.randint(1, 4)
+                    if rand == 1:
+                        entity.setState(CraftState())
+                    elif rand == 2:
+                        entity.setState(MineState())
+                    elif rand == 3:
+                        entity.setState(SmeltState())
+                    elif rand == 4:
+                        entity.setState(SmithState())
+
+            self.entities.append(Entity(EntityType.Explorer, Camp.position, self.senseiImg, IdleState(), GlobalState()))
+            self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
+            self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
+
             Camp.levelUp(self.entities)
 
         # mouse relative coords
@@ -195,22 +215,23 @@ class Game:
             node.position.log()
             if not node.isWalkable:
                 return
-            for agent in self.entities:
-                if agent.entityType == EntityType.Explorer:
-                    agent.moveTo(node.position.randomized())
+            for entity in self.entities:
+                if entity.entityType == EntityType.Explorer:
+                    t = threading.Thread(target=entity.moveTo, args=(node.position.randomized(),))
+                    t.start()
 
     def checkFOW(self):
         # Computes the FOG OF WAR
         for agent in self.entities:
+            if agent.entityType != EntityType.Explorer:
+                continue
+
             node = SETTINGS.getNode(agent.position, False, False)
 
             i = 0
-            searchRadius = 4 # the amount of neighbouring tiles to check
-            if agent.entityType == EntityType.Explorer:
-                searchRadius = 9
-
+            searchRadius = 8 # the amount of neighbouring tiles to check
             while node and i <= searchRadius:
-
+                i += 1
                 #if not node.isVisible:
                     #SETTINGS.activateNode(node)
 
@@ -223,7 +244,7 @@ class Game:
                     else:
                         node = node.parent
 
-                i += 1
+
 
 
     def selectedNode(self):
