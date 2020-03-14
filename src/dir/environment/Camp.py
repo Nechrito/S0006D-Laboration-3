@@ -20,12 +20,11 @@ from enums.StateType import StateType
 class Camp:
 
     level = 1
-    radius = 250
+    radius = 300
     position: vec2
     image: pygame.Surface
     imageScale: vec2
     rect: pygame.Rect
-
 
     lastLevelUpTick = 0
 

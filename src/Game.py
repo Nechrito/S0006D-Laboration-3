@@ -68,7 +68,7 @@ class Game:
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
 
         campImg = pygame.image.load(self.getRealFilePath(SETTINGS.BUILDING_IMG))
-        Camp.init(vec2(1024, 224), campImg)
+        Camp.init(vec2(1152, 256), campImg)
 
         for treeTile in SETTINGS.TILES_T:
             tree = Tree(treeTile.position)
@@ -112,7 +112,9 @@ class Game:
             CameraInstance.followTarget(Camp.position)
 
         # fog of war
-        self.checkFOW()
+        t = threading.Thread(target=self.checkFOW, args=())
+        t.start()
+        t.join()
 
         if Camp.woodCount / Camp.level == 4:
             for entity in self.entities:
