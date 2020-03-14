@@ -1,4 +1,4 @@
-from dir.engine.Camp import Camp
+from dir.environment.Camp import Camp
 from dir.environment.Item import Item
 from enums.EntityType import EntityType
 from enums.ItemType import ItemType
@@ -17,6 +17,7 @@ class MineState(IState):
         Message.sendConsole(entity, "Headin' over to the mines")
 
     def execute(self, entity):
+        return
         if not self.selected:
             for mine in Camp.mines:
                 if not mine.owner:

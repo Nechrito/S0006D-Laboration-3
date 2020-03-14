@@ -1,4 +1,4 @@
-from dir.engine.Camp import Camp
+from dir.environment.Camp import Camp
 from dir.environment.Item import Item
 from enums.EntityType import EntityType
 from enums.ItemType import ItemType
@@ -17,6 +17,7 @@ class SmeltState(IState):
         Message.sendConsole(entity, "I wonder how many ingots I can produce today")
 
     def execute(self, entity):
+        return
         if not self.selected:
             for complex in Camp.smeltingComplexes:
                 if not complex.owner:

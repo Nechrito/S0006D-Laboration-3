@@ -58,7 +58,7 @@ class Camp:
     @classmethod
     def levelUp(cls, entities):
         cls.level += 1
-        cls.radius *= 1.50
+        cls.radius *= 1.25
         cls.lastLevelUpTick = GameTime.ticks
         cls.imageScale = vec2(32, 32) * (cls.level + 0.5)
         cls.image = pygame.transform.scale(cls.image, cls.imageScale.toInt.tuple)

@@ -1,6 +1,6 @@
 import threading
 
-from dir.engine.Camp import Camp
+from dir.environment.Camp import Camp
 from dir.environment.Item import Item
 from enums.ItemType import ItemType
 
@@ -25,7 +25,7 @@ class WorkerState(IState):
             if self.itemTarget.isPickedUp:
                 t = threading.Thread(target=entity.moveTo, args=(Camp.position,))
                 t.start()
-
+                t.join()
                 self.itemTarget.position = entity.position
 
                 if entity.position.distance(Camp.position) <= entity.radius:
@@ -42,7 +42,10 @@ class WorkerState(IState):
 
                     self.itemTarget = None
             else:
-                entity.moveTo(self.itemTarget.position)
+                t = threading.Thread(target=entity.moveTo, args=(self.itemTarget.position,))
+                t.start()
+                t.join()
+
                 if entity.position.distance(self.itemTarget.position) <= 16:
                     self.itemTarget.isPickedUp = True
 
@@ -54,7 +57,7 @@ class WorkerState(IState):
                 self.treeTarget.update()
 
                 # if chopped, remove tree and swap into wood
-                if self.treeTarget.isChopped and self.treeTarget in Camp.treesContainer:
+                if self.treeTarget in Camp.treesContainer:
                     Camp.treesContainer.remove(self.treeTarget)
 
                     node = SETTINGS.getNode(self.treeTarget.position, False)
@@ -76,6 +79,7 @@ class WorkerState(IState):
 
                     t = threading.Thread(target=entity.moveTo, args=(self.treeTarget.position,))
                     t.start()
+                    t.join()
 
         else:
             # locate items
@@ -83,8 +87,7 @@ class WorkerState(IState):
             selectedItem = None
             # search the surrounding area for nearby items to pick up
             for item in Camp.itemsContainer:
-                if item and not item.isTarget and not item.isPickedUp:
-
+                if not item.isTarget and not item.isPickedUp:
                     distanceToSub = item.position.distance(entity.position)
 
                     if closestDistance == 0 or distanceToSub < closestDistance:
@@ -95,12 +98,11 @@ class WorkerState(IState):
 
             if selectedItem:
                 self.itemTarget = selectedItem
-
-            # find a tree to chop
-            if not self.itemTarget:
+            else:
+                # find a tree to chop
                 distToTree = 0
                 for tree in Camp.treesContainer:
-                    #if tree.isChopped or tree.isTarget:
+                    #if tree.isTarget:
                         #continue
 
                     treeNode = SETTINGS.getNode(tree.position)
@@ -110,7 +112,7 @@ class WorkerState(IState):
                     distTreeToEnt = tree.position.distance(entity.position)
 
                     if distTreeToEnt < distToTree or distToTree == 0:
-                        tree.isTarget = True
+                        #tree.isTarget = True
                         self.treeTarget = tree
 
     def exit(self, entity):

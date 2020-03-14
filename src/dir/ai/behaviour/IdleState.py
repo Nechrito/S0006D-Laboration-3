@@ -2,7 +2,7 @@ import time
 
 from dir.ai.StateTransition import StateTransition
 from dir.ai.behaviour.IState import IState
-from dir.engine.Camp import GameTime, Camp
+from dir.environment.Camp import GameTime, Camp
 from enums.StateType import StateType
 
 from enums.EntityType import EntityType

@@ -1,7 +1,4 @@
-from dir.engine.Camp import Camp
-from dir.environment.Item import Item
 from enums.EntityType import EntityType
-from enums.ItemType import ItemType
 
 from dir.ai.behaviour.IState import IState
 from dir.ai.Message import Message

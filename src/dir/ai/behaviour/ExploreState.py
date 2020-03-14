@@ -1,4 +1,5 @@
 import threading
+from multiprocessing.pool import ThreadPool
 
 from dir.ai.StateTransition import StateTransition
 from dir.ai.behaviour.IState import IState
@@ -12,6 +13,9 @@ class ExploreState(IState):
 
     def __init__(self):
         self.currentTarget = None
+        self.pool = ThreadPool(processes=1)
+        self.async_result = self.pool.apply_async(self.getUnmarkedNode)
+
 
     def enter(self, entity):
         Message.sendConsole(entity, "Guess I'll explore the world!")
@@ -24,12 +28,12 @@ class ExploreState(IState):
 
                 t = threading.Thread(target=entity.moveTo, args=(self.currentTarget, ))
                 t.start()
-
+                t.join()
                 if self.currentTarget.distance(entity.position) <= entity.radius:
                     self.currentTarget = None
                 return
 
-        nearestNode = self.getUnmarkedNode()
+        nearestNode = self.async_result.get()
         if nearestNode:
             self.currentTarget = nearestNode.position.randomized()
         else:
@@ -41,7 +45,6 @@ class ExploreState(IState):
 
         for i in SETTINGS.Graph:
             for j in i:
-
                 # Could perform class type Node check, but might result in circular import
                 # this is fine though, Graph wont contain anything else
                 if type(j) == DynamicGraph or j.isVisible or not j.isWalkable:

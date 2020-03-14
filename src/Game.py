@@ -9,7 +9,7 @@ from dir.ai.behaviour.artisan.CraftState import CraftState
 from dir.ai.behaviour.artisan.MineState import MineState
 from dir.ai.behaviour.artisan.SmeltState import SmeltState
 from dir.ai.behaviour.artisan.SmithState import SmithState
-from dir.engine.Camp import Camp
+from dir.environment.Camp import Camp
 from dir.environment.Tree import Tree
 from enums.EntityType import EntityType
 from src.Settings import *
@@ -19,7 +19,7 @@ from dir.ai.behaviour.IdleState import IdleState
 from src.dir.engine.CameraInstance import CameraInstance
 from src.dir.engine.GameTime import GameTime
 from src.dir.engine.Renderer import Renderer
-from src.dir.environment.Map import Map
+from dir.engine.Map import Map
 from src.dir.math.Vector import vec2
 from src.dir.math.cMath import lerp
 
@@ -162,7 +162,7 @@ class Game:
         self.surface.blit(Camp.image, CameraInstance.centeredRect(Camp.rect))
 
         if not self.realCursorEnabled:
-            intersection = SETTINGS.getNode(self.relative)
+            intersection = SETTINGS.getNode(self.relative, False, False)
             if intersection:
                 x = intersection.position
                 self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, x.tuple, (52, 52, 57), 200)
@@ -174,10 +174,7 @@ class Game:
                     else:
                         self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, neighbour.tuple, (255, 0, 128), 128)
 
-                self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple,
-                                         self.relative.tuple,
-                                         (37, 37, 38),
-                                         200)
+                self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, self.relative.tuple, (37, 37, 38), 200)
 
         for entity in self.entities:
             # draw entity
@@ -203,22 +200,23 @@ class Game:
         self.renderer.append("")
         self.renderer.append("Entities: " + str(len(self.entities)))
 
-
         centered = vec2(SETTINGS.SCREEN_WIDTH * 0.10, SETTINGS.SCREEN_HEIGHT * 0.10)
+        self.renderer.renderRect((150, 150), centered, (37, 37, 38), 200)
         self.renderer.renderTexts(centered, self.fontBold, (255, 255, 255))
 
         self.clock.tick(SETTINGS.MAX_FPS)
 
     def onClick(self):
-        node = self.selectedNode()
+        node = SETTINGS.getNode(self.relative, False, False)
         if node:
             node.position.log()
             if not node.isWalkable:
                 return
             for entity in self.entities:
                 if entity.entityType == EntityType.Explorer:
-                    t = threading.Thread(target=entity.moveTo, args=(node.position.randomized(),))
+                    t = threading.Thread(target=entity.moveTo, args=(node.position.randomized(4, 4),))
                     t.start()
+                    t.join()
 
     def checkFOW(self):
         # Computes the FOG OF WAR
@@ -243,9 +241,3 @@ class Game:
                             node = neighbourNode
                     else:
                         node = node.parent
-
-
-
-
-    def selectedNode(self):
-        return SETTINGS.closestNode(self.relative)

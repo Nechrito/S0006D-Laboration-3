@@ -6,7 +6,6 @@ class Tree:
         self.position = spawnPoint
         self.duration = 0.5
         self.timerStart = 0
-        self.isChopped = False
         self.isTarget = False
 
     def startTimer(self):

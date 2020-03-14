@@ -1,4 +1,4 @@
-from dir.engine.Camp import Camp
+from dir.environment.Camp import Camp
 from dir.environment.Item import Item
 from enums.EntityType import EntityType
 from enums.ItemType import ItemType
@@ -17,6 +17,7 @@ class SmithState(IState):
         Message.sendConsole(entity, "I wonder how many swords I can produce today")
 
     def execute(self, entity):
+        return
         if not self.selected:
             for complex in Camp.smithComplexes:
                 if not complex.owner:
