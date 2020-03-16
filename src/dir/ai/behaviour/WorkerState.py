@@ -59,8 +59,9 @@ class WorkerState(IState):
                 elif self.selectedItem.itemType == ItemType.Ore:
                     Camp.ironOreCount += 1
 
-                Camp.itemsContainer.remove(self.selectedItem)
-                self.selectedItem = None
+                if self.selectedItem:
+                    Camp.items.remove(self.selectedItem)
+                    self.selectedItem = None
 
         # move towards the item to then pick it up
         else:
@@ -78,15 +79,15 @@ class WorkerState(IState):
             self.selectedTree.update()
 
             # if chopped, remove tree and swap into wood
-            if self.selectedTree in Camp.treesContainer:
-                Camp.treesContainer.remove(self.selectedTree)
+            if self.selectedTree in Camp.trees:
+                Camp.trees.remove(self.selectedTree)
 
                 node = SETTINGS.getNode(self.selectedTree.position, False)
                 if node:
                     node.images.pop(0)
 
                 self.selectedItem = Item(self.selectedTree.position, ItemType.Wood)
-                Camp.itemsContainer.append(self.selectedItem)
+                Camp.items.append(self.selectedItem)
 
                 self.selectedTree = None
                 self.isChoppingTree = False
@@ -106,7 +107,7 @@ class WorkerState(IState):
         # find a tree to chop
         distToEntCached = 0
         selectedTree = None
-        for tree in Camp.treesContainer:
+        for tree in Camp.trees:
             if tree.isTarget:
                 continue
 
@@ -129,8 +130,13 @@ class WorkerState(IState):
         closestDistance = 0
         selectedItem = None
         # search the surrounding area for nearby items to pick up
-        for item in Camp.itemsContainer:
+        for item in Camp.items:
             if not item.isTarget and not item.isPickedUp:
+
+                itemNode = SETTINGS.getNode(item.position)
+                if not itemNode or not itemNode.isVisible:
+                    continue
+
                 distanceToSub = item.position.distance(entity.position)
 
                 if not selectedItem or distanceToSub < closestDistance:

@@ -68,7 +68,7 @@ class Building:
             if self.item.isProducing:
                 self.item.update()
             else:
-                Camp.itemsContainer.append(self.item)
+                Camp.items.append(self.item)
                 self.item = None
 
         # crafts the building itself

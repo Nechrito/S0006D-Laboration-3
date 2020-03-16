@@ -25,14 +25,19 @@ from enums.StateType import StateType
 class Camp:
 
     level = 1
-    radius = 300
+    radius = 350
     position: vec2
     image: pygame.Surface
     imageScale: vec2
     rect: pygame.Rect
 
+    # temporary hack, see IdleState.py
     lastLevelUpTick = 0
 
+    # entity cap
+    entitiesCount = 200
+
+    # gathered/produced
     woodCount      = 0
     charcoalCount  = 0
     ironIngotCount = 0
@@ -41,8 +46,10 @@ class Camp:
     soldierCount   = 0
 
     # contains all items which may be picked up
-    itemsContainer: List[Item] = []
-    treesContainer: List[Tree] = []
+    items: List[Item] = []
+
+    # the trees scattered around the map
+    trees: List[Tree] = []
 
     # complexes which may be used primarily by artisans
     buildings: List[Building] = []
@@ -59,23 +66,24 @@ class Camp:
     @classmethod
     def levelUp(cls, entities):
         cls.level += 1
-        cls.radius *= 1.25
+        cls.radius *= 1.30
         cls.lastLevelUpTick = GameTime.ticks
         cls.imageScale = vec2(32, 32) * (cls.level + 0.5)
         cls.image = pygame.transform.scale(cls.image, cls.imageScale.toInt.tuple)
         cls.rect = cls.image.get_rect()
         cls.rect.center = cls.position.tuple
 
-        #for entity in entities:
-        #    if entity.entityType == EntityType.Explorer:
-        #        StateTransition.setState(entity, StateType.ExploreState)
+        # for the explorers which went into idle, get back into exploring!
+        for entity in entities:
+            if entity.entityType == EntityType.Explorer:
+                StateTransition.setState(entity, StateType.ExploreState)
 
     @classmethod
     def canProduce(cls, buildingType: BuildingType):
-        wood = cls.woodCount
-        swords = cls.swordCount
-        ingots = cls.ironIngotCount
-        ores = cls.ironOreCount
+        wood    = cls.woodCount
+        swords  = cls.swordCount
+        ingots  = cls.ironIngotCount
+        ores    = cls.ironOreCount
 
         if buildingType == BuildingType.Mine:
             wood -= 10
@@ -88,17 +96,3 @@ class Camp:
             wood -= 10
 
         return wood >= 0 and swords >= 0 and ingots >= 0 and ores >= 0
-
-    @classmethod
-    def canProduceCharcoal(cls):
-        return cls.woodCount >= 2
-
-    @classmethod
-    def canProduceIronIngot(cls):
-        return cls.ironOreCount >= 2 and cls.charcoalCount >= 3
-
-    @classmethod
-    def canProduceSword(cls):
-        return cls.ironIngotCount >= 1 and cls.charcoalCount >= 2
-
-

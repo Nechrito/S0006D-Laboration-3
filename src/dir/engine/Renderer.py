@@ -23,6 +23,14 @@ class Renderer:
         #if not node.isVisible:
             #self.renderRect(SETTINGS.TILE_SIZE.tuple, node.position, (52, 52, 52), 230)
 
+    def renderRectToScreen(self, size, pos: vec2, color=(255, 255, 255), alpha=128):
+        surface = pygame.Surface(size)
+        surface.set_alpha(alpha)
+        surface.fill(color)
+        rect = pygame.Rect(pos[0], pos[1], size[0], size[1])
+        rect.center = pos.tuple
+        self.surface.blit(surface, rect)
+
     def renderRect(self, size, pos, color=(255, 255, 255), alpha=128):
         surface = pygame.Surface(size)
         surface.set_alpha(alpha)

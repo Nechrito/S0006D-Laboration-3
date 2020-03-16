@@ -65,9 +65,10 @@ class Game:
 
         self.map = Map(self.getRealFilePath(SETTINGS.MAP_PATH), self.getRealFilePath(SETTINGS.MAP_REF))
 
-        self.fontSmall = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 16 // SETTINGS.SCREEN_WIDTH)
-        self.fontRegular = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 18 // SETTINGS.SCREEN_WIDTH)
-        self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
+        self.fontSmall = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 12 // SETTINGS.SCREEN_WIDTH)
+        self.fontRegular = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 16 // SETTINGS.SCREEN_WIDTH)
+        self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 18 // SETTINGS.SCREEN_WIDTH)
+        self.fontBig = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
 
         self.buildingImg = pygame.image.load(self.getRealFilePath(SETTINGS.BUILDING_IMG))
         self.buildingRect = self.buildingImg.get_rect()
@@ -79,11 +80,11 @@ class Game:
         maxDist = 48
         maxIterations = 4
         for i in range(60):
-            Camp.itemsContainer.append(Item(centreP.randomized(maxIterations, maxDist), ItemType.Ore))
+            Camp.items.append(Item(centreP.randomized(maxIterations, maxDist), ItemType.Ore))
 
         for treeTile in SETTINGS.TILES_T:
             tree = Tree(treeTile.position)
-            Camp.treesContainer.append(tree)
+            Camp.trees.append(tree)
 
         self.hatguyImg = pygame.image.load(self.getRealFilePath(SETTINGS.HATGUY_IMG))
         self.senseiImg = pygame.image.load(self.getRealFilePath(SETTINGS.SENSEI_IMG))
@@ -141,12 +142,22 @@ class Game:
                     elif rand == 4:
                         entity.setState(SmithState())
 
+            oldLength = len(self.entities)
+
             if Camp.level + 1 == 2:
                 self.entities.append(Entity(EntityType.Craftsman, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
 
-            self.entities.append(Entity(EntityType.Explorer, Camp.position, self.senseiImg, IdleState(), GlobalState()))
-            self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
-            self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
+            # will have to keep watch on the number here, might change this later on
+            if Camp.entitiesCount > 3:
+                self.entities.append(Entity(EntityType.Explorer, Camp.position, self.senseiImg, IdleState(), GlobalState()))
+                self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
+                self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
+
+            # as we may only produce up to 200, we need to check the amount of entities created
+            # not as if the game would be able to manage that many anyhow
+            newLength = len(self.entities)
+            deltaLength = newLength - oldLength
+            Camp.entitiesCount -= deltaLength
 
             Camp.levelUp(self.entities)
 
@@ -207,45 +218,32 @@ class Game:
                 self.renderer.renderLine(entity.waypoints[row].position, entity.waypoints[row + 1].position)
 
             # draw entity type
-            self.renderer.renderText(entity.name, entity.position + vec2(0, 16), self.fontSmall)
+            self.renderer.renderText(entity.name, entity.position + vec2(0, 16), self.fontBold)
 
-            # draw buildings crafted
-            for building in Camp.buildings:
-                self.buildingRect.center = building.position.tuple
-                self.surface.blit(self.buildingImg, CameraInstance.centeredRect(self.buildingRect))
-                self.renderer.renderText(building.name, building.position, self.fontRegular)
+        # draw buildings crafted
+        for building in Camp.buildings:
+            self.buildingRect.center = building.position.tuple
+            self.surface.blit(self.buildingImg, CameraInstance.centeredRect(self.buildingRect))
+            self.renderer.renderText(building.name, building.position, self.fontBig)
 
-            for item in Camp.itemsContainer:
-                self.renderer.renderRect((4, 4), item.position)
-                self.renderer.renderText(item.name, item.position, self.fontSmall)
+        for item in Camp.items:
+            self.renderer.renderRect((4, 4), item.position)
+            self.renderer.renderText(item.name, item.position, self.fontSmall)
 
         # draw information
         self.renderer.append("Camp Level: " + str(int(Camp.level)))
-        self.renderer.append("Items to be collected: " + str(len(Camp.itemsContainer)))
         self.renderer.append("Wood: " + str(Camp.woodCount))
         self.renderer.append("Charcoal: " + str(Camp.charcoalCount))
         self.renderer.append("IronOres: " + str(Camp.ironOreCount))
         self.renderer.append("IronIngots: " + str(Camp.ironIngotCount))
-        self.renderer.append("")
-        self.renderer.append("Entities: " + str(len(self.entities)))
+        self.renderer.append("Entities: " + str(len(self.entities)) + "/200")
+        self.renderer.append("Items to be collected: " + str(len(Camp.items)))
 
         centered = vec2(SETTINGS.SCREEN_WIDTH * 0.10, SETTINGS.SCREEN_HEIGHT * 0.10)
-        #self.renderer.renderRect((150, 150), centered, (37, 37, 38), 200)
+        self.renderer.renderRectToScreen((150, 300), centered, (37, 37, 38), 200)
         self.renderer.renderTexts(centered, self.fontBold, (255, 255, 255))
 
         self.clock.tick(SETTINGS.MAX_FPS)
-
-    def onClick(self):
-        node = SETTINGS.getNode(self.relative, False, False)
-        if node:
-            node.position.log()
-            if not node.isWalkable:
-                return
-            for entity in self.entities:
-                if entity.entityType == EntityType.Explorer:
-                    t = threading.Thread(target=entity.moveTo, args=(node.position.randomized(4, 4),))
-                    t.start()
-                    t.join()
 
     def checkFOW(self):
         # Computes the FOG OF WAR
@@ -271,3 +269,15 @@ class Game:
                             node = neighbourNode
                     else:
                         node = node.parent
+
+    def onClick(self):
+        node = SETTINGS.getNode(self.relative, False, False)
+        if node:
+            node.position.log()
+            if not node.isWalkable:
+                return
+            for entity in self.entities:
+                if entity.entityType == EntityType.Explorer:
+                    t = threading.Thread(target=entity.moveTo, args=(node.position.randomized(), ))
+                    t.start()
+                    t.join()

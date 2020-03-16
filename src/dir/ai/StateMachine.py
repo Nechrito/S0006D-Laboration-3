@@ -9,9 +9,7 @@ class StateMachine:
         self.currentState.enter(self.owner)
 
     def update(self):
-        if not self.locked:
-            self.currentState.execute(self.owner)
-
+        self.currentState.execute(self.owner)
         self.globalState.execute(self.owner)
 
     def setLockedState(self, value):

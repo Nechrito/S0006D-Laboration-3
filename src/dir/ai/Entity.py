@@ -59,11 +59,15 @@ class Entity:
                 self.nextNode = self.waypoints[1].position
 
     def moveTo(self, target: vec2):
+        self.moveToThreaded(target)
+
+    def moveToThreaded(self, target):
         self.isComputingPath = True
 
         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)
         if not temp or len(temp) <= 1:
-            temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(3), target.randomized(6, 7))
+            temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(3),
+                                                     target.randomized(6, 7))
 
             if not temp or len(temp) <= 1:
                 self.isComputingPath = False
