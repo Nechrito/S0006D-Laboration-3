@@ -5,13 +5,12 @@ from dir.environment.Item import Item
 from dir.math.Vector import vec2
 from enums.BuildingType import BuildingType
 from enums.ItemType import ItemType
-from src.Settings import SETTINGS
 from dir.environment.Camp import Camp
 
 
 class Building:
     def __init__(self, position: vec2, buildingType: BuildingType, owner: Entity = None):
-        self.position = SETTINGS.closestNode(position).position
+        self.position = position
         self.buildingType = buildingType
         self.name = str(self.buildingType).replace("BuildingType.", "")
 
@@ -73,7 +72,7 @@ class Building:
                 self.item = None
 
         # crafts the building itself
-        if self.timerStart != 0 and self.isCrafted and time.time() - self.timerStart > self.duration:
+        if self.timerStart != 0 and not self.isCrafted and time.time() - self.timerStart > self.duration:
             self.isCrafted = True
             self.timerStart = 0
             Camp.buildings.append(self)

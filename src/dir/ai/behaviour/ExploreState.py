@@ -14,8 +14,7 @@ class ExploreState(IState):
     def __init__(self):
         self.currentTarget = None
         self.pool = ThreadPool(processes=1)
-        self.async_result = self.pool.apply_async(self.getUnmarkedNode)
-
+        self.async_result = None
 
     def enter(self, entity):
         Message.sendConsole(entity, "Guess I'll explore the world!")
@@ -33,13 +32,13 @@ class ExploreState(IState):
                     self.currentTarget = None
                 return
 
-        nearestNode = self.async_result.get()
-        if nearestNode:
-            self.currentTarget = nearestNode.position.randomized()
-        else:
-            StateTransition.setState(entity, StateType.IdleState)
+        #self.async_result = self.pool.apply_async(self.getUnmarkedNode)
 
-    def getUnmarkedNode(self):
+        t = threading.Thread(target=self.getUnmarkedNode, args=(entity, ))
+        t.start()
+        t.join()
+
+    def getUnmarkedNode(self, entity):
         closest = None
         distance = 0
 
@@ -53,11 +52,14 @@ class ExploreState(IState):
                 currentDist = j.position.distance(Camp.position)
 
                 # the min check makes sure multiple explorers don't trace after eachother
-                if currentDist < distance and currentDist < Camp.radius or distance == 0:
+                if (currentDist <= distance and currentDist < Camp.radius) or distance == 0:
                     distance = currentDist
                     closest = j
 
-        return closest
+        if closest:
+            self.currentTarget = closest.position.randomized()
+        #else:
+            #StateTransition.setState(entity, StateType.IdleState)
 
     def exit(self, entity):
         pass

@@ -66,9 +66,9 @@ class Camp:
         cls.rect = cls.image.get_rect()
         cls.rect.center = cls.position.tuple
 
-        for entity in entities:
-            if entity.entityType == EntityType.Explorer:
-                StateTransition.setState(entity, StateType.ExploreState)
+        #for entity in entities:
+        #    if entity.entityType == EntityType.Explorer:
+        #        StateTransition.setState(entity, StateType.ExploreState)
 
     @classmethod
     def canProduce(cls, buildingType: BuildingType):

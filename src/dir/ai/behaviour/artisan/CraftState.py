@@ -14,7 +14,7 @@ class CraftState(IState):
 
     def enter(self, entity):
         entity.setType(EntityType.Craftsman)
-        Message.sendConsole(entity, "What to build today..") 
+        Message.sendConsole(entity, "What to build today..")
 
     def execute(self, entity):
 
@@ -67,7 +67,7 @@ class CraftState(IState):
                 return
 
             # create a new building at camp, todo: code requires a cleanup in future
-            building = Building(Camp.position.randomized(8, Camp.radius // 16, 6), buildingType)
+            building = Building(Camp.position.randomized(8, Camp.radius // 16, 4), buildingType)
 
             self.selected = building
             self.selected.startBuilding()

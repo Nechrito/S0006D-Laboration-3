@@ -69,8 +69,10 @@ class Game:
         self.fontRegular = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_REGULAR), SETTINGS.SCREEN_HEIGHT * 18 // SETTINGS.SCREEN_WIDTH)
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
 
-        campImg = pygame.image.load(self.getRealFilePath(SETTINGS.BUILDING_IMG))
-        Camp.init(vec2(1152, 256), campImg)
+        self.buildingImg = pygame.image.load(self.getRealFilePath(SETTINGS.BUILDING_IMG))
+        self.buildingRect = self.buildingImg.get_rect()
+
+        Camp.init(vec2(1152, 256), self.buildingImg)
 
         # scatter iron ores around map
         centreP = vec2(SETTINGS.MAP_WIDTH / 2, SETTINGS.MAP_HEIGHT / 2)
@@ -138,8 +140,8 @@ class Game:
                     elif rand == 4:
                         entity.setState(SmithState())
 
-            self.entities.append(Entity(EntityType.Explorer, Camp.position, self.senseiImg, IdleState(), GlobalState()))
-            self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
+            #self.entities.append(Entity(EntityType.Explorer, Camp.position, self.senseiImg, IdleState(), GlobalState()))
+            #self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
             self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
 
             Camp.levelUp(self.entities)
@@ -169,20 +171,22 @@ class Game:
                     if CameraInstance.inCameraBounds(node.position):
                         self.renderer.renderTile(node)
 
-        # draw placeholders for buildings
-        for building in Camp.buildings:
-            self.renderer.renderRect((16, 16), building.position)
-            self.renderer.renderText(building.name, building.position, self.fontRegular)
-
-        for item in Camp.itemsContainer:
-            self.renderer.renderRect((4, 4), item.position)
-            self.renderer.renderText(item.name, item.position, self.fontSmall)
-
        # self.renderer.renderGrid()
        # self.renderer.renderRectOutline()
 
         # draws the base image
         self.surface.blit(Camp.image, CameraInstance.centeredRect(Camp.rect))
+        pygame.draw.circle(self.surface, (255, 255, 255), CameraInstance.centeredVec(Camp.position).toInt.tuple, int(Camp.radius), 1)
+
+        # draw placeholders for buildings
+        for building in Camp.buildings:
+            self.buildingRect.center = building.position.tuple
+            self.surface.blit(self.buildingImg, CameraInstance.centeredRect(self.buildingRect))
+            self.renderer.renderText(building.name, building.position, self.fontRegular)
+
+        for item in Camp.itemsContainer:
+            self.renderer.renderRect((4, 4), item.position)
+            self.renderer.renderText(item.name, item.position, self.fontSmall)
 
         # draws the relative cursor with it's indicating neighbours
         if not self.realCursorEnabled:
@@ -222,7 +226,7 @@ class Game:
         self.renderer.append("Entities: " + str(len(self.entities)))
 
         centered = vec2(SETTINGS.SCREEN_WIDTH * 0.10, SETTINGS.SCREEN_HEIGHT * 0.10)
-        self.renderer.renderRect((150, 150), centered, (37, 37, 38), 200)
+        #self.renderer.renderRect((150, 150), centered, (37, 37, 38), 200)
         self.renderer.renderTexts(centered, self.fontBold, (255, 255, 255))
 
         self.clock.tick(SETTINGS.MAX_FPS)
