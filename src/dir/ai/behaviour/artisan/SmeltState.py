@@ -26,13 +26,14 @@ class SmeltState(IState):
                 if not building.owner:
                     building.owner = entity
                     self.selected = building
+                    break
 
         if not self.selected:
             return
 
         if self.reached:
             if self.selected.isCrafted:
-                self.selected.startProducing(ItemType.IronIngot)
+                self.selected.startProducing(ItemType.Ingot)
                 self.selected.update()
             else:
                 self.selected.startBuilding()

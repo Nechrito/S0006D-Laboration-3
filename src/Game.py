@@ -79,7 +79,7 @@ class Game:
         maxDist = 48
         maxIterations = 4
         for i in range(60):
-            Camp.itemsContainer.append(Item(centreP.randomized(maxIterations, maxDist), ItemType.IronOre))
+            Camp.itemsContainer.append(Item(centreP.randomized(maxIterations, maxDist), ItemType.Ore))
 
         for treeTile in SETTINGS.TILES_T:
             tree = Tree(treeTile.position)
@@ -140,8 +140,8 @@ class Game:
                     elif rand == 4:
                         entity.setState(SmithState())
 
-            #self.entities.append(Entity(EntityType.Explorer, Camp.position, self.senseiImg, IdleState(), GlobalState()))
-            #self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
+            self.entities.append(Entity(EntityType.Explorer, Camp.position, self.senseiImg, IdleState(), GlobalState()))
+            self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
             self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
 
             Camp.levelUp(self.entities)

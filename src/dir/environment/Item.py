@@ -14,7 +14,7 @@ class Item:
 
         if itemType == ItemType.Charcoal:
             self.duration = 30
-        elif itemType == ItemType.IronIngot:
+        elif itemType == ItemType.Ingot:
             self.duration = 30 # is not assigned to any specific number according to the assignment
         if itemType == ItemType.Sword:
             self.duration = 60
@@ -32,6 +32,6 @@ class Item:
         if not self.isProducing:
             return
 
-        if self.timerStart != 0 and time.time() - self.timerStart > self.duration:
+        if self.timerStart != 0 and time.time() - self.timerStart > 0.5: # self.duration
             self.isProducing = False
             print("Created: " + self.name)

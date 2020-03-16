@@ -17,8 +17,6 @@ class IdleState(IState):
 
     def execute(self, entity):
 
-        print(str(time.time() - Camp.lastLevelUpTick))
-
         if entity.entityType == EntityType.Worker:
             StateTransition.setState(entity, StateType.WorkState)
 

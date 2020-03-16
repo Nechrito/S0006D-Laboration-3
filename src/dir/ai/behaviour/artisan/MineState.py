@@ -26,6 +26,7 @@ class MineState(IState):
                 if not building.owner:
                     building.owner = entity
                     self.selected = building
+                    break
 
         if not self.selected:
             return

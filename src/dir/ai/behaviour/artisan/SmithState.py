@@ -1,5 +1,4 @@
 from dir.environment.Camp import Camp
-from dir.environment.Item import Item
 from enums.BuildingType import BuildingType
 from enums.EntityType import EntityType
 from enums.ItemType import ItemType
@@ -26,6 +25,7 @@ class SmithState(IState):
                 if not building.owner:
                     building.owner = entity
                     self.selected = building
+                    break
 
         if not self.selected:
             return
