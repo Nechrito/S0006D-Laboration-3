@@ -1,37 +1,24 @@
 import asyncio
-import multiprocessing as mp
 import random
 import threading
+from multiprocessing.pool import ThreadPool
 
 
 class ParallelTask:
 
-    tasks = None
-    threads = None
-    manager = None
-    pool = None
-
     @classmethod
     def init(cls):
-        cls.threads = []
-        cls.cachedFuncs = []
-        cls.pool = mp.Pool(mp.cpu_count())
-        cls.manager = mp.Manager()
-        cls.tasks = cls.manager.Queue()
-        cls.results = cls.manager.Queue()
-
-    @classmethod
-    def update(cls):
         pass
-        #for t in cls.threads:
-            #t.join()
 
     @classmethod
-    def addTask(cls, func, arguments):
-        # todo: avoid threading..
-        t = threading.Thread(target=func, args=arguments)
-        t.setDaemon(True) # allows to exit program no matter running threads
+    def addTask(cls, func, args):
+        t = threading.Thread(target=func, args=args)
+        # t.setDaemon(True)
         t.start()
+        t.join()
+        #pool = ThreadPool(processes=1)
+        #result = pool.apply_async(func, args)
+        #return result.get()
 
     @classmethod
     async def addTaskAsync(cls, func):

@@ -25,7 +25,7 @@ from enums.StateType import StateType
 class Camp:
 
     level = 1
-    radius = 350
+    radius = 250
     position: vec2
     image: pygame.Surface
     imageScale: vec2

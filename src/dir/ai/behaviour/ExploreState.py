@@ -4,6 +4,7 @@ from multiprocessing.pool import ThreadPool
 from Game import Camp
 from dir.ai.Message import Message
 from dir.ai.behaviour.IState import IState
+from dir.engine.ParallelTask import ParallelTask
 from src.dir.ai.Entity import SETTINGS, DynamicGraph
 
 
@@ -29,12 +30,10 @@ class ExploreState(IState):
                 return
 
         #self.async_result = self.pool.apply_async(self.getUnmarkedNode)
+        #ParallelTask.addTask(self.getUnmarkedNode, ())
+        self.getUnmarkedNode()
 
-        t = threading.Thread(target=self.getUnmarkedNode, args=(entity, ))
-        t.start()
-        t.join()
-
-    def getUnmarkedNode(self, entity):
+    def getUnmarkedNode(self):
         closest = None
         distance = 0
 

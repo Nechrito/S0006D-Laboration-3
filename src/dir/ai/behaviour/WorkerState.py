@@ -1,5 +1,3 @@
-import threading
-
 from dir.environment.Camp import Camp
 from dir.environment.Item import Item
 from enums.ItemType import ItemType
@@ -20,7 +18,6 @@ class WorkerState(IState):
         Message.sendConsole(entity, "Sure could make use of more wood, will fetch some")
 
     def execute(self, entity):
-
         # update selected tree
         if self.selectedTree:
             self.updateTree(entity)

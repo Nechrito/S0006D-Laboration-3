@@ -1,6 +1,7 @@
 import random
 import threading
 from os import path
+from time import sleep
 
 import pygame
 import pygame.freetype
@@ -126,7 +127,8 @@ class Game:
             CameraInstance.followTarget(Camp.position)
 
         # fog of war
-        ParallelTask.addTask(self.checkFOW, ())
+       # ParallelTask.addTask(self.checkFOW, ())
+        self.checkFOW()
 
         if Camp.woodCount / Camp.level == 4:
             for entity in self.entities:
@@ -164,8 +166,6 @@ class Game:
         # mouse relative coords
         for agent in self.entities:
             agent.update()
-
-        ParallelTask.update()
 
         # window title
         if not self.paused:

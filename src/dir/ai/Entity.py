@@ -1,9 +1,7 @@
-import asyncio
 import random
 import time
 
 from dir.ai.StateMachine import StateMachine
-from dir.engine.ParallelTask import ParallelTask
 from enums.EntityType import EntityType
 from src.Settings import *
 from src.dir.engine.GameTime import GameTime
@@ -61,15 +59,11 @@ class Entity:
                 self.nextNode = self.waypoints[1].position
 
     def moveTo(self, target: vec2):
-        ParallelTask.addTask(self.moveToThreaded, (target, ))
-
-    def moveToThreaded(self, target):
         self.isComputingPath = True
 
         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)
         if not temp or len(temp) <= 1:
-            temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(3),
-                                                     target.randomized(6, 7))
+            temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(3), target.randomized(6, 7))
 
             if not temp or len(temp) <= 1:
                 self.isComputingPath = False

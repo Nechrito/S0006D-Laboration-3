@@ -38,6 +38,8 @@ class PathManager:
     def requestPath(self, start: vec2, end: vec2):
         self.algorithm.childNodes = []
         return self.algorithm.getPath(start, end)
+        #algo = ParallelTask.addTask(self.algorithm.getPath, (start, end, ))
+        #return algo
 
     def requestChildren(self):
         return self.algorithm.childNodes
