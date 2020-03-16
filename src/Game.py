@@ -165,6 +165,8 @@ class Game:
         for agent in self.entities:
             agent.update()
 
+        ParallelTask.update()
+
         # window title
         if not self.paused:
 
