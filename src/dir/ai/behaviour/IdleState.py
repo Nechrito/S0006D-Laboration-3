@@ -26,9 +26,6 @@ class IdleState(IState):
             if time.time() - Camp.lastLevelUpTick <= 1000:
                 StateTransition.setState(entity, StateType.ExploreState)
 
-        elif entity.entityType == EntityType.Builder:
-            StateTransition.setState(entity, StateType.BuildState)
-
         elif entity.entityType == EntityType.Miner:
             StateTransition.setState(entity, StateType.ArtisanMiner)
 

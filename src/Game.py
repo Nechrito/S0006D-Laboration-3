@@ -132,13 +132,17 @@ class Game:
                 if entity.entityType == EntityType.Worker:
                     rand = random.randint(1, 4)
                     if rand == 1:
-                        entity.setState(CraftState())
+                        #entity.setState(CraftState())
+                        pass
                     elif rand == 2:
                         entity.setState(MineState())
                     elif rand == 3:
                         entity.setState(SmeltState())
                     elif rand == 4:
                         entity.setState(SmithState())
+
+            if Camp.level + 1 == 2:
+                self.entities.append(Entity(EntityType.Craftsman, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
 
             self.entities.append(Entity(EntityType.Explorer, Camp.position, self.senseiImg, IdleState(), GlobalState()))
             self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
@@ -178,16 +182,6 @@ class Game:
         self.surface.blit(Camp.image, CameraInstance.centeredRect(Camp.rect))
         pygame.draw.circle(self.surface, (255, 255, 255), CameraInstance.centeredVec(Camp.position).toInt.tuple, int(Camp.radius), 1)
 
-        # draw placeholders for buildings
-        for building in Camp.buildings:
-            self.buildingRect.center = building.position.tuple
-            self.surface.blit(self.buildingImg, CameraInstance.centeredRect(self.buildingRect))
-            self.renderer.renderText(building.name, building.position, self.fontRegular)
-
-        for item in Camp.itemsContainer:
-            self.renderer.renderRect((4, 4), item.position)
-            self.renderer.renderText(item.name, item.position, self.fontSmall)
-
         # draws the relative cursor with it's indicating neighbours
         if not self.realCursorEnabled:
             intersection = SETTINGS.getNode(self.relative, False, False)
@@ -214,6 +208,16 @@ class Game:
 
             # draw entity type
             self.renderer.renderText(entity.name, entity.position + vec2(0, 16), self.fontSmall)
+
+            # draw buildings crafted
+            for building in Camp.buildings:
+                self.buildingRect.center = building.position.tuple
+                self.surface.blit(self.buildingImg, CameraInstance.centeredRect(self.buildingRect))
+                self.renderer.renderText(building.name, building.position, self.fontRegular)
+
+            for item in Camp.itemsContainer:
+                self.renderer.renderRect((4, 4), item.position)
+                self.renderer.renderText(item.name, item.position, self.fontSmall)
 
         # draw information
         self.renderer.append("Camp Level: " + str(int(Camp.level)))

@@ -49,8 +49,11 @@ class WorkerState(IState):
             self.selectedItem.position = entity.position
 
             if entity.position.distance(Camp.position) <= entity.radius:
+
                 if self.selectedItem.itemType == ItemType.Wood:
                     Camp.woodCount += 1
+                elif self.selectedItem.itemType == ItemType.Charcoal:
+                    Camp.charcoalCount += 1
                 elif self.selectedItem.itemType == ItemType.Ingot:
                     Camp.ironIngotCount += 1
                 elif self.selectedItem.itemType == ItemType.Ore:
@@ -83,7 +86,6 @@ class WorkerState(IState):
                     node.images.pop(0)
 
                 self.selectedItem = Item(self.selectedTree.position, ItemType.Wood)
-                self.selectedItem.isPickedUp = True
                 Camp.itemsContainer.append(self.selectedItem)
 
                 self.selectedTree = None
@@ -137,7 +139,6 @@ class WorkerState(IState):
 
         if selectedItem:
             selectedItem.isTarget = True
-            selectedItem.isPickedUp = True
             return selectedItem
         return None
 

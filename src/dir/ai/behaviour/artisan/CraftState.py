@@ -67,10 +67,11 @@ class CraftState(IState):
                 return
 
             # create a new building at camp, todo: code requires a cleanup in future
-            building = Building(Camp.position.randomized(8, Camp.radius // 16, 4), buildingType)
-
-            self.selected = building
-            self.selected.startBuilding()
+            dist = (Camp.radius // 16)
+            building = Building(Camp.position.randomized(10, dist // 2, dist // 4), buildingType)
+            if building.position:
+                self.selected = building
+                self.selected.startBuilding()
 
     def exit(self, entity):
         pass
