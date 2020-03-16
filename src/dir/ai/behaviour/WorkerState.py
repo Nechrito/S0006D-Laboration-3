@@ -43,9 +43,7 @@ class WorkerState(IState):
     def updateItem(self, entity):
         # move to camp once the item is picked up
         if self.selectedItem.isPickedUp:
-            t = threading.Thread(target=entity.moveTo, args=(Camp.position,))
-            t.start()
-            t.join()
+            entity.moveTo(Camp.position)
             self.selectedItem.position = entity.position
 
             if entity.position.distance(Camp.position) <= entity.radius:
@@ -65,9 +63,7 @@ class WorkerState(IState):
 
         # move towards the item to then pick it up
         else:
-            t = threading.Thread(target=entity.moveTo, args=(self.selectedItem.position,))
-            t.start()
-            t.join()
+            entity.moveTo(self.selectedItem.position)
 
             if entity.position.distance(self.selectedItem.position) <= entity.radius:
                 self.selectedItem.isPickedUp = True
@@ -98,10 +94,7 @@ class WorkerState(IState):
                 self.selectedTree.startTimer()
                 self.isChoppingTree = True
             else:
-
-                t = threading.Thread(target=entity.moveTo, args=(self.selectedTree.position,))
-                t.start()
-                t.join()
+                entity.moveTo(self.selectedTree.position)
 
     def findTree(self, entity):
         # find a tree to chop

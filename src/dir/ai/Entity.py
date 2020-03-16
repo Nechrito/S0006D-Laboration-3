@@ -2,6 +2,7 @@ import random
 import time
 
 from dir.ai.StateMachine import StateMachine
+from dir.engine.ParallelTask import ParallelTask
 from enums.EntityType import EntityType
 from src.Settings import *
 from src.dir.engine.GameTime import GameTime
@@ -59,7 +60,7 @@ class Entity:
                 self.nextNode = self.waypoints[1].position
 
     def moveTo(self, target: vec2):
-        self.moveToThreaded(target)
+        ParallelTask.addTask(self.moveToThreaded, (target, ))
 
     def moveToThreaded(self, target):
         self.isComputingPath = True

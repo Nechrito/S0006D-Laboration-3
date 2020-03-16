@@ -19,9 +19,6 @@ class AStar(IPath):
         startNode = SETTINGS.getNode(start, False, True)
         endNode = SETTINGS.getNode(end, False, True)
 
-        if not startNode or not endNode:
-            return None
-
         closedList = []
         openList = [startNode]
 

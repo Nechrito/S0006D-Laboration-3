@@ -1,12 +1,10 @@
 import threading
 from multiprocessing.pool import ThreadPool
 
-from dir.ai.StateTransition import StateTransition
-from dir.ai.behaviour.IState import IState
-from dir.ai.Message import Message
-from enums.StateType import StateType
-from src.dir.ai.Entity import SETTINGS, DynamicGraph
 from Game import Camp
+from dir.ai.Message import Message
+from dir.ai.behaviour.IState import IState
+from src.dir.ai.Entity import SETTINGS, DynamicGraph
 
 
 class ExploreState(IState):
@@ -24,10 +22,8 @@ class ExploreState(IState):
         if self.currentTarget:
             node = SETTINGS.getNode(self.currentTarget)
             if node and not node.isVisible and node.position.distance(entity.position) <= Camp.radius:
+                entity.moveTo(self.currentTarget)
 
-                t = threading.Thread(target=entity.moveTo, args=(self.currentTarget, ))
-                t.start()
-                t.join()
                 if self.currentTarget.distance(entity.position) <= entity.radius:
                     self.currentTarget = None
                 return

@@ -12,6 +12,7 @@ from dir.ai.behaviour.artisan.MineState import MineState
 from dir.ai.behaviour.artisan.SmeltState import SmeltState
 from dir.ai.behaviour.artisan.SmithState import SmithState
 from dir.engine.Map import Map
+from dir.engine.ParallelTask import ParallelTask
 from dir.environment.Camp import Camp
 from dir.environment.Item import Item
 from dir.environment.Tree import Tree
@@ -73,6 +74,7 @@ class Game:
         self.buildingImg = pygame.image.load(self.getRealFilePath(SETTINGS.BUILDING_IMG))
         self.buildingRect = self.buildingImg.get_rect()
 
+        ParallelTask.init()
         Camp.init(vec2(1152, 256), self.buildingImg)
 
         # scatter iron ores around map
@@ -124,9 +126,7 @@ class Game:
             CameraInstance.followTarget(Camp.position)
 
         # fog of war
-        t = threading.Thread(target=self.checkFOW, args=())
-        t.start()
-        t.join()
+        ParallelTask.addTask(self.checkFOW, ())
 
         if Camp.woodCount / Camp.level == 4:
             for entity in self.entities:
@@ -278,6 +278,4 @@ class Game:
                 return
             for entity in self.entities:
                 if entity.entityType == EntityType.Explorer:
-                    t = threading.Thread(target=entity.moveTo, args=(node.position.randomized(), ))
-                    t.start()
-                    t.join()
+                    entity.moveTo(node.position.randomized())
