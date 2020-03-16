@@ -3,7 +3,6 @@ import time
 from src.Settings import SETTINGS
 from src.dir.math.Vector import vec2
 from src.dir.math.cMath import truncate
-from src.dir.pathfinding.Node import Node
 from src.dir.pathfinding.IPath import IPath
 from src.enums.PathType import PathType
 

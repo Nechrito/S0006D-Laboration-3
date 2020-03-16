@@ -113,6 +113,7 @@ class WorkerState(IState):
 
                     if distTreeToEnt < distToTree or distToTree == 0:
                         #tree.isTarget = True
+                        distToTree = tree.position.distance(Camp.position)
                         self.treeTarget = tree
 
     def exit(self, entity):

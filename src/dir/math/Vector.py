@@ -27,12 +27,17 @@ class vec2:
     def LocalY(self):
         return self.Y // SETTINGS.TILE_SIZE[1]
 
-    def randomized(self, iterations=8, maxDist=6):
+    def randomized(self, iterations=8, maxDist=6, minDist=0):
         maxDist *= 16
+        minDist *= 16
         for _ in fori(1, iterations, 1):
 
             rand = vec2(self.X + random.randrange(-maxDist, maxDist),
                         self.Y + random.randrange(-maxDist, maxDist))
+
+            if minDist != 0:
+                if rand.distance(self) < minDist:
+                    continue
 
             node = SETTINGS.getNode(rand, False, False)
             if node and node.isWalkable:

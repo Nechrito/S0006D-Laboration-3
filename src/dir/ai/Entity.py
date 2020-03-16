@@ -1,10 +1,9 @@
 import random
-import threading
 import time
 
+from dir.ai.StateMachine import StateMachine
 from enums.EntityType import EntityType
 from src.Settings import *
-from dir.ai.StateMachine import StateMachine
 from src.dir.engine.GameTime import GameTime
 from src.dir.math.Vector import vec2
 from src.dir.pathfinding.PathManager import PathManager
@@ -21,6 +20,7 @@ class Entity:
         self.image = image
         self.moveSpeed = random.randrange(20, 30)
         self.createdTime = time.time()
+        self.isComputingPath = False
 
         # increase movement speed by 20% if entity is an explorer
         if characterType == EntityType.Explorer:
@@ -43,6 +43,9 @@ class Entity:
         self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
 
+        if self.isComputingPath:
+            return
+
         if self.nextNode.distance(self.position) >= 8:
             node = SETTINGS.getNode(self.position, True, False)
             moveSpeedMultiplier = 1.0
@@ -56,13 +59,17 @@ class Entity:
                 self.nextNode = self.waypoints[1].position
 
     def moveTo(self, target: vec2):
+        self.isComputingPath = True
+
         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)
         if not temp or len(temp) <= 1:
             temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(3), target.randomized(6, 7))
 
             if not temp or len(temp) <= 1:
+                self.isComputingPath = False
                 return
 
+        self.isComputingPath = False
         self.waypoints = temp
         self.nextNode = self.waypoints[1].position
 

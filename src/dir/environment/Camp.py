@@ -1,18 +1,23 @@
-import time
+# Since 3.7 this allows to remove annotations from type hinting when doing conditional import
+from __future__ import annotations
 
+# Conditional import (hinting, avoids circular imports)
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from dir.environment.Building import Building
+    from dir.environment.Item import Item
+    from dir.environment.Tree import Tree
+
+# packages
 import pygame
-
+import time
 from typing import List
 
+# local packages
 from dir.ai.StateTransition import StateTransition
 from dir.engine.GameTime import GameTime
-from dir.environment.Item import Item
-from dir.environment.Mine import Mine
-from dir.environment.Smelting import Smelting
-from dir.environment.Smith import Smith
-from dir.environment.Training import TrainingCamp
-from dir.environment.Tree import Tree
 from dir.math.Vector import vec2
+from enums.BuildingType import BuildingType
 from enums.EntityType import EntityType
 from enums.StateType import StateType
 
@@ -39,11 +44,8 @@ class Camp:
     itemsContainer: List[Item] = []
     treesContainer: List[Tree] = []
 
-    # complexes which may be used by artisans
-    mines:             List[Mine]         = []
-    smithComplexes:    List[Smith]        = []
-    smeltingComplexes: List[Smelting]     = []
-    trainingCamps:     List[TrainingCamp] = []
+    # complexes which may be used primarily by artisans
+    buildings: List[Building] = []
 
     @classmethod
     def init(cls, campPos: vec2, image):
@@ -67,6 +69,25 @@ class Camp:
         for entity in entities:
             if entity.entityType == EntityType.Explorer:
                 StateTransition.setState(entity, StateType.ExploreState)
+
+    @classmethod
+    def canProduce(cls, buildingType: BuildingType):
+        wood = cls.woodCount
+        swords = cls.swordCount
+        ingots = cls.ironIngotCount
+        ores = cls.ironOreCount
+
+        if buildingType == BuildingType.Mine:
+            wood -= 10
+        elif buildingType == BuildingType.Smith:
+            wood -= 10
+            ingots -= 3
+        elif buildingType == BuildingType.Smelt:
+            wood -= 10
+        elif buildingType == BuildingType.TrainingCamp:
+            wood -= 10
+
+        return wood >= 0 and swords >= 0 and ingots >= 0 and ores >= 0
 
     @classmethod
     def canProduceCharcoal(cls):

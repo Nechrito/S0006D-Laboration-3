@@ -1,25 +1,27 @@
+import random
 import threading
 from os import path
-import random
 
 import pygame
 import pygame.freetype
 
+from dir.ai.behaviour.GlobalState import GlobalState
+from dir.ai.behaviour.IdleState import IdleState
 from dir.ai.behaviour.artisan.CraftState import CraftState
 from dir.ai.behaviour.artisan.MineState import MineState
 from dir.ai.behaviour.artisan.SmeltState import SmeltState
 from dir.ai.behaviour.artisan.SmithState import SmithState
+from dir.engine.Map import Map
 from dir.environment.Camp import Camp
+from dir.environment.Item import Item
 from dir.environment.Tree import Tree
 from enums.EntityType import EntityType
+from enums.ItemType import ItemType
 from src.Settings import *
 from src.dir.ai.Entity import Entity
-from dir.ai.behaviour.GlobalState import GlobalState
-from dir.ai.behaviour.IdleState import IdleState
 from src.dir.engine.CameraInstance import CameraInstance
 from src.dir.engine.GameTime import GameTime
 from src.dir.engine.Renderer import Renderer
-from dir.engine.Map import Map
 from src.dir.math.Vector import vec2
 from src.dir.math.cMath import lerp
 
@@ -69,6 +71,13 @@ class Game:
 
         campImg = pygame.image.load(self.getRealFilePath(SETTINGS.BUILDING_IMG))
         Camp.init(vec2(1152, 256), campImg)
+
+        # scatter iron ores around map
+        centreP = vec2(SETTINGS.MAP_WIDTH / 2, SETTINGS.MAP_HEIGHT / 2)
+        maxDist = 48
+        maxIterations = 4
+        for i in range(60):
+            Camp.itemsContainer.append(Item(centreP.randomized(maxIterations, maxDist), ItemType.IronOre))
 
         for treeTile in SETTINGS.TILES_T:
             tree = Tree(treeTile.position)
@@ -150,19 +159,32 @@ class Game:
                                        " | Date: " + GameTime.timeElapsed())
 
     def draw(self):
+
         self.renderer.clear()
 
+        # lowest layer, the tiles
         for row in SETTINGS.Graph:
             for node in row:
                 if node and node.isVisible:
                     if CameraInstance.inCameraBounds(node.position):
                         self.renderer.renderTile(node)
 
+        # draw placeholders for buildings
+        for building in Camp.buildings:
+            self.renderer.renderRect((16, 16), building.position)
+            self.renderer.renderText(building.name, building.position, self.fontRegular)
+
+        for item in Camp.itemsContainer:
+            self.renderer.renderRect((4, 4), item.position)
+            self.renderer.renderText(item.name, item.position, self.fontSmall)
+
        # self.renderer.renderGrid()
        # self.renderer.renderRectOutline()
 
+        # draws the base image
         self.surface.blit(Camp.image, CameraInstance.centeredRect(Camp.rect))
 
+        # draws the relative cursor with it's indicating neighbours
         if not self.realCursorEnabled:
             intersection = SETTINGS.getNode(self.relative, False, False)
             if intersection:
@@ -188,9 +210,6 @@ class Game:
 
             # draw entity type
             self.renderer.renderText(entity.name, entity.position + vec2(0, 16), self.fontSmall)
-
-        # draw camp level
-        #self.renderer.renderText("Camp (Lv. " + str(Camp.level) + ")", Camp.position - vec2(0, 32), self.fontBold)
 
         # draw information
         self.renderer.append("Camp Level: " + str(int(Camp.level)))
@@ -224,12 +243,13 @@ class Game:
         # Computes the FOG OF WAR
         for agent in self.entities:
             if agent.entityType != EntityType.Explorer:
-                continue
+                searchRadius = 3
+            else:
+                searchRadius = 8  # the amount of neighbouring tiles to check
 
             node = SETTINGS.getNode(agent.position, False, False)
 
             i = 0
-            searchRadius = 8 # the amount of neighbouring tiles to check
             while node and i <= searchRadius:
                 i += 1
                 #if not node.isVisible:

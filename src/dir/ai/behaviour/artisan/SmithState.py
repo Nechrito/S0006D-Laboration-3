@@ -1,5 +1,6 @@
 from dir.environment.Camp import Camp
 from dir.environment.Item import Item
+from enums.BuildingType import BuildingType
 from enums.EntityType import EntityType
 from enums.ItemType import ItemType
 
@@ -17,26 +18,29 @@ class SmithState(IState):
         Message.sendConsole(entity, "I wonder how many swords I can produce today")
 
     def execute(self, entity):
-        return
         if not self.selected:
-            for complex in Camp.smithComplexes:
-                if not complex.owner:
-                    complex.owner = entity
-                    self.selected = complex
+            for building in Camp.buildings:
+                if building.buildingType != BuildingType.Smith:
+                    continue
+
+                if not building.owner:
+                    building.owner = entity
+                    self.selected = building
 
         if not self.selected:
             return
 
         if self.reached:
-            if self.selected.isProduced:
-                Camp.itemsContainer.append(Item(self.selected.position, ItemType.Sword))
-                self.selected.isProduced = False
-            else:
+            if self.selected.isCrafted:
+                self.selected.startProducing(ItemType.Sword)
                 self.selected.update()
-        elif entity.position.distance(self.selected) <= entity.radius:
+            else:
+                self.selected.startBuilding()
+
+        elif self.selected and entity.position.distance(self.selected.position) <= entity.radius:
             self.reached = True
-        else:
-            entity.moveTo(self.selected)
+        elif self.selected:
+            entity.moveTo(self.selected.position)
 
     def exit(self, entity):
         pass

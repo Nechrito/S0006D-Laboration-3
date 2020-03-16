@@ -1,6 +1,5 @@
 import time
 
-from dir.engine.GameTime import GameTime
 from src.Settings import SETTINGS
 from src.dir.math.Vector import vec2
 from src.dir.math.cMath import truncate
@@ -72,18 +71,16 @@ class AStar(IPath):
                 neighbour.h = self.heuristic(neighbour.position, endNode.position)
                 neighbour.f = neighbour.g + neighbour.h
 
+        #self.timeElapsed = truncate((time.time() - self.timerStart) * 1000)
+        #avg = truncate(self.getAverage(PathType.AStar))
+
+        #self.computeAverage(self.timeElapsed, PathType.AStar)
+
+        #if self.timeElapsed > 0:
+        #    print("[A*] Elapsed: " + str(self.timeElapsed) +
+        #          "ms (Avg. " + str(avg) +
+        #          "ms) | Path Length: " + str(len(path)))
+
         # if computation is completed, traverse list (todo: heap)
         path = self.backTrace(currentNode)
-
-        self.timeElapsed = truncate((time.time() - self.timerStart) * 1000)
-        avg = truncate(self.getAverage(PathType.AStar))
-
-        self.computeAverage(self.timeElapsed, PathType.AStar)
-
-        if self.timeElapsed > 0:
-            print("[A*] Elapsed: " + str(self.timeElapsed) +
-                  "ms (Avg. " + str(avg) +
-                  "ms) | Path Length: " + str(len(path)))
-
         return path
-

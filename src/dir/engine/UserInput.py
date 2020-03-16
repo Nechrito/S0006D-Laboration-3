@@ -3,7 +3,6 @@ import sys
 import pygame
 
 from src.dir.engine.GameTime import GameTime
-from src.dir.pathfinding.PathManager import PathManager
 
 
 class UserInput:

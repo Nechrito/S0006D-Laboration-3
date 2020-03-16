@@ -17,6 +17,28 @@ class StateTransition:
             from dir.ai.behaviour.ExploreState import ExploreState
             entity.setState(ExploreState())
 
-        elif stateType == StateType.BuildState:
-            from dir.ai.behaviour.BuildingState import BuildingState
-            entity.setState(BuildingState())
+        elif stateType == StateType.ArtisanCraftsman:
+            from dir.ai.behaviour.artisan.CraftState import CraftState
+            entity.setState(CraftState())
+
+        elif stateType == StateType.ArtisanMiner:
+            from dir.ai.behaviour.artisan.MineState import MineState
+            entity.setState(MineState())
+
+        elif stateType == StateType.ArtisanSmelter:
+            from dir.ai.behaviour.artisan.SmeltState import SmeltState
+            entity.setState(SmeltState())
+
+        elif stateType == StateType.ArtisanSmith:
+            from dir.ai.behaviour.artisan.SmithState import SmithState
+            entity.setState(SmithState())
+
+    @classmethod
+    def create_instance(cls, class_name, instance_name):
+        count = 0
+        while True:
+            name = instance_name + str(count)
+            globals()[name] = class_name()
+            count += 1
+            print('Class instance: {}'.format(name))
+            yield True

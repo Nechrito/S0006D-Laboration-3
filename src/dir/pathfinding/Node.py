@@ -2,7 +2,6 @@ import pygame
 
 from src.Settings import SETTINGS
 from src.dir.math.Vector import vec2
-from src.dir.math.cMath import lerp, lerpColor
 
 
 class Node:
