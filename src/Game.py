@@ -1,19 +1,12 @@
-import random
-import threading
 from os import path
-from time import sleep
 
 import pygame
 import pygame.freetype
 
-from dir.ai.behaviour.GlobalState import GlobalState
-from dir.ai.behaviour.IdleState import IdleState
-from dir.ai.behaviour.artisan.CraftState import CraftState
-from dir.ai.behaviour.artisan.MineState import MineState
-from dir.ai.behaviour.artisan.SmeltState import SmeltState
-from dir.ai.behaviour.artisan.SmithState import SmithState
+from dir.ai.behaviour.generic.GlobalState import GlobalState
+from dir.ai.behaviour.generic.IdleState import IdleState
+from dir.engine.EntityManager import EntityManager
 from dir.engine.Map import Map
-from dir.engine.ParallelTask import ParallelTask
 from dir.environment.Camp import Camp
 from dir.environment.Item import Item
 from dir.environment.Tree import Tree
@@ -36,10 +29,6 @@ class Game:
     def __init__(self, directory, folder):
         self.directory = directory
         self.folder = folder
-
-        pygame.init()
-        pygame.mixer.init()
-        pygame.freetype.init()
 
         self.surface = pygame.display.set_mode((SETTINGS.SCREEN_WIDTH, SETTINGS.SCREEN_HEIGHT))
         self.renderer = Renderer(self.surface)
@@ -67,7 +56,7 @@ class Game:
 
         self.map = Map(self.getRealFilePath(SETTINGS.MAP_PATH), self.getRealFilePath(SETTINGS.MAP_REF))
 
-        self.fontSmall = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 12 // SETTINGS.SCREEN_WIDTH)
+        self.fontSmall = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 14 // SETTINGS.SCREEN_WIDTH)
         self.fontRegular = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 16 // SETTINGS.SCREEN_WIDTH)
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 18 // SETTINGS.SCREEN_WIDTH)
         self.fontBig = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
@@ -75,13 +64,12 @@ class Game:
         self.buildingImg = pygame.image.load(self.getRealFilePath(SETTINGS.BUILDING_IMG))
         self.buildingRect = self.buildingImg.get_rect()
 
-        ParallelTask.init()
-        Camp.init(vec2(1152, 256), self.buildingImg)
+        Camp.init(vec2(1056, 464), self.buildingImg)
 
         # scatter iron ores around map
         centreP = vec2(SETTINGS.MAP_WIDTH / 2, SETTINGS.MAP_HEIGHT / 2)
         maxDist = 48
-        maxIterations = 4
+        maxIterations = 6
         for i in range(60):
             Camp.items.append(Item(centreP.randomized(maxIterations, maxDist), ItemType.Ore))
 
@@ -92,8 +80,9 @@ class Game:
         self.hatguyImg = pygame.image.load(self.getRealFilePath(SETTINGS.HATGUY_IMG))
         self.senseiImg = pygame.image.load(self.getRealFilePath(SETTINGS.SENSEI_IMG))
 
-        self.entities = [ Entity(EntityType.Worker,   Camp.position, self.hatguyImg, IdleState(), GlobalState()),
-                          Entity(EntityType.Explorer, Camp.position, self.senseiImg, IdleState(), GlobalState()) ]
+        EntityManager.register(Entity(EntityType.Worker,     Camp.position, self.hatguyImg, IdleState(), GlobalState()))
+        EntityManager.register(Entity(EntityType.Explorer,   Camp.position, self.senseiImg, IdleState(), GlobalState()))
+        EntityManager.register(Entity(EntityType.Explorer,   Camp.position, self.senseiImg, IdleState(), GlobalState()))
 
         self.realCursorEnabled = False
         pygame.mouse.set_visible(self.realCursorEnabled)
@@ -126,46 +115,26 @@ class Game:
         else:
             CameraInstance.followTarget(Camp.position)
 
-        # fog of war
-       # ParallelTask.addTask(self.checkFOW, ())
         self.checkFOW()
+        EntityManager.update()
 
-        if Camp.woodCount / Camp.level == 4:
-            for entity in self.entities:
-                if entity.entityType == EntityType.Worker:
-                    rand = random.randint(1, 4)
-                    if rand == 1:
-                        #entity.setState(CraftState())
-                        pass
-                    elif rand == 2:
-                        entity.setState(MineState())
-                    elif rand == 3:
-                        entity.setState(SmeltState())
-                    elif rand == 4:
-                        entity.setState(SmithState())
+        if Camp.level < 5 and Camp.woodCount // Camp.level == 5:
 
-            oldLength = len(self.entities)
+            nextLevel = Camp.level + 1
 
-            if Camp.level + 1 == 2:
-                self.entities.append(Entity(EntityType.Craftsman, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
+            if nextLevel == 2:
+                EntityManager.register((Entity(EntityType.Craftsman, Camp.position.randomized(), self.hatguyImg, IdleState(), GlobalState())))
+            elif nextLevel == 3:
+                EntityManager.register((Entity(EntityType.Miner, Camp.position.randomized(), self.hatguyImg, IdleState(), GlobalState())))
+            elif nextLevel == 4:
+                EntityManager.register((Entity(EntityType.Smelter, Camp.position.randomized(), self.hatguyImg, IdleState(), GlobalState())))
+            elif nextLevel == 5:
+                EntityManager.register((Entity(EntityType.Smith, Camp.position.randomized(), self.hatguyImg, IdleState(), GlobalState())))
 
-            # will have to keep watch on the number here, might change this later on
-            if Camp.entitiesCount > 3:
-                self.entities.append(Entity(EntityType.Explorer, Camp.position, self.senseiImg, IdleState(), GlobalState()))
-                self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
-                self.entities.append(Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState()))
+            EntityManager.register((Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState())))
 
-            # as we may only produce up to 200, we need to check the amount of entities created
-            # not as if the game would be able to manage that many anyhow
-            newLength = len(self.entities)
-            deltaLength = newLength - oldLength
-            Camp.entitiesCount -= deltaLength
+            Camp.levelUp()
 
-            Camp.levelUp(self.entities)
-
-        # mouse relative coords
-        for agent in self.entities:
-            agent.update()
 
         # window title
         if not self.paused:
@@ -193,6 +162,7 @@ class Game:
 
         # draws the base image
         self.surface.blit(Camp.image, CameraInstance.centeredRect(Camp.rect))
+        #self.renderer.renderText("Camp (" + str(Camp.level) + ")", Camp.position, self.fontBig)
         pygame.draw.circle(self.surface, (255, 255, 255), CameraInstance.centeredVec(Camp.position).toInt.tuple, int(Camp.radius), 1)
 
         # draws the relative cursor with it's indicating neighbours
@@ -211,7 +181,7 @@ class Game:
 
                 self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, self.relative.tuple, (37, 37, 38), 200)
 
-        for entity in self.entities:
+        for entity in EntityManager.entities:
             # draw entity
             self.surface.blit(entity.image, CameraInstance.centeredSprite(entity))
 
@@ -235,21 +205,21 @@ class Game:
         # draw information
         self.renderer.append("Camp Level: " + str(int(Camp.level)))
         self.renderer.append("Wood: " + str(Camp.woodCount))
-        self.renderer.append("Charcoal: " + str(Camp.charcoalCount))
         self.renderer.append("IronOres: " + str(Camp.ironOreCount))
-        self.renderer.append("IronIngots: " + str(Camp.ironIngotCount))
-        self.renderer.append("Entities: " + str(len(self.entities)) + "/200")
-        self.renderer.append("Items to be collected: " + str(len(Camp.items)))
+        self.renderer.append("IronIngots: " + str(Camp.ironIngotCount) + "/20")
+        self.renderer.append("Soldiers: " + str(Camp.soldierCount) + "/20")
+        self.renderer.append("Charcoal: " + str(Camp.charcoalCount) + "/200")
 
-        centered = vec2(SETTINGS.SCREEN_WIDTH * 0.10, SETTINGS.SCREEN_HEIGHT * 0.10)
+        centered = vec2(SETTINGS.SCREEN_WIDTH * 0.10, SETTINGS.SCREEN_HEIGHT * 0.05)
         self.renderer.renderRectToScreen((150, 300), centered, (37, 37, 38), 200)
         self.renderer.renderTexts(centered, self.fontBold, (255, 255, 255))
 
         self.clock.tick(SETTINGS.MAX_FPS)
 
     def checkFOW(self):
+
         # Computes the FOG OF WAR
-        for agent in self.entities:
+        for agent in EntityManager.entities:
             if agent.entityType != EntityType.Explorer:
                 searchRadius = 3
             else:
@@ -259,18 +229,16 @@ class Game:
 
             i = 0
             while node and i <= searchRadius:
-                i += 1
-                #if not node.isVisible:
-                    #SETTINGS.activateNode(node)
 
                 for neighbour in node.neighbours:
                     if neighbour and neighbour.parent:
                         neighbourNode = SETTINGS.getNode(neighbour, False, False)
                         if neighbourNode and not neighbourNode.isVisible:
-                            SETTINGS.activateNode(neighbourNode)
+                            neighbourNode.isVisible = True
                             node = neighbourNode
                     else:
                         node = node.parent
+                i += 1
 
     def onClick(self):
         node = SETTINGS.getNode(self.relative, False, False)
@@ -278,6 +246,6 @@ class Game:
             node.position.log()
             if not node.isWalkable:
                 return
-            for entity in self.entities:
+            for entity in EntityManager.entities:
                 if entity.entityType == EntityType.Explorer:
                     entity.moveTo(node.position.randomized())

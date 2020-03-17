@@ -10,9 +10,12 @@ from enums.EntityType import EntityType
 
 class IdleState(IState):
     def __init__(self):
-        pass
+        self.lastMoveTick = 0
 
     def enter(self, entity):
+        pass
+
+    def handleMessage(self, telegram):
         pass
 
     def execute(self, entity):
@@ -37,6 +40,12 @@ class IdleState(IState):
 
         elif entity.entityType == EntityType.Smith:
             StateTransition.setState(entity, StateType.ArtisanSmith)
+
+        else:
+            # move around once in a while
+            if time.time() - self.lastMoveTick > 1500:
+                self.lastMoveTick = time.time()
+                entity.moveTo(entity.position.randomized())
 
     def exit(self, entity):
         pass

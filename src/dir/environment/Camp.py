@@ -3,6 +3,9 @@ from __future__ import annotations
 
 # Conditional import (hinting, avoids circular imports)
 from typing import TYPE_CHECKING
+
+from dir.engine.EntityManager import EntityManager
+
 if TYPE_CHECKING:
     from dir.environment.Building import Building
     from dir.environment.Item import Item
@@ -25,7 +28,7 @@ from enums.StateType import StateType
 class Camp:
 
     level = 1
-    radius = 250
+    radius = 300
     position: vec2
     image: pygame.Surface
     imageScale: vec2
@@ -57,24 +60,29 @@ class Camp:
     @classmethod
     def init(cls, campPos: vec2, image):
         cls.position = campPos
-        cls.imageScale = vec2(32, 32)
-        cls.image = image
+
+        heightDiff = 0.80
+        size = 64
+        cls.imageScale = vec2(size * heightDiff, size)
+        cls.image = pygame.transform.scale(image, cls.imageScale.toInt.tuple)
         cls.rect = cls.image.get_rect()
         cls.rect.center = cls.position.tuple
         cls.lastLevelUpTick = time.time()
 
     @classmethod
-    def levelUp(cls, entities):
+    def levelUp(cls):
+
         cls.level += 1
         cls.radius *= 1.30
         cls.lastLevelUpTick = GameTime.ticks
-        cls.imageScale = vec2(32, 32) * (cls.level + 0.5)
+
+        cls.imageScale *= 1.30
         cls.image = pygame.transform.scale(cls.image, cls.imageScale.toInt.tuple)
         cls.rect = cls.image.get_rect()
         cls.rect.center = cls.position.tuple
 
         # for the explorers which went into idle, get back into exploring!
-        for entity in entities:
+        for entity in EntityManager.entities:
             if entity.entityType == EntityType.Explorer:
                 StateTransition.setState(entity, StateType.ExploreState)
 

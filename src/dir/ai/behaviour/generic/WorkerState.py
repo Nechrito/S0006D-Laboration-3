@@ -17,6 +17,9 @@ class WorkerState(IState):
     def enter(self, entity):
         Message.sendConsole(entity, "Sure could make use of more wood, will fetch some")
 
+    def handleMessage(self, telegram):
+        pass
+
     def execute(self, entity):
         # update selected tree
         if self.selectedTree:
@@ -55,7 +58,8 @@ class WorkerState(IState):
                     Camp.ironOreCount += 1
 
                 if self.selectedItem:
-                    Camp.items.remove(self.selectedItem)
+                    if self.selectedItem in Camp.items:
+                        Camp.items.remove(self.selectedItem)
                     self.selectedItem = None
 
         # move towards the item to then pick it up
@@ -79,7 +83,7 @@ class WorkerState(IState):
                 if node:
                     node.images.pop(0)
 
-                self.selectedItem = Item(self.selectedTree.position, ItemType.Wood)
+                self.selectedItem = Item(self.selectedTree.position.randomized(), ItemType.Wood)
                 Camp.items.append(self.selectedItem)
 
                 self.selectedTree = None
@@ -101,12 +105,13 @@ class WorkerState(IState):
             if tree.isTarget:
                 continue
 
-            treeNode = SETTINGS.getNode(tree.position)
+            treeNode = SETTINGS.getNode(tree.position, False, False)
             if not treeNode or not treeNode.isVisible:
                 continue
 
             distTreeToEnt = tree.position.distance(Camp.position)
-            if distTreeToEnt < distToEntCached or not self.selectedTree:
+
+            if distTreeToEnt < distToEntCached or not selectedTree:
                 distToEntCached = distTreeToEnt
                 selectedTree = tree
 
@@ -123,7 +128,7 @@ class WorkerState(IState):
         for item in Camp.items:
             if not item.isTarget and not item.isPickedUp:
 
-                itemNode = SETTINGS.getNode(item.position)
+                itemNode = SETTINGS.getNode(item.position, False, False)
                 if not itemNode or not itemNode.isVisible:
                     continue
 

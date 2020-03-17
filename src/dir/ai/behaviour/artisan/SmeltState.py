@@ -16,6 +16,9 @@ class SmeltState(IState):
         entity.setType(EntityType.Smelter)
         Message.sendConsole(entity, "I wonder how many ingots I can produce today")
 
+    def handleMessage(self, telegram):
+        pass
+
     def execute(self, entity):
         if not self.selected:
             for building in Camp.buildings:

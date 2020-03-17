@@ -7,7 +7,7 @@ from enums.ItemType import ItemType
 class Item:
     position: vec2
 
-    def __init__(self, spawnPoint, itemType: ItemType):
+    def __init__(self, spawnPoint: vec2, itemType: ItemType):
         self.position = spawnPoint
         self.itemType = itemType
         self.name = str(self.itemType).replace("ItemType.", "")
@@ -32,6 +32,6 @@ class Item:
         if not self.isProducing:
             return
 
-        if self.timerStart != 0 and time.time() - self.timerStart > 0.5: # self.duration
+        if self.timerStart != 0 and time.time() - self.timerStart > self.duration:
             self.isProducing = False
             print("Created: " + self.name)

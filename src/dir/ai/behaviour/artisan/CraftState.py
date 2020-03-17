@@ -16,6 +16,9 @@ class CraftState(IState):
         entity.setType(EntityType.Craftsman)
         Message.sendConsole(entity, "What to build today..")
 
+    def handleMessage(self, telegram):
+        pass
+
     def execute(self, entity):
         if self.selected:
 
@@ -67,10 +70,11 @@ class CraftState(IState):
 
             # create a new building at camp, todo: code requires a cleanup in future
             dist = (Camp.radius // 16)
-            building = Building(Camp.position.randomized(10, dist // 3, dist // 4), buildingType)
+            building = Building(Camp.position.randomized(10, dist, dist // 2), buildingType)
             if building.position:
                 self.selected = building
                 self.selected.startBuilding()
+
 
     def exit(self, entity):
         pass

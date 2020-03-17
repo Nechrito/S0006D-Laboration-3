@@ -12,6 +12,10 @@ class StateMachine:
         self.currentState.execute(self.owner)
         self.globalState.execute(self.owner)
 
+    def handleMessage(self, telegram):
+        self.currentState.handleMessage(telegram)
+        self.globalState.handleMessage(telegram)
+
     def setLockedState(self, value):
         self.locked = value
 

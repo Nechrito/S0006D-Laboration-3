@@ -12,6 +12,9 @@ class GlobalState(IState):
     def enter(self, entity: Entity):
         pass
 
+    def handleMessage(self, telegram):
+        pass
+
     def execute(self, entity: Entity):
         self.lastTick = GameTime.ticks
         pass

@@ -16,6 +16,9 @@ class MineState(IState):
         entity.setType(EntityType.Miner)
         Message.sendConsole(entity, "Headin' over to the mines")
 
+    def handleMessage(self, telegram):
+        pass
+
     def execute(self, entity):
         if not self.selected:
             for building in Camp.buildings:

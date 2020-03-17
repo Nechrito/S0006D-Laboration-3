@@ -6,15 +6,15 @@ class StateTransition:
     @classmethod
     def setState(cls, entity, stateType):
         if stateType == StateType.IdleState:
-            from dir.ai.behaviour.IdleState import IdleState
+            from dir.ai.behaviour.generic.IdleState import IdleState
             entity.setState(IdleState())
 
         elif stateType == StateType.WorkState:
-            from dir.ai.behaviour.WorkerState import WorkerState
+            from dir.ai.behaviour.generic.WorkerState import WorkerState
             entity.setState(WorkerState())
 
         elif stateType == StateType.ExploreState:
-            from dir.ai.behaviour.ExploreState import ExploreState
+            from dir.ai.behaviour.generic.ExploreState import ExploreState
             entity.setState(ExploreState())
 
         elif stateType == StateType.ArtisanCraftsman:

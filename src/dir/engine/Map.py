@@ -2,6 +2,8 @@ import random
 
 import pytmx
 import time
+
+from dir.engine.TaskManager import TaskManager
 from src.Settings import *
 from src.dir.math.Vector import vec2
 from src.dir.math.cMath import truncate
@@ -20,11 +22,13 @@ class Map:
 
         self.start = vec2(0, 0)
         self.end = vec2(0, 0)
+
         self.loadPath()
+        #ParallelTask.addTask(self.loadPath, (), 1)
 
         if reference:
             self.loadReferenceMap(reference)
-
+            #ParallelTask.addTask(self.loadReferenceMap, reference, 5)
 
         col = 0
         for x in SETTINGS.Graph:

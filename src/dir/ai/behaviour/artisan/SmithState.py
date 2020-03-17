@@ -16,6 +16,9 @@ class SmithState(IState):
         entity.setType(EntityType.Smith)
         Message.sendConsole(entity, "I wonder how many swords I can produce today")
 
+    def handleMessage(self, telegram):
+        pass
+
     def execute(self, entity):
         if not self.selected:
             for building in Camp.buildings:

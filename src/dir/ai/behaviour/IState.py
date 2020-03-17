@@ -8,6 +8,10 @@ class IState(object, metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
+    def handleMessage(self, telegram):
+        pass
+
+    @abc.abstractmethod
     def execute(self, entity):
         pass
 

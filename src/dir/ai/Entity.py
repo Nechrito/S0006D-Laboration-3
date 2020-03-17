@@ -2,6 +2,8 @@ import random
 import time
 
 from dir.ai.StateMachine import StateMachine
+from dir.ai.Telegram import Telegram
+from dir.engine.TaskManager import TaskManager
 from enums.EntityType import EntityType
 from src.Settings import *
 from src.dir.engine.GameTime import GameTime
@@ -63,7 +65,7 @@ class Entity:
 
         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)
         if not temp or len(temp) <= 1:
-            temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(3), target.randomized(6, 7))
+            temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(2), target.randomized(3, 7))
 
             if not temp or len(temp) <= 1:
                 self.isComputingPath = False
@@ -72,6 +74,9 @@ class Entity:
         self.isComputingPath = False
         self.waypoints = temp
         self.nextNode = self.waypoints[1].position
+
+    def handleMessage(self, telegram: Telegram):
+        self.stateMachine.handleMessage(telegram)
 
     def setType(self, entityType):
         self.entityType = entityType
