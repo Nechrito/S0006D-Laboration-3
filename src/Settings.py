@@ -90,16 +90,10 @@ class SETTINGS:
 
     @classmethod
     def addNode(cls, node):
-        cached = cls.getNode(node.position, False, False)
-        if not cached or type(cached) is DynamicGraph:  # add to graph if not yet added
-            cached = cls.Graph[int(node.position.LocalY - 1)][int(node.position.LocalX - 1)] = node
-
-        if len(cached.neighbours) <= 0:
-            cached.addNeighbours()
-
+        cached = cls.Graph[int(node.position.LocalY - 1)][int(node.position.LocalX - 1)] = node
+        cached.addNeighbours()
         if cached.position not in cls.Coordinates:
             cls.Coordinates.append(cached)
-
         return cached
 
     @classmethod
@@ -109,16 +103,11 @@ class SETTINGS:
             cached.isVisible = True
 
     @classmethod
-    def configureNode(cls, position, enabled, moveSpeed=-1.0):
+    def configureNode(cls, position, enabled, moveSpeed=1.0):
         node = cls.getNode(position, False)
         if node:
-            if moveSpeed != -1.0:
-                node.moveSpeed = moveSpeed
-
+            node.moveSpeed = moveSpeed
             node.isWalkable = enabled
-        else:
-            from src.dir.pathfinding.Node import Node
-            cls.addNode(Node(position))
 
     @classmethod
     def closestNode(cls, target, allowInstant=True, allowIterate=True):

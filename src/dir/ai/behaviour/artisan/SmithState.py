@@ -10,10 +10,11 @@ from dir.ai.Message import Message
 class SmithState(IState):
     def __init__(self):
         self.selected = None
+        self.selectedPos = None
         self.reached = False
 
     def enter(self, entity):
-        entity.setType(EntityType.Smith)
+        entity.setType(EntityType.Miner)
         Message.sendConsole(entity, "I wonder how many swords I can produce today")
 
     def handleMessage(self, telegram):
@@ -22,12 +23,13 @@ class SmithState(IState):
     def execute(self, entity):
         if not self.selected:
             for building in Camp.buildings:
-                if building.buildingType != BuildingType.Smith:
+                if building.buildingType != BuildingType.Smelt:
                     continue
 
                 if not building.owner:
                     building.owner = entity
                     self.selected = building
+                    self.selectedPos = self.selected.position.randomized()
                     break
 
         if not self.selected:
@@ -40,10 +42,10 @@ class SmithState(IState):
             else:
                 self.selected.startBuilding()
 
-        elif self.selected and entity.position.distance(self.selected.position) <= entity.radius:
+        elif self.selected and entity.position.distance(self.selectedPos) <= entity.radius:
             self.reached = True
         elif self.selected:
-            entity.moveTo(self.selected.position)
+            entity.moveTo(self.selectedPos)
 
     def exit(self, entity):
         pass

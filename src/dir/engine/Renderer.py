@@ -20,9 +20,8 @@ class Renderer:
     def renderTile(self, node: Node):
         for image in node.images:
             self.surface.blit(image, CameraInstance.centeredRect(node.rect))
-        #if not node.isVisible:
-            #self.renderRect(SETTINGS.TILE_SIZE.tuple, node.position, (52, 52, 52), 230)
 
+    # doesn't follow camera like most else
     def renderRectToScreen(self, size, pos: vec2, color=(255, 255, 255), alpha=128):
         surface = pygame.Surface(size)
         surface.set_alpha(alpha)
@@ -43,16 +42,16 @@ class Renderer:
             for y in x:
                 pygame.draw.rect(self.surface, (52, 52, 52), CameraInstance.centeredRect(y.rect))  # , 1
 
-    def renderGrid(self):
+    def renderGrid(self, color=(102, 227, 164)):
         tWidth = SETTINGS.TILE_SIZE[0]
         tHeight = SETTINGS.TILE_SIZE[1]
         sWidth = (SETTINGS.MAP_WIDTH - tWidth)
         sHeight = (SETTINGS.MAP_HEIGHT - tHeight)
 
         for x in fori(tWidth, sWidth, tWidth):
-            self.renderLine(vec2(x, tHeight), vec2(x, sHeight))
+            self.renderLine(vec2(x, tHeight), vec2(x, sHeight), color)
         for y in fori(tHeight, sHeight, tHeight):
-            self.renderLine(vec2(tWidth, y), vec2(sWidth, y))
+            self.renderLine(vec2(tWidth, y), vec2(sWidth, y), color)
 
     def renderLine(self, start: vec2, end: vec2, color=(255, 255, 255), width=1):
         v1 = vec2(start) + CameraInstance.center - vec2(8)

@@ -10,10 +10,11 @@ from dir.ai.Message import Message
 class SmeltState(IState):
     def __init__(self):
         self.selected = None
+        self.selectedPos = None
         self.reached = False
 
     def enter(self, entity):
-        entity.setType(EntityType.Smelter)
+        entity.setType(EntityType.Miner)
         Message.sendConsole(entity, "I wonder how many ingots I can produce today")
 
     def handleMessage(self, telegram):
@@ -28,6 +29,7 @@ class SmeltState(IState):
                 if not building.owner:
                     building.owner = entity
                     self.selected = building
+                    self.selectedPos = self.selected.position.randomized()
                     break
 
         if not self.selected:
@@ -40,10 +42,10 @@ class SmeltState(IState):
             else:
                 self.selected.startBuilding()
 
-        elif self.selected and entity.position.distance(self.selected.position) <= entity.radius:
+        elif self.selected and entity.position.distance(self.selectedPos) <= entity.radius:
             self.reached = True
         elif self.selected:
-            entity.moveTo(self.selected.position)
+            entity.moveTo(self.selectedPos)
 
     def exit(self, entity):
         pass

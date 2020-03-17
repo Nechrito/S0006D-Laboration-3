@@ -58,7 +58,7 @@ class Building:
         if self.item:
             return
 
-        self.item = Item(self.position, itemType)
+        self.item = Item(self.position.randomized(maxDist=3), itemType)
         self.item.startProducing()
 
     def update(self):

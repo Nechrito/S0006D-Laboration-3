@@ -22,6 +22,7 @@ class ExploreState(IState):
         self.source = None
         self.lastCheckTick = 0
         self.moveRate = 0
+        self.threshold = 0.15
 
         #self.pool = ThreadPool(processes=1)
         #self.async_result = None
@@ -34,7 +35,7 @@ class ExploreState(IState):
         if self.source and telegram.source != self.source:
             self.avoidableTarget = telegram.message
 
-            if self.currentTarget and self.currentTarget.distance(self.avoidableTarget) <= Camp.radius * 0.50:
+            if self.currentTarget and self.currentTarget.distance(self.avoidableTarget) <= Camp.radius * self.threshold:
                 self.currentTarget = None
 
     def execute(self, entity):
@@ -49,7 +50,7 @@ class ExploreState(IState):
             self.lastCheckTick = time.time()
             self.getUnmarkedNode(entity)
             self.avoidableTarget = None
-            self.moveRate = random.randrange(500, 2000) / 1000
+            self.moveRate = random.randrange(250, 750) / 1000
 
             # let all other Explorers know where I'm headed, so they don't walk there aswell
             EntityManager.sendMessage(Telegram(entity, EntityType.Explorer, MessageType.PositionChange, self.currentTarget))
@@ -67,11 +68,12 @@ class ExploreState(IState):
                     continue
 
                 currentDist = node.position.distance(Camp.position)
+                if currentDist < Camp.radius or closest is None:
+                    if currentDist > distance != 0:
+                        continue
 
-                # the min check makes sure multiple explorers don't trace after eachother
-                if (currentDist <= distance and currentDist < Camp.radius) or distance == 0:
                     if self.avoidableTarget:
-                        if self.avoidableTarget.distance(node.position) <= Camp.radius * 0.25:
+                        if self.avoidableTarget.distance(node.position) < Camp.radius * self.threshold:
                             continue
 
                     distance = currentDist

@@ -70,7 +70,7 @@ class CraftState(IState):
 
             # create a new building at camp, todo: code requires a cleanup in future
             dist = (Camp.radius // 16)
-            building = Building(Camp.position.randomized(10, dist, dist // 2), buildingType)
+            building = Building(Camp.position.randomized(iterations=10, maxDist=dist * 0.75, minDist=dist * 0.25), buildingType)
             if building.position:
                 self.selected = building
                 self.selected.startBuilding()

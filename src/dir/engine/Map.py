@@ -61,12 +61,6 @@ class Map:
 
                     # NOTE: B M T G V
                     if char == 'T':  # TREE
-                        i = random.randint(1, 2)
-                        if i == 1:
-                            treeImg = SETTINGS.TILE_T1
-                        else:
-                            treeImg = SETTINGS.TILE_T2
-                        nodeObj.addImage(treeImg)
                         SETTINGS.TILES_T.append(nodeObj)
                     if char == 'M':  # GROUND
                         nodeObj.addImage(SETTINGS.TILE_M)
@@ -86,7 +80,9 @@ class Map:
                         if char == 'G':
                             moveSpeed = 0.5
 
-                        SETTINGS.configureNode(nodeObj.position, False, moveSpeed)
-
+                        nodeRaw = SETTINGS.getNode(nodeObj.position, False, False)
+                        if nodeRaw:
+                            nodeRaw.moveSpeed = moveSpeed
+                            nodeRaw.isWalkable = False
                     x += 1
                 y += 1

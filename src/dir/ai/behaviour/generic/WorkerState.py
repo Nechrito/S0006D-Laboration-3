@@ -79,11 +79,7 @@ class WorkerState(IState):
             if self.selectedTree in Camp.trees:
                 Camp.trees.remove(self.selectedTree)
 
-                node = SETTINGS.getNode(self.selectedTree.position, False)
-                if node:
-                    node.images.pop(0)
-
-                self.selectedItem = Item(self.selectedTree.position.randomized(), ItemType.Wood)
+                self.selectedItem = Item(self.selectedTree.position.randomized(5, 3), ItemType.Wood)
                 Camp.items.append(self.selectedItem)
 
                 self.selectedTree = None

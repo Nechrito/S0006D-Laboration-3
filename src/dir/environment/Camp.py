@@ -28,6 +28,7 @@ from enums.StateType import StateType
 class Camp:
 
     level = 1
+    maxLevel = 6
     radius = 300
     position: vec2
     image: pygame.Surface
@@ -61,9 +62,7 @@ class Camp:
     def init(cls, campPos: vec2, image):
         cls.position = campPos
 
-        heightDiff = 0.80
-        size = 64
-        cls.imageScale = vec2(size * heightDiff, size)
+        cls.imageScale = vec2(70, 88) # could do image.get_width() / height() aswell but can't be arsed right now
         cls.image = pygame.transform.scale(image, cls.imageScale.toInt.tuple)
         cls.rect = cls.image.get_rect()
         cls.rect.center = cls.position.tuple
@@ -73,10 +72,13 @@ class Camp:
     def levelUp(cls):
 
         cls.level += 1
-        cls.radius *= 1.30
+        if cls.level >= cls.maxLevel:
+            cls.radius = 9999
+        else:
+            cls.radius *= 1.30
         cls.lastLevelUpTick = GameTime.ticks
 
-        cls.imageScale *= 1.30
+        cls.imageScale += 6
         cls.image = pygame.transform.scale(cls.image, cls.imageScale.toInt.tuple)
         cls.rect = cls.image.get_rect()
         cls.rect.center = cls.position.tuple
