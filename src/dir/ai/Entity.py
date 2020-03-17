@@ -62,13 +62,12 @@ class Entity:
 
     def moveTo(self, target: vec2):
         self.isComputingPath = True
-
         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)
         if not temp or len(temp) <= 1:
-            temp = self.pathfinder.requestPathCached(self.waypoints, self.position.randomized(3), target.randomized(3, 7))
+
+            temp = self.pathfinder.requestPath(self.position.randomized(3), target.randomized(3, 7))
 
             if not temp or len(temp) <= 1:
-                self.isComputingPath = False
                 return
 
         self.isComputingPath = False

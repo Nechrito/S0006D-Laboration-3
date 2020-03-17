@@ -28,9 +28,6 @@ class UserInput:
                     pygame.mouse.set_visible(self.instance.realCursorEnabled)
                     pygame.event.set_grab(not self.instance.realCursorEnabled)
 
-
-
-
                 # Pause game
                 if event.key == pygame.K_SPACE:
                     if self.instance.paused:
@@ -42,8 +39,8 @@ class UserInput:
 
                 # Speed up
                 if not self.instance.paused and event.key == pygame.K_LSHIFT:
-                    self.timeScaleCurrent = GameTime.setScale(self.timeScaleCurrent * 2)
+                    self.timeScaleCurrent = GameTime.setScale(self.timeScaleCurrent + (1 if self.timeScaleCurrent == 1 else 2)) # i hate odd numbers lol
                 # Slow down
                 if not self.instance.paused and event.key == pygame.K_LCTRL:
-                    self.timeScaleCurrent = GameTime.setScale(self.timeScaleCurrent / 2)
+                    self.timeScaleCurrent = GameTime.setScale(max(1, self.timeScaleCurrent - 2))
 

@@ -7,7 +7,6 @@ from dir.ai.StateTransition import StateTransition
 from dir.ai.Telegram import Telegram
 from dir.ai.behaviour.IState import IState
 from dir.engine.EntityManager import EntityManager
-from dir.math.Vector import vec2
 from enums.EntityType import EntityType
 from enums.MessageType import MessageType
 from enums.StateType import StateType
@@ -40,15 +39,15 @@ class ExploreState(IState):
 
     def execute(self, entity):
 
-        if self.currentTarget is not None:
-            entity.moveTo(self.currentTarget) # actually crashed for being None wtf
+        if self.currentTarget:
+            entity.moveTo(self.currentTarget)
 
             if self.currentTarget.distance(entity.position) <= entity.radius:
                 self.currentTarget = None
 
         elif time.time() - self.lastCheckTick >= self.moveRate: # seconds
             self.lastCheckTick = time.time()
-            self.getUnmarkedNode(entity)
+            #self.getUnmarkedNode(entity)
             self.avoidableTarget = None
             self.moveRate = random.randrange(250, 750) / 1000
 
@@ -59,12 +58,11 @@ class ExploreState(IState):
 
         closest = None
         distance = 0
-
         for i in SETTINGS.Graph:
             for node in i:
                 # Could perform class type Node check, but might result in circular import
                 # this is fine though, Graph wont contain anything else
-                if type(node) == DynamicGraph or node.isVisible or not node.isWalkable:
+                if node is None or not node or type(node) == DynamicGraph or node.isVisible or not node.isWalkable:
                     continue
 
                 currentDist = node.position.distance(Camp.position)
@@ -79,12 +77,8 @@ class ExploreState(IState):
                     distance = currentDist
                     closest = node
 
-        if closest is not None:
-            temp = SETTINGS.getNode(closest.position, False)
-            if not temp:
-                self.avoidableTarget = closest.position
-            else:
-                self.currentTarget = temp.position
+        if closest:
+            self.currentTarget = closest.position
         else:
             StateTransition.setState(entity, StateType.IdleState)
 

@@ -14,7 +14,6 @@ class vec2:
         else:
             self.X = X
             self.Y = Y
-        self.parent = None # to ease the FOW iteration
 
     def Local(self):
         return vec2(self.LocalX, self.LocalY)

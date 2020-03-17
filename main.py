@@ -33,7 +33,7 @@ if __name__ == "__main__":
     while True:
         # Lessen CPU usage of the app
         if not pygame.key.get_focused():
-            pygame.time.wait(100)
+            pygame.time.wait(10)
 
         # Core
         GameTime.updateTicks()

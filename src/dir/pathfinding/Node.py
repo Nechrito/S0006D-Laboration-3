@@ -27,8 +27,6 @@ class Node:
         self.neighbours = []
 
     def addNeighbours(self):
-        if 0 < self.position.X < SETTINGS.MAP_WIDTH - SETTINGS.TILE_SIZE[0] and 0 < self.position.Y < SETTINGS.MAP_HEIGHT - SETTINGS.TILE_SIZE[1]:
-            self.isWalkable = True
 
         self.neighbours.clear()
 
@@ -36,17 +34,19 @@ class Node:
                     vec2(1, 1), vec2(-1, 1), vec2(1, -1), vec2(-1, -1)]  # Diagonal
 
         for direction in adjacent:
-            neighbour = self.position + vec2(direction.X * SETTINGS.TILE_SIZE[0], direction.Y * SETTINGS.TILE_SIZE[1])
 
-            if 0 < neighbour.X < SETTINGS.MAP_WIDTH - SETTINGS.TILE_SIZE[0] and 0 < neighbour.Y < SETTINGS.MAP_HEIGHT - SETTINGS.TILE_SIZE[1]:
-                neighbour.parent = self
-                self.neighbours.append(neighbour)
+            neighbour = self.position + vec2(direction.X * 16, direction.Y * 16)
+            node = SETTINGS.getNode(neighbour, False, False)
 
-    def __getitem__(self, item):
-        if item == 0:
-            return self.position.X
-        if item == 1:
-            return self.position.Y
+            if node:
+                # node.parent = self
+                self.neighbours.append(node)
+
+    #def __getitem__(self, item):
+    #    if item == 0:
+    #        return self.position.X
+    #    if item == 1:
+    #        return self.position.Y
 
     def addImage(self, img):
         self.images = [img] + self.images

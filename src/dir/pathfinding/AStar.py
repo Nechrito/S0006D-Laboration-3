@@ -39,7 +39,7 @@ class AStar(IPath):
                     currentIndex = index
 
             openList.pop(currentIndex)
-            closedList.append(currentNode.position)
+            closedList.append(currentNode)
 
             if not currentNode.isWalkable:
                 continue
@@ -48,20 +48,19 @@ class AStar(IPath):
             if currentNode == endNode:
                 break
 
-            for pos in currentNode.neighbours:
-
-                if pos in closedList:
+            for temp in currentNode.neighbours:
+                if not temp:
                     continue
 
-                neighbour = SETTINGS.getNode(pos)
+                neighbour = SETTINGS.getNode(temp.position)
+
+                if neighbour in closedList:
+                    continue
 
                 if not neighbour or not neighbour.isWalkable:
                     continue
 
                 neighbour.parent = currentNode
-
-                if neighbour not in self.childNodes:
-                    self.childNodes.append(neighbour)
 
                 cost = currentNode.g + self.getCost(neighbour, currentNode)
 
@@ -75,6 +74,7 @@ class AStar(IPath):
                 neighbour.h = self.heuristic(neighbour.position, endNode.position)
                 neighbour.f = neighbour.g + neighbour.h
 
+        print(str(len(closedList)) + " | " + str(len(openList)))
         #self.timeElapsed = truncate((time.time() - self.timerStart) * 1000)
         #avg = truncate(self.getAverage(PathType.AStar))
 
@@ -86,5 +86,7 @@ class AStar(IPath):
         #          "ms) | Path Length: " + str(len(path)))
 
         # if computation is completed, traverse list (todo: heap)
-        path = self.backTrace(currentNode)
-        return path
+        if currentNode:
+            path = self.backTrace(currentNode)
+            return path
+        return None

@@ -18,6 +18,8 @@ class Map:
 
         mapWidth = self.tmx.width * self.tmx.tilewidth
         mapHeight = self.tmx.height * self.tmx.tileheight
+        #print(str(self.tmx.width))
+        #print(str(self.tmx.height))
         SETTINGS.configure(mapWidth, mapHeight)
 
         self.start = vec2(0, 0)
@@ -30,9 +32,17 @@ class Map:
             self.loadReferenceMap(reference)
             #ParallelTask.addTask(self.loadReferenceMap, reference, 5)
 
+        for i in SETTINGS.Graph:
+            for j in i:
+                if j:
+                    node = SETTINGS.getNode(j.position, False, False)
+                    if node:
+                        j.addNeighbours()
+                        node.addNeighbours()
+
         col = 0
-        for x in SETTINGS.Graph:
-            print(str(col) + " " + str(x))
+        for i in SETTINGS.Graph:
+            print(str(col) + " " + str(i))
             col += 1
 
         timeElapsed = time.time() - startTime
@@ -50,14 +60,21 @@ class Map:
 
     def loadReferenceMap(self, filename):
         with open(filename, 'r') as file:
-            lines = file.readlines()[:-1]
-            y = 1
+            lines = file.readlines()
+
+            y = 0
             for line in lines:
-                x = 1
-                line = line[:-1]
+                y += 1
+
+                x = 0
                 for char in line:
+                    x += 1
+
                     position = vec2(x * SETTINGS.TILE_SIZE[0], y * SETTINGS.TILE_SIZE[1])
                     nodeObj = SETTINGS.addNode(Node(position))
+
+                    if not nodeObj:
+                        continue
 
                     # NOTE: B M T G V
                     if char == 'T':  # TREE
@@ -69,6 +86,11 @@ class Map:
                         nodeObj.addImage(SETTINGS.TILE_B)
                         SETTINGS.TILES_B.append(nodeObj)
                     if char == 'G':  # WETLAND
+
+                        nodeRaw = SETTINGS.getNode(nodeObj.position, False, False)
+                        if nodeRaw:
+                            nodeRaw.moveSpeed = 0.50
+
                         nodeObj.addImage(SETTINGS.TILE_G)
                         SETTINGS.TILES_G.append(nodeObj)
                     if char == 'V':  # WATER
@@ -76,13 +98,6 @@ class Map:
                         SETTINGS.TILES_V.append(nodeObj)
 
                     if char != 'M' and char != 'G' and char != 'T':
-                        moveSpeed = 1.0
-                        if char == 'G':
-                            moveSpeed = 0.5
-
                         nodeRaw = SETTINGS.getNode(nodeObj.position, False, False)
                         if nodeRaw:
-                            nodeRaw.moveSpeed = moveSpeed
                             nodeRaw.isWalkable = False
-                    x += 1
-                y += 1

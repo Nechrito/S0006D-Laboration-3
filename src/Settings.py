@@ -90,11 +90,16 @@ class SETTINGS:
 
     @classmethod
     def addNode(cls, node):
-        cached = cls.Graph[int(node.position.LocalY - 1)][int(node.position.LocalX - 1)] = node
-        cached.addNeighbours()
-        if cached.position not in cls.Coordinates:
-            cls.Coordinates.append(cached)
-        return cached
+        localX = int(node.position.LocalX - 1)
+        localY = int(node.position.LocalY - 1)
+        if localX <= 0 or localX >= 100 or localY <= 0 or localY >= 100:
+            cls.Graph[localY][localX] = None
+            return None
+        else:
+            cached = cls.Graph[localY][localX] = node
+            if cached.position not in cls.Coordinates:
+                cls.Coordinates.append(cached)
+            return cached
 
     @classmethod
     def activateNode(cls, node):

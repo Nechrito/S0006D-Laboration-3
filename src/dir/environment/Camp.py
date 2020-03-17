@@ -4,6 +4,7 @@ from __future__ import annotations
 # Conditional import (hinting, avoids circular imports)
 from typing import TYPE_CHECKING
 
+from Settings import SETTINGS
 from dir.engine.EntityManager import EntityManager
 
 if TYPE_CHECKING:
@@ -28,7 +29,7 @@ from enums.StateType import StateType
 class Camp:
 
     level = 1
-    maxLevel = 6
+    maxLevel = 5
     radius = 300
     position: vec2
     image: pygame.Surface
@@ -73,7 +74,7 @@ class Camp:
 
         cls.level += 1
         if cls.level >= cls.maxLevel:
-            cls.radius = 9999
+            cls.radius = 2000
         else:
             cls.radius *= 1.30
         cls.lastLevelUpTick = GameTime.ticks

@@ -42,16 +42,16 @@ class Renderer:
             for y in x:
                 pygame.draw.rect(self.surface, (52, 52, 52), CameraInstance.centeredRect(y.rect))  # , 1
 
-    def renderGrid(self, color=(102, 227, 164)):
-        tWidth = SETTINGS.TILE_SIZE[0]
-        tHeight = SETTINGS.TILE_SIZE[1]
-        sWidth = (SETTINGS.MAP_WIDTH - tWidth)
-        sHeight = (SETTINGS.MAP_HEIGHT - tHeight)
-
-        for x in fori(tWidth, sWidth, tWidth):
-            self.renderLine(vec2(x, tHeight), vec2(x, sHeight), color)
-        for y in fori(tHeight, sHeight, tHeight):
-            self.renderLine(vec2(tWidth, y), vec2(sWidth, y), color)
+    def renderGrid(self):
+        size = 16
+        sWidth = SETTINGS.MAP_WIDTH
+        sHeight = SETTINGS.MAP_HEIGHT
+        color = (102, 227, 164)
+        center = CameraInstance.center
+        for x in fori(size, sWidth + size + size + size, size):
+            pygame.draw.line(self.surface, color, (vec2(x, size) + center).tuple, (vec2(x, sHeight) + center).tuple)
+        for y in fori(size + size, sHeight, size):
+            pygame.draw.line(self.surface, color, (vec2(size, y) + center).tuple, (vec2(sWidth, y) + center).tuple)
 
     def renderLine(self, start: vec2, end: vec2, color=(255, 255, 255), width=1):
         v1 = vec2(start) + CameraInstance.center - vec2(8)

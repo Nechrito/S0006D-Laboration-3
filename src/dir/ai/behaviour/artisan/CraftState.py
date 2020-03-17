@@ -23,8 +23,10 @@ class CraftState(IState):
         if self.selected:
 
             # update the production timer
-            if self.selected.timerStart != 0:
+            if not self.selected.isCrafted:
                 self.selected.update()
+            else:
+                self.selected = None
         else:
 
             # amount of each building type created
@@ -69,8 +71,8 @@ class CraftState(IState):
                 return
 
             # create a new building at camp, todo: code requires a cleanup in future
-            dist = (Camp.radius // 16)
-            building = Building(Camp.position.randomized(iterations=10, maxDist=dist * 0.75, minDist=dist * 0.25), buildingType)
+            dist = Camp.radius // 16
+            building = Building(Camp.position.randomized(iterations=10, maxDist=dist * 0.75, minDist=dist * 0.20), buildingType)
             if building.position:
                 self.selected = building
                 self.selected.startBuilding()

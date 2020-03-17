@@ -7,7 +7,7 @@ class Tree:
         self.position = spawnPoint
         self.image = pygame.transform.scale(image, (32, 48))
         self.rect = self.image.get_rect()
-        self.rect.center = self.position.tuple
+        self.rect.center = (self.position.X + 8, self.position.Y + 8)
 
         self.duration = 0.5
         self.timerStart = 0

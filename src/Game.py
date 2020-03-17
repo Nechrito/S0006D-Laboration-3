@@ -100,30 +100,26 @@ class Game:
         CameraInstance.init()
         CameraInstance.followTarget(Camp.position)
 
-    @staticmethod
-    def checkFOW():
+    def checkFOW(self):
 
         # Computes the FOG OF WAR
         for agent in EntityManager.entities:
-            if agent.entityType != EntityType.Explorer:
-                searchRadius = 3
-            else:
-                searchRadius = 8  # the amount of neighbouring tiles to check
 
             node = SETTINGS.getNode(agent.position, False, False)
+            if not node or node.isVisible:
+                continue
 
-            i = 0
-            while node and i <= searchRadius:
+            node.isVisible = True
 
-                for neighbour in node.neighbours:
-                    if neighbour and neighbour.parent:
-                        neighbourNode = SETTINGS.getNode(neighbour, False, False)
-                        if neighbourNode and not neighbourNode.isVisible:
-                            neighbourNode.isVisible = True
-                            node = neighbourNode
-                    else:
-                        node = node.parent
-                i += 1
+            if agent.entityType != EntityType.Explorer:
+                continue
+
+            for neighbour in node.neighbours:
+                if neighbour and not neighbour.isVisible:
+                    neighbour.isVisible = True
+                    #nodeRaw = SETTINGS.getNode(neighbour.position, False, False)
+                    #if nodeRaw:
+                        #nodeRaw.isVisible = True
 
     def onClick(self):
         node = SETTINGS.getNode(self.relative, False, False)
@@ -160,6 +156,7 @@ class Game:
         self.checkFOW()
         EntityManager.update()
 
+        # level up
         if Camp.level < Camp.maxLevel and Camp.woodCount // Camp.level == 4:
 
             nextLevel = Camp.level + 1
@@ -188,13 +185,13 @@ class Game:
         # lowest layer, the tiles
         for row in SETTINGS.Graph:
             for node in row:
-                # todo: remove isVisible once optimized drawing, then cover unseen nodes with an alpha
-                if node and node.isVisible:
-                    if CameraInstance.inCameraBounds(node.position):
-                        self.renderer.renderTile(node)
+                if node:
+                    # todo: remove isVisible once optimized drawing, then cover unseen nodes with an alpha
+                    if node.isVisible:
+                        if CameraInstance.inCameraBounds(node.position):
+                            self.renderer.renderTile(node)
 
         self.renderer.renderGrid()
-        #self.renderer.renderRectOutline()
 
         # draws the base image
         self.surface.blit(Camp.image, CameraInstance.centeredRect(Camp.rect))
@@ -202,22 +199,6 @@ class Game:
         # outline of the radius which entities rely on
         if Camp.level < Camp.maxLevel:
             pygame.draw.circle(self.surface, (255, 255, 255), CameraInstance.centeredVec(Camp.position).toInt.tuple, int(Camp.radius), 1)
-
-        # draws the relative cursor with it's indicating neighbours
-        if not self.realCursorEnabled:
-            intersection = SETTINGS.getNode(self.relative, False, False)
-            if intersection:
-                x = intersection.position
-                self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, x.tuple, (52, 52, 57), 200)
-
-                for neighbour in intersection.neighbours:
-                    node = SETTINGS.getNode(neighbour)
-                    if node and node.isWalkable:
-                        self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, neighbour.tuple, (0, 255, 128), 128)
-                    else:
-                        self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, neighbour.tuple, (255, 0, 128), 128)
-
-                self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, self.relative.tuple, (37, 37, 38), 200)
 
         for tree in Camp.trees:
             self.surface.blit(tree.image, CameraInstance.centeredRect(tree.rect))
@@ -227,6 +208,21 @@ class Game:
             self.buildingRect.center = building.position.tuple
             self.surface.blit(self.buildingImg, CameraInstance.centeredRect(self.buildingRect))
             self.renderer.renderText(building.name, building.position, self.fontBig, (181, 181, 181))
+
+        # draws the relative cursor with it's indicating neighbours
+        if not self.realCursorEnabled:
+            intersection = SETTINGS.getNode(self.relative, False, False)
+            if intersection:
+                x = intersection.position
+                self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, x.tuple, (52, 52, 57), 200)
+
+                for neighbour in intersection.neighbours:
+                    if neighbour and neighbour.isWalkable:
+                        self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, neighbour.position.tuple, (0, 255, 128), 128)
+                    else:
+                        self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, neighbour.position.tuple, (255, 0, 128), 128)
+
+                self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, self.relative.tuple, (37, 37, 38), 200)
 
         for entity in EntityManager.entities:
             # draw entity
@@ -241,7 +237,7 @@ class Game:
 
         for item in Camp.items:
             self.renderer.renderRect((4, 4), item.position)
-            self.renderer.renderText(item.name, item.position, self.fontSmall, (255, 153, 153))
+            self.renderer.renderText('[' + item.name + ']', item.position, self.fontSmall, (255, 153, 153))
 
         # draw information
         self.renderer.append("Camp Level: " + str(int(Camp.level)))
