@@ -15,7 +15,7 @@ class WorkerState(IState):
         self.searchRadius = 16 * 4
 
     def enter(self, entity):
-        Message.sendConsole(entity, "Sure could make use of more wood, will fetch some")
+        Message.sendConsole(entity, "Sure could make use of more wood 'n' ores")
 
     def handleMessage(self, telegram):
         pass

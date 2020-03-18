@@ -1,8 +1,12 @@
 import random
 import time
 
+from dir.ai.StateTransition import StateTransition
 from dir.ai.behaviour.IState import IState
 from dir.environment.Camp import Camp
+from enums.EntityType import EntityType
+from enums.MessageType import MessageType
+from enums.StateType import StateType
 
 
 class IdleState(IState):
@@ -17,7 +21,32 @@ class IdleState(IState):
         self.entity = entity
 
     def handleMessage(self, telegram):
-        pass
+        if not self.entity:
+            if telegram.target:
+                self.entity = telegram.target
+            else:
+                return
+        if telegram.messageType == MessageType.RevertState:
+            self.entity.revertState()
+        elif telegram.messageType == MessageType.StateChange:
+
+            if self.entity.entityType == EntityType.Worker:
+                StateTransition.setState(self.entity, StateType.WorkState)
+
+            elif self.entity.entityType == EntityType.Explorer:
+                StateTransition.setState(self.entity, StateType.ExploreState)
+
+            elif self.entity.entityType == EntityType.Miner:
+                StateTransition.setState(self.entity, StateType.ArtisanMiner)
+
+            elif self.entity.entityType == EntityType.Craftsman:
+                StateTransition.setState(self.entity, StateType.ArtisanCraftsman)
+
+            elif self.entity.entityType == EntityType.Smelter:
+                StateTransition.setState(self.entity, StateType.ArtisanSmelter)
+
+            elif self.entity.entityType == EntityType.Smith:
+                StateTransition.setState(self.entity, StateType.ArtisanSmith)
 
     def execute(self, entity):
 
