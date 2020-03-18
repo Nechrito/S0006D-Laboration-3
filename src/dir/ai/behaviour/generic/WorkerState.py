@@ -21,24 +21,23 @@ class WorkerState(IState):
         pass
 
     def execute(self, entity):
-        # update selected tree
-        if self.selectedTree:
-            self.updateTree(entity)
 
         # update selected item
-        elif self.selectedItem:
+        if self.selectedItem:
             self.updateItem(entity)
 
+        # update selected tree
+        elif self.selectedTree:
+            self.updateTree(entity)
         # locate tree, then item if no tree found
         else:
-
-            tree = self.findTree(entity)
-            if tree:
-                self.selectedTree = tree
+            item = self.findItem(entity)
+            if item:
+                self.selectedItem = item
             else:
-                item = self.findItem(entity)
-                if item:
-                    self.selectedItem = item
+                tree = self.findTree(entity)
+                if tree:
+                    self.selectedTree = tree
 
     def updateItem(self, entity):
         # move to camp once the item is picked up

@@ -56,10 +56,10 @@ class AStar(IPath):
 
                 neighbour = SETTINGS.getNode(temp.position)
 
-                if neighbour in closedList:
+                if not neighbour or not neighbour.isWalkable:
                     continue
 
-                if not neighbour or not neighbour.isWalkable:
+                if neighbour in closedList:
                     continue
 
                 neighbour.parent = currentNode

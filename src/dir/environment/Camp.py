@@ -90,6 +90,24 @@ class Camp:
                 StateTransition.setState(entity, StateType.ExploreState)
 
     @classmethod
+    def canLevelUp(cls):
+        if Camp.level == 1:
+            if Camp.woodCount >= 6 and Camp.ironOreCount >= 3:
+                return True
+        elif Camp.level == 2:
+            if Camp.woodCount >= 12 and Camp.ironOreCount >= 8:
+                return True
+        elif Camp.level == 3:
+            if Camp.woodCount >= 26 and Camp.ironOreCount >= 14:
+                return True
+        elif Camp.level == 4:
+            if Camp.woodCount >= 40 and Camp.ironOreCount >= 24:
+                return True
+        elif Camp.level == 5:
+            if Camp.woodCount >= 58 and Camp.ironOreCount >= 32:
+                return True
+
+    @classmethod
     def canProduce(cls, buildingType: BuildingType):
         wood    = cls.woodCount
         swords  = cls.swordCount

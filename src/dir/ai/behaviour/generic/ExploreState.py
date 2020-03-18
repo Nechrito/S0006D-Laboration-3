@@ -77,7 +77,7 @@ class ExploreState(IState):
                     distance = currentDist
                     closest = node
 
-        if closest:
+        if closest and closest.position and closest.position.distance(Camp.position) < Camp.radius:
             self.currentTarget = closest.position
         else:
             StateTransition.setState(entity, StateType.IdleState)

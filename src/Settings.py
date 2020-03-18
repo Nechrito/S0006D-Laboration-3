@@ -82,7 +82,7 @@ class SETTINGS:
         except IndexError:
             pass
 
-        if node and type(node) != DynamicGraph:
+        if node:
             return node
 
         if allowIterate:

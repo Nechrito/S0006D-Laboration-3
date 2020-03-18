@@ -19,7 +19,7 @@ class Entity:
         self.stateMachine = StateMachine(self, startState, globalState)
         self.position = campPos.randomized(9)
         self.image = image
-        self.moveSpeed = random.randrange(20, 30)
+        self.moveSpeed = random.randrange(20, 35)
         self.createdTime = time.time()
         self.isComputingPath = False
 
@@ -36,7 +36,7 @@ class Entity:
         self.waypoints = []
         self.nextNode = self.position
 
-        self.radius = 8
+        self.radius = 16
 
     def update(self):
         self.stateMachine.update()
@@ -47,7 +47,7 @@ class Entity:
         if self.isComputingPath:
             return
 
-        if self.nextNode.distance(self.position) >= 8:
+        if self.nextNode.distance(self.position) >= self.radius:
             node = SETTINGS.getNode(self.position, True, False)
             moveSpeedMultiplier = 1.0
             if node:

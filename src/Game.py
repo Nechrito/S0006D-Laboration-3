@@ -86,6 +86,7 @@ class Game:
         self.senseiImg = pygame.image.load(self.getRealFilePath(SETTINGS.SENSEI_IMG))
 
         EntityManager.register(Entity(EntityType.Worker,     Camp.position, self.hatguyImg, IdleState(), GlobalState()))
+        EntityManager.register(Entity(EntityType.Worker,     Camp.position, self.hatguyImg, IdleState(), GlobalState()))
         EntityManager.register(Entity(EntityType.Explorer,   Camp.position, self.senseiImg, IdleState(), GlobalState()))
         EntityManager.register(Entity(EntityType.Explorer,   Camp.position, self.senseiImg, IdleState(), GlobalState()))
 
@@ -159,14 +160,13 @@ class Game:
         EntityManager.update()
 
         # level up
-        if Camp.level < Camp.maxLevel and Camp.woodCount // Camp.level == 4:
+        if Camp.canLevelUp():
 
             nextLevel = Camp.level + 1
 
-            if nextLevel == 2:
+            if nextLevel == 3:
+                print("craftsman & miner")
                 EntityManager.register((Entity(EntityType.Craftsman, Camp.position.randomized(), self.hatguyImg, IdleState(), GlobalState())))
-                EntityManager.register((Entity(EntityType.Explorer, Camp.position, self.hatguyImg, IdleState(), GlobalState())))
-            elif nextLevel == 3:
                 EntityManager.register((Entity(EntityType.Miner, Camp.position.randomized(), self.hatguyImg, IdleState(), GlobalState())))
             elif nextLevel == 4:
                 print("Smelter??")

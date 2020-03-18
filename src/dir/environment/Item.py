@@ -26,7 +26,7 @@ class Item:
     def startProducing(self):
         self.isProducing = True
         self.timerStart = time.time()
-        print("Creating: " + self.name)
+       # print("Creating: " + self.name)
 
     def update(self):
         if not self.isProducing:
@@ -34,4 +34,4 @@ class Item:
 
         if self.timerStart != 0 and time.time() - self.timerStart > self.duration:
             self.isProducing = False
-            print("Created: " + self.name)
+           # print("Created: " + self.name)
