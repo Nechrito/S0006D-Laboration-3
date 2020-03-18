@@ -18,24 +18,19 @@ class ExploreState(IState):
     def __init__(self):
         self.currentTarget = None
         self.avoidableTarget = None
-        self.source = None
+        self.entity = None
         self.lastCheckTick = 0
         self.moveRate = 0
         self.threshold = 0.15
 
-        #self.pool = ThreadPool(processes=1)
-        #self.async_result = None
-
     def enter(self, entity):
-        self.source = entity
-        Message.sendConsole(entity, "Guess I'll explore the world!")
+        self.entity = entity
+        Message.sendConsole(entity, "Guess I'll do some explorin' ")
 
     def handleMessage(self, telegram):
-        if self.source and telegram.source != self.source:
-            self.avoidableTarget = telegram.message
-
-            #if self.currentTarget and self.currentTarget.distance(self.avoidableTarget) <= Camp.radius * self.threshold:
-                #self.currentTarget = None
+        if self.entity and telegram.source != self.entity and telegram.isMyType(self.entity):
+            if telegram.messageType == MessageType.PositionChange:
+                self.avoidableTarget = telegram.message
 
     def execute(self, entity):
 
@@ -52,7 +47,7 @@ class ExploreState(IState):
             self.moveRate = random.randrange(250, 750) / 1000
 
             # let all other Explorers know where I'm headed, so they don't walk there aswell
-            EntityManager.sendMessage(Telegram(entity, EntityType.Explorer, MessageType.PositionChange, self.currentTarget))
+            EntityManager.sendMessage(Telegram(source=entity, entityType=EntityType.Explorer, messageType= MessageType.PositionChange, message=self.currentTarget))
 
     def getUnmarkedNode(self, entity):
 

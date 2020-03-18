@@ -32,8 +32,11 @@ class EntityManager:
     @classmethod
     def sendMessage(cls, telegram: Telegram):
         for entity in EntityManager.entities:
-            if entity.entityType == telegram.entityType:
-                entity.handleMessage(telegram)
+            if telegram.isForMe(entity):
+                temp = telegram
+                if not temp.target:
+                    temp.target = entity
+                entity.handleMessage(temp)
 
     @classmethod
     def update(cls):

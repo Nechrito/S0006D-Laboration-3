@@ -1,51 +1,34 @@
+import random
 import time
 
-from dir.ai.StateTransition import StateTransition
 from dir.ai.behaviour.IState import IState
-from dir.environment.Camp import GameTime, Camp
-from enums.StateType import StateType
-
-from enums.EntityType import EntityType
+from dir.environment.Camp import Camp
 
 
 class IdleState(IState):
     def __init__(self):
         self.lastMoveTick = 0
+        self.moveTickMin = 1000
+        self.moveTickMax = 3000
+        self.moveRate = random.randint(self.moveTickMin, self.moveTickMax)
+        self.destination = None
 
     def enter(self, entity):
-        pass
+        self.entity = entity
 
     def handleMessage(self, telegram):
         pass
 
     def execute(self, entity):
 
-        if entity.entityType == EntityType.Worker:
-            StateTransition.setState(entity, StateType.WorkState)
+        if not self.destination or (self.destination and self.destination.distance(entity.position) <= entity.radius):
+            self.lastMoveTick = time.time()
+            self.moveRate = random.randint(self.moveTickMin, self.moveTickMax)
+            self.destination = Camp.position.randomized(maxDist=10, minDist=5)
 
-        elif entity.entityType == EntityType.Explorer:
-            # a bit hacky, but essentially when an agent is done exploring
-            # the agent will go back into idle and wait for the Camp to level up
-            if time.time() - Camp.lastLevelUpTick <= 1000:
-                StateTransition.setState(entity, StateType.ExploreState)
-
-        elif entity.entityType == EntityType.Miner:
-            StateTransition.setState(entity, StateType.ArtisanMiner)
-
-        elif entity.entityType == EntityType.Craftsman:
-            StateTransition.setState(entity, StateType.ArtisanCraftsman)
-
-        elif entity.entityType == EntityType.Smelter:
-            StateTransition.setState(entity, StateType.ArtisanSmelter)
-
-        elif entity.entityType == EntityType.Smith:
-            StateTransition.setState(entity, StateType.ArtisanSmith)
-
-        else:
-            # move around once in a while
-            if time.time() - self.lastMoveTick > 1500:
-                self.lastMoveTick = time.time()
-                entity.moveTo(entity.position.randomized())
+        # move around once in a while
+        if self.destination and time.time() - self.lastMoveTick > self.moveRate / 1000:
+            entity.moveTo(self.destination)
 
     def exit(self, entity):
         pass

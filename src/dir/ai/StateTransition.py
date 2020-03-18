@@ -4,6 +4,10 @@ from enums.StateType import StateType
 class StateTransition:
 
     @classmethod
+    def revertState(cls, entity):
+        entity.revertState()
+
+    @classmethod
     def setState(cls, entity, stateType):
         if stateType == StateType.IdleState:
             from dir.ai.behaviour.generic.IdleState import IdleState

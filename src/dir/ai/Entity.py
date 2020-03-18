@@ -2,7 +2,6 @@ import random
 import time
 
 from dir.ai.StateMachine import StateMachine
-from dir.ai.Telegram import Telegram
 from enums.EntityType import EntityType
 from src.Settings import *
 from src.dir.engine.GameTime import GameTime
@@ -73,7 +72,7 @@ class Entity:
         self.waypoints = temp
         self.nextNode = self.waypoints[1].position
 
-    def handleMessage(self, telegram: Telegram):
+    def handleMessage(self, telegram):
         self.stateMachine.handleMessage(telegram)
 
     def setType(self, entityType):

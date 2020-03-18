@@ -4,6 +4,7 @@ from os import path
 import pygame
 import pygame.freetype
 
+from dir.ai.Telegram import Telegram
 from dir.ai.behaviour.generic.GlobalState import GlobalState
 from dir.ai.behaviour.generic.IdleState import IdleState
 from dir.engine.EntityManager import EntityManager
@@ -13,6 +14,7 @@ from dir.environment.Item import Item
 from dir.environment.Tree import Tree
 from enums.EntityType import EntityType
 from enums.ItemType import ItemType
+from enums.MessageType import MessageType
 from src.Settings import *
 from src.dir.ai.Entity import Entity
 from src.dir.engine.CameraInstance import CameraInstance
@@ -89,6 +91,10 @@ class Game:
         EntityManager.register(Entity(EntityType.Worker,     Camp.position, self.hatguyImg, IdleState(), GlobalState()))
         EntityManager.register(Entity(EntityType.Explorer,   Camp.position, self.senseiImg, IdleState(), GlobalState()))
         EntityManager.register(Entity(EntityType.Explorer,   Camp.position, self.senseiImg, IdleState(), GlobalState()))
+
+        # call global state and set their actual default state
+        EntityManager.sendMessage(Telegram(messageType=MessageType.StateChange, entityType=EntityType.Worker))
+        EntityManager.sendMessage(Telegram(messageType=MessageType.StateChange, entityType=EntityType.Explorer))
 
         self.realCursorEnabled = False
         pygame.mouse.set_visible(self.realCursorEnabled)
