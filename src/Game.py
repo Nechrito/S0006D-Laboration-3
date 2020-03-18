@@ -106,7 +106,7 @@ class Game:
         for agent in EntityManager.entities:
 
             node = SETTINGS.getNode(agent.position, False, False)
-            if not node or node.isVisible:
+            if not node:
                 continue
 
             node.isVisible = True
@@ -115,11 +115,13 @@ class Game:
                 continue
 
             for neighbour in node.neighbours:
-                if neighbour and not neighbour.isVisible:
+                if neighbour:
                     neighbour.isVisible = True
-                    #nodeRaw = SETTINGS.getNode(neighbour.position, False, False)
-                    #if nodeRaw:
-                        #nodeRaw.isVisible = True
+
+                    # 2nd layer lol
+                    for neighbour2 in neighbour.neighbours:
+                        if neighbour2:
+                            neighbour2.isVisible = True
 
     def onClick(self):
         node = SETTINGS.getNode(self.relative, False, False)
@@ -163,11 +165,14 @@ class Game:
 
             if nextLevel == 2:
                 EntityManager.register((Entity(EntityType.Craftsman, Camp.position.randomized(), self.hatguyImg, IdleState(), GlobalState())))
+                EntityManager.register((Entity(EntityType.Explorer, Camp.position, self.hatguyImg, IdleState(), GlobalState())))
             elif nextLevel == 3:
                 EntityManager.register((Entity(EntityType.Miner, Camp.position.randomized(), self.hatguyImg, IdleState(), GlobalState())))
             elif nextLevel == 4:
+                print("Smelter??")
                 EntityManager.register((Entity(EntityType.Smelter, Camp.position.randomized(), self.hatguyImg, IdleState(), GlobalState())))
             elif nextLevel == 5:
+                print("Smith??")
                 EntityManager.register((Entity(EntityType.Smith, Camp.position.randomized(), self.hatguyImg, IdleState(), GlobalState())))
 
             EntityManager.register((Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState())))
@@ -201,7 +206,9 @@ class Game:
             pygame.draw.circle(self.surface, (255, 255, 255), CameraInstance.centeredVec(Camp.position).toInt.tuple, int(Camp.radius), 1)
 
         for tree in Camp.trees:
-            self.surface.blit(tree.image, CameraInstance.centeredRect(tree.rect))
+            treeNode = SETTINGS.getNode(tree.position, False, False)
+            if treeNode and treeNode.isVisible:
+                self.surface.blit(tree.image, CameraInstance.centeredRect(tree.rect))
 
         # draw buildings crafted
         for building in Camp.buildings:
@@ -242,13 +249,21 @@ class Game:
         # draw information
         self.renderer.append("Camp Level: " + str(int(Camp.level)))
         self.renderer.append("Wood: " + str(Camp.woodCount))
-        self.renderer.append("IronOres: " + str(Camp.ironOreCount))
+        self.renderer.append("IronOres: " + str(Camp.ironOreCount) + "/60")
         self.renderer.append("IronIngots: " + str(Camp.ironIngotCount) + "/20")
         self.renderer.append("Soldiers: " + str(Camp.soldierCount) + "/20")
         self.renderer.append("Charcoal: " + str(Camp.charcoalCount) + "/200")
+        self.renderer.append("")
+        self.renderer.append("~Entities~")
+        self.renderer.append("Workers: " + str(len(EntityManager.getAllOfType(EntityType.Worker))))
+        self.renderer.append("Explorers: " + str(len(EntityManager.getAllOfType(EntityType.Explorer))))
+        self.renderer.append("Craftsmen: " + str(len(EntityManager.getAllOfType(EntityType.Craftsman))))
+        self.renderer.append("Miners: " + str(len(EntityManager.getAllOfType(EntityType.Miner))))
+        self.renderer.append("Smelters: " + str(len(EntityManager.getAllOfType(EntityType.Smelter))))
+        self.renderer.append("Smiths: " + str(len(EntityManager.getAllOfType(EntityType.Smith))))
 
-        centered = vec2(SETTINGS.SCREEN_WIDTH * 0.10, SETTINGS.SCREEN_HEIGHT * 0.05)
-        self.renderer.renderRectToScreen((150, 300), centered, (37, 37, 38), 200)
+        centered = vec2(SETTINGS.SCREEN_WIDTH * 0.10, SETTINGS.SCREEN_HEIGHT * 0.015)
+        self.renderer.renderRectToScreen((150, 425), centered, (37, 37, 38), 200)
         self.renderer.renderTexts(centered, self.fontBold, (255, 255, 255))
 
         self.clock.tick(SETTINGS.MAX_FPS)

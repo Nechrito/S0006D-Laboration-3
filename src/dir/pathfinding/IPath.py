@@ -12,7 +12,7 @@ class IPath(object, metaclass=abc.ABCMeta):
         self.childNodes = []
         self.timerStart = None
         self.timeElapsed = None
-        self.average = {PathType.AStar: [0, 0], PathType.BFS: [0, 0], PathType.DFS: [0, 0]}
+        self.average = {PathType.AStar.value: [0, 0], PathType.BFS.value: [0, 0], PathType.DFS.value: [0, 0]}
 
     def computeAverage(self, value, index):
         if value <= 0:

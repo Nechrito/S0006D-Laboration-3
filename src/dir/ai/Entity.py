@@ -3,7 +3,6 @@ import time
 
 from dir.ai.StateMachine import StateMachine
 from dir.ai.Telegram import Telegram
-from dir.engine.TaskManager import TaskManager
 from enums.EntityType import EntityType
 from src.Settings import *
 from src.dir.engine.GameTime import GameTime

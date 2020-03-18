@@ -10,7 +10,7 @@ from dir.engine.EntityManager import EntityManager
 from enums.EntityType import EntityType
 from enums.MessageType import MessageType
 from enums.StateType import StateType
-from src.dir.ai.Entity import SETTINGS, DynamicGraph
+from src.dir.ai.Entity import SETTINGS
 
 
 class ExploreState(IState):
@@ -34,8 +34,8 @@ class ExploreState(IState):
         if self.source and telegram.source != self.source:
             self.avoidableTarget = telegram.message
 
-            if self.currentTarget and self.currentTarget.distance(self.avoidableTarget) <= Camp.radius * self.threshold:
-                self.currentTarget = None
+            #if self.currentTarget and self.currentTarget.distance(self.avoidableTarget) <= Camp.radius * self.threshold:
+                #self.currentTarget = None
 
     def execute(self, entity):
 
@@ -47,7 +47,7 @@ class ExploreState(IState):
 
         elif time.time() - self.lastCheckTick >= self.moveRate: # seconds
             self.lastCheckTick = time.time()
-            #self.getUnmarkedNode(entity)
+            self.getUnmarkedNode(entity)
             self.avoidableTarget = None
             self.moveRate = random.randrange(250, 750) / 1000
 
@@ -56,18 +56,18 @@ class ExploreState(IState):
 
     def getUnmarkedNode(self, entity):
 
-        closest = None
+        closest = SETTINGS.getNode(entity.position)
         distance = 0
         for i in SETTINGS.Graph:
             for node in i:
                 # Could perform class type Node check, but might result in circular import
                 # this is fine though, Graph wont contain anything else
-                if node is None or not node or type(node) == DynamicGraph or node.isVisible or not node.isWalkable:
+                if not node or node.isVisible or not node.isWalkable:
                     continue
 
                 currentDist = node.position.distance(Camp.position)
-                if currentDist < Camp.radius or closest is None:
-                    if currentDist > distance != 0:
+                if currentDist < Camp.radius:
+                    if currentDist < distance != 0:
                         continue
 
                     if self.avoidableTarget:

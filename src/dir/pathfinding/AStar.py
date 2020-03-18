@@ -1,5 +1,7 @@
 import time
 
+from dir.math.cMath import truncate
+from enums.PathType import PathType
 from src.Settings import SETTINGS
 from src.dir.math.Vector import vec2
 from src.dir.pathfinding.IPath import IPath
@@ -74,19 +76,13 @@ class AStar(IPath):
                 neighbour.h = self.heuristic(neighbour.position, endNode.position)
                 neighbour.f = neighbour.g + neighbour.h
 
-        print(str(len(closedList)) + " | " + str(len(openList)))
+        path = self.backTrace(currentNode)
+
         #self.timeElapsed = truncate((time.time() - self.timerStart) * 1000)
-        #avg = truncate(self.getAverage(PathType.AStar))
-
-        #self.computeAverage(self.timeElapsed, PathType.AStar)
-
+        #avg = truncate(self.getAverage(PathType.AStar.value))
+        #self.computeAverage(self.timeElapsed, PathType.AStar.value)
         #if self.timeElapsed > 0:
-        #    print("[A*] Elapsed: " + str(self.timeElapsed) +
-        #          "ms (Avg. " + str(avg) +
-        #          "ms) | Path Length: " + str(len(path)))
+        #    print("[A*] Elapsed: " + str(self.timeElapsed) + "ms (Avg. " + str(avg) + "ms) | Path Length: " + str(len(path)))
 
         # if computation is completed, traverse list (todo: heap)
-        if currentNode:
-            path = self.backTrace(currentNode)
-            return path
-        return None
+        return path
