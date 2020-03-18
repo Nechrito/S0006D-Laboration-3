@@ -1,6 +1,7 @@
 import time
 
 from dir.ai.Entity import Entity
+from dir.engine.GameTime import GameTime
 from dir.environment.Item import Item
 from dir.math.Vector import vec2
 from enums.BuildingType import BuildingType
@@ -52,7 +53,7 @@ class Building:
         Camp.ironIngotCount -= self.costIronIngot
         Camp.ironOreCount   -= self.costIronOre
         self.timerStart = time.time()
-        print("Creating: " + self.name)
+        print("Real duration: " + str(self.duration) + " | Relative: " + str(GameTime.relativeDuration(self.duration)))
 
     def startProducing(self, itemType: ItemType):
         if self.item:
@@ -72,7 +73,7 @@ class Building:
                 self.item = None
 
         # crafts the building itself
-        if self.timerStart != 0 and not self.isCrafted and time.time() - self.timerStart > 0.5: # self.duration
+        if self.timerStart != 0 and not self.isCrafted and time.time() - self.timerStart > self.duration:
             self.isCrafted = True
             self.timerStart = 0
             Camp.buildings.append(self)

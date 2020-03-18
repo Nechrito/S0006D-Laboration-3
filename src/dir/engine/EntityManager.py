@@ -2,20 +2,35 @@ from typing import List
 
 from dir.ai.Entity import Entity
 from dir.ai.Telegram import Telegram
+from dir.ai.behaviour.generic.GlobalState import GlobalState
+from dir.ai.behaviour.generic.IdleState import IdleState
 from enums.EntityType import EntityType
 
 
 class EntityManager:
 
+    imgHatguy = None
+    imgSensei = None
+    campPosition = None
     entities: List[Entity]
 
     @classmethod
-    def init(cls):
+    def init(cls, campPos, imageHatguy, imageSensei):
         cls.entities = []
+        cls.campPosition = campPos
+        cls.imgHatguy = imageHatguy
+        cls.imgSensei = imageSensei
 
     @classmethod
-    def register(cls, entity: Entity):
-        cls.entities.append(entity)
+    def register(cls, entityType: EntityType):
+        if entityType == EntityType.Explorer:
+            img = cls.imgSensei
+        elif entityType == EntityType.Worker:
+            img = cls.imgHatguy
+        else: # todo: if we want more images
+            img = cls.imgHatguy
+
+        cls.entities.append(Entity(entityType, cls.campPosition.randomized(), img, IdleState(), GlobalState()))
 
     @classmethod
     def remove(cls, entity: Entity):
@@ -33,7 +48,7 @@ class EntityManager:
     def sendMessage(cls, telegram: Telegram):
         for entity in EntityManager.entities:
             temp = telegram
-            if temp.isForMe(entity):
+            if temp.isForMe(entity) or temp.entityType == EntityType.Ignored:
                 if not temp.target:
                     temp.target = entity
                 entity.handleMessage(temp)

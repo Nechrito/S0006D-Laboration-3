@@ -43,15 +43,12 @@ class AStar(IPath):
             openList.pop(currentIndex)
             closedList.append(currentNode)
 
-            if not currentNode.isWalkable:
-                continue
-
             # complete, now reverse fill path
             if currentNode == endNode:
                 break
 
             for temp in currentNode.neighbours:
-                if not temp:
+                if not temp or not temp.isWalkable:
                     continue
 
                 neighbour = SETTINGS.getNode(temp.position)

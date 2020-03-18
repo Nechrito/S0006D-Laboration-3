@@ -25,7 +25,6 @@ if __name__ == "__main__":
 
     GameTime.init()
     TaskManager.init()
-    EntityManager.init()
 
     instance = Game(directory, folder)
     userInput = UserInput(instance)

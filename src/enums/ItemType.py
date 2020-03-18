@@ -6,5 +6,4 @@ class ItemType(Enum):
     Ore = auto()
     Ingot = auto()
     Sword = auto()
-
     Wood = auto()

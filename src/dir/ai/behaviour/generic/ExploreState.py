@@ -51,7 +51,8 @@ class ExploreState(IState):
 
     def getUnmarkedNode(self, entity):
 
-        closest = SETTINGS.getNode(entity.position)
+        # shouldn't be much of a difference anyway
+        closest = (self.currentTarget if self.currentTarget else SETTINGS.getNode(entity.position))
         distance = 0
         for i in SETTINGS.Graph:
             for node in i:
@@ -61,18 +62,18 @@ class ExploreState(IState):
                     continue
 
                 currentDist = node.position.distance(Camp.position)
-                if currentDist < Camp.radius:
-                    if currentDist < distance != 0:
+                if currentDist <= Camp.radius + 16:
+                    if currentDist > distance != 0:
                         continue
 
                     if self.avoidableTarget:
-                        if self.avoidableTarget.distance(node.position) < Camp.radius * self.threshold:
+                        if self.avoidableTarget.distance(node.position) <= Camp.radius * self.threshold:
                             continue
 
                     distance = currentDist
                     closest = node
 
-        if closest and closest.position and closest.position.distance(Camp.position) < Camp.radius:
+        if closest and closest.position:
             self.currentTarget = closest.position
         else:
             StateTransition.setState(entity, StateType.IdleState)

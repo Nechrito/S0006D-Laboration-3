@@ -12,6 +12,7 @@ from dir.engine.Map import Map
 from dir.environment.Camp import Camp
 from dir.environment.Item import Item
 from dir.environment.Tree import Tree
+from enums.BuildingType import BuildingType
 from enums.EntityType import EntityType
 from enums.ItemType import ItemType
 from enums.MessageType import MessageType
@@ -65,7 +66,11 @@ class Game:
         self.buildingImg = pygame.image.load(self.getRealFilePath(SETTINGS.BUILDING_IMG))
         self.buildingRect = self.buildingImg.get_rect()
 
+        hatguyImg = pygame.image.load(self.getRealFilePath(SETTINGS.HATGUY_IMG))
+        senseiImg = pygame.image.load(self.getRealFilePath(SETTINGS.SENSEI_IMG))
+
         Camp.init(vec2(1136, 448), self.buildingImg)
+        EntityManager.init(Camp.position, hatguyImg, senseiImg)
 
         # scatter iron ores around map
         centreP = vec2(SETTINGS.MAP_WIDTH // 2, SETTINGS.MAP_HEIGHT // 2)
@@ -84,17 +89,13 @@ class Game:
             tree = Tree(treeTile.position, treeImg)
             Camp.trees.append(tree)
 
-        self.hatguyImg = pygame.image.load(self.getRealFilePath(SETTINGS.HATGUY_IMG))
-        self.senseiImg = pygame.image.load(self.getRealFilePath(SETTINGS.SENSEI_IMG))
+        EntityManager.register(EntityType.Worker)
+        EntityManager.register(EntityType.Worker)
+        EntityManager.register(EntityType.Explorer)
+        EntityManager.register(EntityType.Explorer)
 
-        EntityManager.register(Entity(EntityType.Worker,     Camp.position, self.hatguyImg, IdleState(), GlobalState()))
-        EntityManager.register(Entity(EntityType.Worker,     Camp.position, self.hatguyImg, IdleState(), GlobalState()))
-        EntityManager.register(Entity(EntityType.Explorer,   Camp.position, self.senseiImg, IdleState(), GlobalState()))
-        EntityManager.register(Entity(EntityType.Explorer,   Camp.position, self.senseiImg, IdleState(), GlobalState()))
-
-        # call global state and set their actual default state
-        EntityManager.sendMessage(Telegram(messageType=MessageType.StateChange, entityType=EntityType.Worker))
-        EntityManager.sendMessage(Telegram(messageType=MessageType.StateChange, entityType=EntityType.Explorer))
+        # set their actual default state, rather than idle (easier to create entities by doing this)
+        EntityManager.sendMessage(Telegram(messageType=MessageType.StateChange, entityType=EntityType.Ignored))
 
         self.realCursorEnabled = False
         pygame.mouse.set_visible(self.realCursorEnabled)
@@ -171,19 +172,24 @@ class Game:
             nextLevel = Camp.level + 1
 
             if nextLevel == 3:
-                print("craftsman & miner")
-                EntityManager.register((Entity(EntityType.Craftsman, Camp.position.randomized(), self.hatguyImg, IdleState(), GlobalState())))
-                EntityManager.register((Entity(EntityType.Miner, Camp.position.randomized(), self.hatguyImg, IdleState(), GlobalState())))
+                EntityManager.register(EntityType.Craftsman)
+                EntityManager.register(EntityType.Miner)
+                EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Mine))
             elif nextLevel == 4:
-                print("Smelter??")
-                EntityManager.register((Entity(EntityType.Smelter, Camp.position.randomized(), self.hatguyImg, IdleState(), GlobalState())))
+                EntityManager.register(EntityType.Worker)
+                EntityManager.register(EntityType.Smelter)
+                EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Smelt))
             elif nextLevel == 5:
-                print("Smith??")
-                EntityManager.register((Entity(EntityType.Smith, Camp.position.randomized(), self.hatguyImg, IdleState(), GlobalState())))
-
-            EntityManager.register((Entity(EntityType.Worker, Camp.position, self.hatguyImg, IdleState(), GlobalState())))
+                EntityManager.register(EntityType.Smith)
+                EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Smith))
+            elif nextLevel == 6:
+                EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.TrainingCamp))
 
             Camp.levelUp()
+
+            # only IdleState listens to this specific message
+            EntityManager.sendMessage(Telegram(messageType=MessageType.StateChange, entityType=EntityType.Ignored))
+            EntityManager.sendMessage(Telegram(messageType=MessageType.LevelUp, entityType=EntityType.Ignored))
 
         # window title
         if not self.paused:
@@ -254,7 +260,7 @@ class Game:
 
         # draw information
         self.renderer.append("Camp Level: " + str(int(Camp.level)))
-        self.renderer.append("Wood: " + str(Camp.woodCount))
+        self.renderer.append("Wood: " + str(Camp.woodCount) + "/727")
         self.renderer.append("IronOres: " + str(Camp.ironOreCount) + "/60")
         self.renderer.append("IronIngots: " + str(Camp.ironIngotCount) + "/20")
         self.renderer.append("Soldiers: " + str(Camp.soldierCount) + "/20")

@@ -4,9 +4,6 @@ from __future__ import annotations
 # Conditional import (hinting, avoids circular imports)
 from typing import TYPE_CHECKING
 
-from Settings import SETTINGS
-from dir.engine.EntityManager import EntityManager
-
 if TYPE_CHECKING:
     from dir.environment.Building import Building
     from dir.environment.Item import Item
@@ -18,19 +15,16 @@ import time
 from typing import List
 
 # local packages
-from dir.ai.StateTransition import StateTransition
 from dir.engine.GameTime import GameTime
 from dir.math.Vector import vec2
 from enums.BuildingType import BuildingType
-from enums.EntityType import EntityType
-from enums.StateType import StateType
 
 
 class Camp:
 
     level = 1
-    maxLevel = 5
-    radius = 300
+    maxLevel = 6
+    radius = 215
     position: vec2
     image: pygame.Surface
     imageScale: vec2
@@ -76,35 +70,33 @@ class Camp:
         if cls.level >= cls.maxLevel:
             cls.radius = 2000
         else:
-            cls.radius *= 1.30
+            cls.radius *= 1.5
         cls.lastLevelUpTick = GameTime.ticks
 
-        cls.imageScale += 6
+        cls.imageScale += 8
         cls.image = pygame.transform.scale(cls.image, cls.imageScale.toInt.tuple)
         cls.rect = cls.image.get_rect()
         cls.rect.center = cls.position.tuple
 
-        # for the explorers which went into idle, get back into exploring!
-        for entity in EntityManager.entities:
-            if entity.entityType == EntityType.Explorer:
-                StateTransition.setState(entity, StateType.ExploreState)
-
     @classmethod
     def canLevelUp(cls):
         if Camp.level == 1:
-            if Camp.woodCount >= 6 and Camp.ironOreCount >= 3:
+            if Camp.woodCount >= 10:
                 return True
         elif Camp.level == 2:
-            if Camp.woodCount >= 12 and Camp.ironOreCount >= 8:
+            if Camp.woodCount >= 16:
                 return True
         elif Camp.level == 3:
-            if Camp.woodCount >= 26 and Camp.ironOreCount >= 14:
+            if Camp.woodCount >= 26:
                 return True
         elif Camp.level == 4:
-            if Camp.woodCount >= 40 and Camp.ironOreCount >= 24:
+            if Camp.woodCount >= 40:
                 return True
         elif Camp.level == 5:
-            if Camp.woodCount >= 58 and Camp.ironOreCount >= 32:
+            if Camp.woodCount >= 58:
+                return True
+        elif Camp.level == 6:
+            if Camp.woodCount >= 65:
                 return True
 
     @classmethod

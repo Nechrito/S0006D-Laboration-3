@@ -4,6 +4,7 @@ from enums.BuildingType import BuildingType
 from enums.EntityType import EntityType
 from dir.ai.behaviour.IState import IState
 from dir.ai.Message import Message
+from enums.MessageType import MessageType
 
 
 class CraftState(IState):
@@ -11,23 +12,32 @@ class CraftState(IState):
 
     def __init__(self):
         self.selected = None
+        self.locked = True # if we get a msg that we should craft something, wait until we can craft it
 
     def enter(self, entity):
         entity.setType(EntityType.Craftsman)
         Message.sendConsole(entity, "What to build today..")
 
     def handleMessage(self, telegram):
-        pass
+        if telegram.messageType and telegram.messageType == MessageType.CraftRequest:
+            dist = Camp.radius // 16
+            self.selected = Building(Camp.position.randomized(iterations=10, maxDist=dist * 0.75, minDist=dist * 0.20), telegram.message)
+            self.locked = True
 
     def execute(self, entity):
         if self.selected:
 
             # update the production timer
             if not self.selected.isCrafted:
+
+                if self.selected.timerStart == 0 and Camp.canProduce(self.selected.buildingType):
+                    Message.sendConsole(entity, "Buildin' a brand new " + self.selected.name)
+                    self.selected.startBuilding()
+
                 self.selected.update()
             else:
                 self.selected = None
-        else:
+        elif not self.locked: # most of the underlying code here wont be used, as it's now based on messaging
 
             # amount of each building type created
             mines = 0
@@ -76,7 +86,6 @@ class CraftState(IState):
             if building.position:
                 self.selected = building
                 self.selected.startBuilding()
-
 
     def exit(self, entity):
         pass
