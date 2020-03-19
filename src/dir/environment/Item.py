@@ -12,6 +12,7 @@ class Item:
         self.itemType = itemType
         self.name = str(self.itemType).replace("ItemType.", "")
         self.color = (255, 255, 255) # for text rendering
+        self.duration = 1
 
         if itemType == ItemType.Charcoal:
             self.color = (51, 51, 51)
@@ -39,5 +40,5 @@ class Item:
         if not self.isProducing:
             return
 
-        if self.timerStart != 0 and time.time() - self.timerStart >= 5: #self.duration:
+        if time.time() - self.timerStart >= self.duration:
             self.isProducing = False

@@ -19,9 +19,7 @@ class CraftState(IState):
 
     def handleMessage(self, telegram):
         if telegram.messageType and telegram.messageType == MessageType.CraftRequest:
-
-            dist = Camp.radius // 16
-            self.selected = Building(Camp.position.randomized(iterations=10, maxDist=dist * 0.5, minDist=dist * 0.20), telegram.message)
+            self.selected = Building(Camp.position.randomized(iterations=20, maxDist=10, minDist=5), telegram.message)
             self.locked = True
 
     def execute(self, entity):
@@ -33,6 +31,7 @@ class CraftState(IState):
                 if self.selected.timerStart == 0 and Camp.canProduce(self.selected.buildingType):
                     Message.sendConsole(entity, "Buildin' a brand new " + self.selected.name)
                     self.selected.startBuilding()
+                   # self.locked = False
 
                 self.selected.update()
             else:

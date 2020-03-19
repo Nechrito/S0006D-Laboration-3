@@ -62,11 +62,7 @@ class Entity:
         self.isComputingPath = True
         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)
         if not temp or len(temp) <= 1:
-
-            temp = self.pathfinder.requestPath(self.position.randomized(3), target.randomized(3, 7))
-
-            if not temp or len(temp) <= 1:
-                return
+            return
 
         self.isComputingPath = False
         self.waypoints = temp

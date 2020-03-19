@@ -187,12 +187,12 @@ class Game:
                 EntityManager.register(EntityType.Worker)
                 EntityManager.register(EntityType.Worker)
                 EntityManager.register(EntityType.Smelter)
-                EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Smelt))
+                EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Smith))
             elif nextLevel == 5:
                 EntityManager.register(EntityType.Worker)
                 EntityManager.register(EntityType.Worker)
                 EntityManager.register(EntityType.Smith)
-                EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Smith))
+                EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Smelt))
             elif nextLevel == 6:
                 EntityManager.register(EntityType.Worker)
                 EntityManager.register(EntityType.Worker)
@@ -254,8 +254,6 @@ class Game:
                     else:
                         self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, neighbour.position.tuple, (255, 0, 128), 128)
 
-                self.renderer.renderRect(SETTINGS.TILE_SIZE.tuple, self.relative.tuple, (37, 37, 38), 200)
-
         for entity in EntityManager.entities:
             # draw entity
             self.surface.blit(entity.image, CameraInstance.centeredSprite(entity))
@@ -272,8 +270,8 @@ class Game:
 
         # draw information
         self.renderer.append("Camp Level: " + str(int(Camp.level)))
-        self.renderer.append("Wood: " + str(Camp.woodCount) + "/727")
-        self.renderer.append("IronOres: " + str(Camp.ironOreCount) + "/60")
+        self.renderer.append("Wood: " + str(Camp.woodCount) + '/' + str(Camp.totalWoodCount))
+        self.renderer.append("IronOres: " + str(Camp.ironOreCount) + '/' + str(Camp.totalOreCount))
         self.renderer.append("IronIngots: " + str(Camp.ironIngotCount))
         self.renderer.append("Charcoal: " + str(Camp.charcoalCount))
         self.renderer.append("Swords: " + str(Camp.swordCount))

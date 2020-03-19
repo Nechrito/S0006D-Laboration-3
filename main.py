@@ -1,11 +1,8 @@
 import sys
 from os import path
 
-import pygame
 import pygame.freetype
 
-from dir.engine.EntityManager import EntityManager
-from dir.engine.TaskManager import TaskManager
 from src.Game import Game
 from src.dir.engine.GameTime import GameTime
 from src.dir.engine.UserInput import UserInput
@@ -24,7 +21,6 @@ if __name__ == "__main__":
     pygame.freetype.init()
 
     GameTime.init()
-    TaskManager.init()
 
     instance = Game(directory, folder)
     userInput = UserInput(instance)

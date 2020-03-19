@@ -38,6 +38,8 @@ class Camp:
     entitiesCount = 200
 
     # gathered
+    totalWoodCount = 727
+    totalOreCount  = 60
     woodCount      = 0
     ironOreCount   = 0
 
@@ -98,11 +100,15 @@ class Camp:
             if Camp.woodCount >= 34:
                 return True
         elif Camp.level == 5:
-            if Camp.woodCount >= 58:
+            if Camp.woodCount >= 54:
                 return True
 
     @classmethod
     def canProduce(cls, buildingType: BuildingType):
+        if not buildingType:
+            print("Error!!! None!!")
+            return
+
         wood    = cls.woodCount
         swords  = cls.swordCount
         ingots  = cls.ironIngotCount

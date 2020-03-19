@@ -1,9 +1,7 @@
-import random
 
 import pytmx
 import time
 
-from dir.engine.TaskManager import TaskManager
 from src.Settings import *
 from src.dir.math.Vector import vec2
 from src.dir.math.cMath import truncate

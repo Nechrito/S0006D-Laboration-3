@@ -1,6 +1,6 @@
 import time
 
-from dir.ai.Entity import Entity
+from dir.ai.Entity import Entity, SETTINGS
 from dir.engine.GameTime import GameTime
 from dir.environment.Item import Item
 from dir.math.Vector import vec2
@@ -14,6 +14,13 @@ class Building:
         self.position = position
         self.buildingType = buildingType
         self.name = str(self.buildingType).replace("BuildingType.", "")
+
+        node = SETTINGS.getNode(position, False, True)
+        if node:
+            node.isWalkable = False
+            for neighbour in node.neighbours:
+                if neighbour:
+                    neighbour.isWalkable = False
 
         # int
         self.priority = self.buildingType.value
@@ -48,6 +55,9 @@ class Building:
         if self.timerStart != 0:
             return
 
+        Camp.totalWoodCount -= self.costWood
+        Camp.totalOreCount -= self.costIronOre
+
         Camp.woodCount  -= self.costWood
         Camp.swordCount -= self.costSword
         Camp.ironIngotCount -= self.costIronIngot
@@ -72,7 +82,7 @@ class Building:
                 self.item = None
 
         # crafts the building itself
-        if self.timerStart != 0 and not self.isCrafted: #  and time.time() - self.timerStart >= self.duration:
+        if self.timerStart != 0 and not self.isCrafted and time.time() - self.timerStart >= 1:#self.duration:
             self.isCrafted = True
             self.timerStart = 0
             Camp.buildings.append(self)

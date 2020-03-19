@@ -1,6 +1,5 @@
 from dir.environment.Camp import Camp
 from enums.BuildingType import BuildingType
-from enums.EntityType import EntityType
 from enums.ItemType import ItemType
 
 from dir.ai.behaviour.IState import IState

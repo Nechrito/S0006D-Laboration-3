@@ -26,7 +26,7 @@ class vec2:
     def LocalY(self):
         return self.Y // SETTINGS.TILE_SIZE[1]
 
-    def randomized(self, iterations=5, maxDist=4, minDist=0):
+    def randomized(self, iterations=5, maxDist=5, minDist=1):
         maxDist *= 16
         minDist *= 16
 
