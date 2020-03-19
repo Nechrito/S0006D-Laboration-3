@@ -1,6 +1,5 @@
 from dir.environment.Camp import Camp
 from dir.environment.Item import Item
-from dir.math.Vector import vec2
 from enums.ItemType import ItemType
 
 from src.dir.ai.Entity import SETTINGS
@@ -56,6 +55,8 @@ class WorkerState(IState):
                     Camp.ironIngotCount += 1
                 elif self.selectedItem.itemType == ItemType.Ore:
                     Camp.ironOreCount += 1
+                elif self.selectedItem.itemType == ItemType.Sword:
+                    Camp.swordCount += 1
 
                 if self.selectedItem:
                     if self.selectedItem in Camp.items:

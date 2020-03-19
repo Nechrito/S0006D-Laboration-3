@@ -27,7 +27,7 @@ class SmeltState(IState):
                 if not building.owner:
                     building.owner = entity
                     self.selected = building
-                    self.selectedPos = self.selected.position.randomized()
+                    self.selectedPos = self.selected.position.randomized(10, 4, 2)
                     break
 
         if not self.selected:

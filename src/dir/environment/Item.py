@@ -29,6 +29,7 @@ class Item:
             self.color = (196, 171, 134)
 
         self.isProducing = False
+        self.isProduced = False
         self.isPickedUp = False
         self.isTarget = False # If an entity is approaching, to prevent multiple entities on the same object
 
@@ -40,5 +41,6 @@ class Item:
         if not self.isProducing:
             return
 
-        if time.time() - self.timerStart >= self.duration:
+        if time.time() - self.timerStart >= 3: #self.duration:
             self.isProducing = False
+            self.isProduced = True

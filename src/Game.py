@@ -107,7 +107,7 @@ class Game:
 
     def tryProduceSoldier(self):
         if Camp.swordCount >= 1 and (time.time() - self.lastSoldierTick >= 60 or self.lastSoldierTick == 0):
-            EntityManager.register(EntityType.soldier)
+            EntityManager.register(EntityType.Soldier)
             Camp.swordCount -= 1
             self.lastSoldierTick = time.time()
 
@@ -177,23 +177,23 @@ class Game:
 
             nextLevel = Camp.nextLevel
 
-            if nextLevel == 3:
+            if nextLevel == 2:
                 EntityManager.register(EntityType.Explorer)
                 EntityManager.register(EntityType.Explorer)
                 EntityManager.register(EntityType.Miner)
                 EntityManager.register(EntityType.Craftsman)
                 EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Mine))
+            elif nextLevel == 3:
+                EntityManager.register(EntityType.Worker)
+                EntityManager.register(EntityType.Worker)
+                EntityManager.register(EntityType.Smith)
+                EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Smith))
             elif nextLevel == 4:
                 EntityManager.register(EntityType.Worker)
                 EntityManager.register(EntityType.Worker)
                 EntityManager.register(EntityType.Smelter)
-                EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Smith))
-            elif nextLevel == 5:
-                EntityManager.register(EntityType.Worker)
-                EntityManager.register(EntityType.Worker)
-                EntityManager.register(EntityType.Smith)
                 EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Smelt))
-            elif nextLevel == 6:
+            elif nextLevel == 5:
                 EntityManager.register(EntityType.Worker)
                 EntityManager.register(EntityType.Worker)
                 EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.TrainingCamp))
@@ -218,7 +218,7 @@ class Game:
         # lowest layer, the tiles
         for row in SETTINGS.Graph:
             for node in row:
-                if node and node.isVisible:
+                if node and node.isVisible and len(node.images) > 0:
                     self.renderer.renderTile(node)
 
         #self.renderer.renderGrid()

@@ -18,11 +18,11 @@ class AStar(IPath):
         if not start or not end:
             return
 
-        startNode = SETTINGS.getNode(start, False, False)
+        startNode = SETTINGS.getNode(start, True, False)
         if not startNode:
             return
 
-        endNode = SETTINGS.getNode(end, False, False)
+        endNode = SETTINGS.getNode(end, True, False)
         if not endNode:
             return
 

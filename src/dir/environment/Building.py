@@ -15,12 +15,12 @@ class Building:
         self.buildingType = buildingType
         self.name = str(self.buildingType).replace("BuildingType.", "")
 
-        node = SETTINGS.getNode(position, False, True)
-        if node:
-            node.isWalkable = False
-            for neighbour in node.neighbours:
-                if neighbour:
-                    neighbour.isWalkable = False
+        #node = SETTINGS.getNode(position, False, True)
+        #if node:
+        #    node.isWalkable = False
+        #    for neighbour in node.neighbours:
+        #        if neighbour:
+        #            neighbour.isWalkable = False
 
         # int
         self.priority = self.buildingType.value
@@ -55,20 +55,20 @@ class Building:
         if self.timerStart != 0:
             return
 
-        Camp.totalWoodCount -= self.costWood
-        Camp.totalOreCount -= self.costIronOre
-
-        Camp.woodCount  -= self.costWood
-        Camp.swordCount -= self.costSword
-        Camp.ironIngotCount -= self.costIronIngot
-        Camp.ironOreCount   -= self.costIronOre
+        #Camp.totalWoodCount -= self.costWood
+        #Camp.totalOreCount -= self.costIronOre
+#
+        #Camp.woodCount  -= self.costWood
+        #Camp.swordCount -= self.costSword
+        #Camp.ironIngotCount -= self.costIronIngot
+        #Camp.ironOreCount   -= self.costIronOre
         self.timerStart = time.time()
 
     def startProducing(self, itemType: ItemType):
         if self.item:
             return
 
-        self.item = Item(self.position.randomized(maxDist=3), itemType)
+        self.item = Item(self.position.randomized(maxDist=4, checkCollision=False), itemType)
         self.item.startProducing()
 
     def update(self):
@@ -77,7 +77,7 @@ class Building:
         if self.item:
             if self.item.isProducing:
                 self.item.update()
-            else:
+            elif self.item.isProduced:
                 Camp.items.append(self.item)
                 self.item = None
 

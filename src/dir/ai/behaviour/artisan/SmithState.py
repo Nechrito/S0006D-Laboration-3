@@ -19,6 +19,7 @@ class SmithState(IState):
         pass
 
     def execute(self, entity):
+
         if not self.selected:
             for building in Camp.buildings:
                 if building.buildingType != BuildingType.Smelt:
@@ -27,7 +28,7 @@ class SmithState(IState):
                 if not building.owner:
                     building.owner = entity
                     self.selected = building
-                    self.selectedPos = self.selected.position.randomized()
+                    self.selectedPos = self.selected.position.randomized(10, 4, 2)
                     break
 
         if not self.selected:

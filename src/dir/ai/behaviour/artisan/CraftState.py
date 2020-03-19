@@ -1,7 +1,6 @@
 from dir.environment.Building import Building
 from dir.environment.Camp import Camp
 from enums.BuildingType import BuildingType
-from enums.EntityType import EntityType
 from dir.ai.behaviour.IState import IState
 from dir.ai.Message import Message
 from enums.MessageType import MessageType
@@ -19,11 +18,12 @@ class CraftState(IState):
 
     def handleMessage(self, telegram):
         if telegram.messageType and telegram.messageType == MessageType.CraftRequest:
-            self.selected = Building(Camp.position.randomized(iterations=20, maxDist=10, minDist=5), telegram.message)
+            self.selected = Building(Camp.position.randomized(iterations=10, maxDist=16, minDist=6), telegram.message)
             self.locked = True
 
     def execute(self, entity):
         if self.selected:
+            self.selected.update()
 
             # update the production timer
             if not self.selected.isCrafted:
@@ -33,7 +33,6 @@ class CraftState(IState):
                     self.selected.startBuilding()
                    # self.locked = False
 
-                self.selected.update()
             else:
                 self.selected = None
         elif not self.locked: # most of the underlying code here wont be used, as it's now based on messaging

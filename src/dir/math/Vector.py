@@ -1,6 +1,7 @@
 import numbers
 import math
 import random
+import time
 
 from dir.math.Iterator import fori
 from src.Settings import SETTINGS
@@ -26,15 +27,12 @@ class vec2:
     def LocalY(self):
         return self.Y // SETTINGS.TILE_SIZE[1]
 
-    def randomized(self, iterations=5, maxDist=5, minDist=1):
+    def randomized(self, iterations=5, maxDist=6, minDist=0, checkCollision=True):
         maxDist *= 16
         minDist *= 16
-
         maxDist = int(maxDist)
         minDist = int(minDist)
-
-        for _ in fori(1, iterations, 1):
-
+        for _ in range(1, iterations):
             rand = vec2(self.X + random.randrange(-maxDist, maxDist),
                         self.Y + random.randrange(-maxDist, maxDist))
 
@@ -43,8 +41,11 @@ class vec2:
                     continue
 
             node = SETTINGS.getNode(rand, False, False)
-            if node and node.isWalkable:
+            if node:
+                if checkCollision and not node.isWalkable:
+                    continue
                 return node.position
+
 
     def distance(self, other):
         return math.hypot(self.X - other.X, self.Y - other.Y)

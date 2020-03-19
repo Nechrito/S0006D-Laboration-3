@@ -75,7 +75,7 @@ class Camp:
         cls.nextLevel += 1
 
         if cls.level >= cls.maxLevel:
-            cls.radius = 2000
+            cls.radius = 1000
         else:
             cls.radius *= 1.5
         cls.lastLevelUpTick = GameTime.ticks
@@ -99,16 +99,10 @@ class Camp:
         elif Camp.level == 4:
             if Camp.woodCount >= 34:
                 return True
-        elif Camp.level == 5:
-            if Camp.woodCount >= 54:
-                return True
 
     @classmethod
     def canProduce(cls, buildingType: BuildingType):
-        if not buildingType:
-            print("Error!!! None!!")
-            return
-
+        return True
         wood    = cls.woodCount
         swords  = cls.swordCount
         ingots  = cls.ironIngotCount

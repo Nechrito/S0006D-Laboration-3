@@ -28,7 +28,7 @@ class MineState(IState):
                 if not building.owner:
                     building.owner = entity
                     self.selected = building
-                    self.selectedPos = self.selected.position.randomized()
+                    self.selectedPos = self.selected.position.randomized(10, 4, 2)
                     break
 
         if not self.selected:
@@ -41,7 +41,7 @@ class MineState(IState):
             else:
                 self.selected.startBuilding()
 
-        elif self.selected and entity.position.distance(self.selectedPos) <= entity.radius:
+        elif entity.position.distance(self.selectedPos) <= entity.radius:
             self.reached = True # <- lessens the amount of .distance(...) calls
         elif self.selected:
             entity.moveTo(self.selectedPos)
