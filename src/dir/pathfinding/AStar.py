@@ -1,7 +1,6 @@
 import time
+from copy import copy
 
-from dir.math.cMath import truncate
-from enums.PathType import PathType
 from src.Settings import SETTINGS
 from src.dir.math.Vector import vec2
 from src.dir.pathfinding.IPath import IPath
@@ -15,6 +14,9 @@ class AStar(IPath):
     def getPath(self, start: vec2, end: vec2):
         self.timerStart = time.time()
         self.timeElapsed = None
+
+        if not start or not end:
+            return
 
         startNode = SETTINGS.getNode(start, False, False)
         if not startNode:
@@ -30,13 +32,13 @@ class AStar(IPath):
         currentNode = None
 
         # iterate until end is located
-        while openList:
+        while openList and time.time() - self.timerStart < 500:
 
             currentNode = openList[0]
             currentIndex = 0
 
             for index, node in enumerate(openList):
-                if node.f < currentNode.f and node.isWalkable:
+                if node.f < currentNode.f:
                     currentNode = node
                     currentIndex = index
 
@@ -48,10 +50,7 @@ class AStar(IPath):
                 break
 
             for temp in currentNode.neighbours:
-                if not temp or not temp.isWalkable:
-                    continue
-
-                neighbour = SETTINGS.getNode(temp.position)
+                neighbour = copy(temp)
 
                 if not neighbour or not neighbour.isWalkable:
                     continue

@@ -56,8 +56,8 @@ class SETTINGS:
 
     @classmethod
     def configure(cls, mapWidth, mapHeight):
-        cls.MAP_WIDTH = mapWidth
-        cls.MAP_HEIGHT = mapHeight
+        cls.MAP_WIDTH = mapWidth + 16  * 2
+        cls.MAP_HEIGHT = mapHeight + 16 * 2
 
         cls.Graph = DynamicGraph()
         cls.Coordinates = []
@@ -92,14 +92,14 @@ class SETTINGS:
     def addNode(cls, node):
         localX = int(node.position.LocalX - 1)
         localY = int(node.position.LocalY - 1)
-        if localX <= 0 or localX >= 100 or localY <= 0 or localY >= 100:
-            cls.Graph[localY][localX] = None
-            return None
-        else:
-            cached = cls.Graph[localY][localX] = node
-            if cached.position not in cls.Coordinates:
-                cls.Coordinates.append(cached)
-            return cached
+        #if localX <= 0 or localX >= 100 or localY <= 0 or localY >= 99:
+        #    cls.Graph[localY][localX] = None
+        #    return None
+        #else:
+        cached = cls.Graph[localY][localX] = node
+        if cached.position not in cls.Coordinates:
+            cls.Coordinates.append(cached)
+        return cached
 
     @classmethod
     def activateNode(cls, node):

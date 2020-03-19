@@ -13,6 +13,7 @@ class IPath(object, metaclass=abc.ABCMeta):
         self.timerStart = None
         self.timeElapsed = None
         self.average = {PathType.AStar.value: [0, 0], PathType.BFS.value: [0, 0], PathType.DFS.value: [0, 0]}
+        self.sqrt2 = math.sqrt(2)
 
     def computeAverage(self, value, index):
         if value <= 0:
@@ -28,20 +29,18 @@ class IPath(object, metaclass=abc.ABCMeta):
         pass
 
     #  Diagonal Manhattan
-    @staticmethod
-    def heuristic(startPos, endPos):
+    def heuristic(self, startPos, endPos):
         dx = abs(startPos.X - endPos.X)
         dy = abs(startPos.Y - endPos.Y)
         D = 1
-        D2 = math.sqrt(2)
+        D2 = self.sqrt2
         return D * (dx + dy) + (D2 - 2 * D) * min(dx, dy)
 
-    @staticmethod
-    def getCost(startNode: Node, endNode: Node):
+    def getCost(self, startNode: Node, endNode: Node):
         if int(endNode.position.X - startNode.position.X) == 0 or int(endNode.position.Y - startNode.position.Y) == 0:
             cost = 1  # horizontal/vertical cost
         else:
-            cost = 1.4  # diagonal cost
+            cost = self.sqrt2  # diagonal cost
         return startNode.g + cost
 
     @staticmethod

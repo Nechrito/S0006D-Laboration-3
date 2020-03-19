@@ -21,7 +21,7 @@ class ExploreState(IState):
         self.entity = None
         self.lastCheckTick = 0
         self.moveRate = 0
-        self.threshold = 0.15
+        self.threshold = 0.65
 
     def enter(self, entity):
         self.entity = entity
@@ -31,6 +31,9 @@ class ExploreState(IState):
         if self.entity and telegram.source != self.entity and telegram.isMyType(self.entity):
             if telegram.messageType == MessageType.PositionChange:
                 self.avoidableTarget = telegram.message
+
+               # if self.currentTarget and self.currentTarget.distance(self.avoidableTarget) < Camp.radius * self.threshold:
+                    #self.currentTarget = None
 
     def execute(self, entity):
 
@@ -42,12 +45,20 @@ class ExploreState(IState):
 
         elif time.time() - self.lastCheckTick >= self.moveRate: # seconds
             self.lastCheckTick = time.time()
-            self.getUnmarkedNode(entity)
+            temp = self.getUnmarkedNode(entity)
+            if temp:
+                self.currentTarget = temp
+            else:
+                return
             self.avoidableTarget = None
             self.moveRate = random.randrange(250, 750) / 1000
 
-            # let all other Explorers know where I'm headed, so they don't walk there aswell
-            EntityManager.sendMessage(Telegram(source=entity, entityType=EntityType.Explorer, messageType= MessageType.PositionChange, message=self.currentTarget))
+            if self.currentTarget:
+                # let all other Explorers know where I'm headed, so they don't walk there aswell
+                EntityManager.sendMessage(Telegram(source=entity, entityType=EntityType.Explorer, messageType=MessageType.PositionChange, message=self.currentTarget))
+            else:
+                Message.sendConsole(entity, "Hm.. nothing to do huh")
+                StateTransition.setState(entity, StateType.IdleState)
 
     def getUnmarkedNode(self, entity):
 
@@ -62,19 +73,19 @@ class ExploreState(IState):
                     continue
 
                 currentDist = node.position.distance(Camp.position)
-                if currentDist <= Camp.radius + 16:
+                if currentDist <= Camp.radius:
                     if currentDist > distance != 0:
                         continue
 
                     if self.avoidableTarget:
-                        if self.avoidableTarget.distance(node.position) <= Camp.radius * self.threshold:
+                        if self.avoidableTarget.distance(node.position)  * self.threshold <= entity.position.distance(node.position):
                             continue
 
                     distance = currentDist
                     closest = node
 
-        if closest and closest.position:
-            self.currentTarget = closest.position
+        if closest:
+            return closest.position
         else:
             StateTransition.setState(entity, StateType.IdleState)
 

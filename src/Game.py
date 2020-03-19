@@ -109,6 +109,8 @@ class Game:
 
         # Computes the FOG OF WAR
         for agent in EntityManager.entities:
+            if agent.isComputingPath:
+                continue
 
             node = SETTINGS.getNode(agent.position, False, False)
             if not node:
@@ -116,12 +118,12 @@ class Game:
 
             node.isVisible = True
 
-            if agent.entityType != EntityType.Explorer:
-                continue
-
             for neighbour in node.neighbours:
                 if neighbour:
                     neighbour.isVisible = True
+
+                    if agent.entityType != EntityType.Explorer:
+                        continue
 
                     # 2nd layer lol
                     for neighbour2 in neighbour.neighbours:
@@ -167,9 +169,9 @@ class Game:
         if Camp.canLevelUp():
 
             nextLevel = Camp.nextLevel
-            print(str(Camp.level) + ' ' + str(nextLevel))
 
             if nextLevel == 3:
+                EntityManager.register(EntityType.Explorer)
                 EntityManager.register(EntityType.Miner)
                 EntityManager.register(EntityType.Craftsman)
                 EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Mine))
@@ -206,7 +208,7 @@ class Game:
                         if CameraInstance.inCameraBounds(node.position):
                             self.renderer.renderTile(node)
 
-        self.renderer.renderGrid()
+        #self.renderer.renderGrid()
 
         # draws the base image
         self.surface.blit(Camp.image, CameraInstance.centeredRect(Camp.rect))
@@ -250,11 +252,11 @@ class Game:
                 self.renderer.renderLine(entity.waypoints[row].position, entity.waypoints[row + 1].position)
 
             # draw entity name (type)
-            self.renderer.renderText(entity.name, entity.position + vec2(0, 16), self.fontBold, (44, 130, 145))
+            self.renderer.renderText(entity.name, entity.position + vec2(0, 18), self.fontBold, (232, 232, 232))
 
         for item in Camp.items:
             self.renderer.renderRect((4, 4), item.position)
-            self.renderer.renderText('[' + item.name + ']', item.position, self.fontSmall, (255, 153, 153))
+            self.renderer.renderText('[' + item.name + ']', item.position, self.fontSmall, item.color)
 
         # draw information
         self.renderer.append("Camp Level: " + str(int(Camp.level)))

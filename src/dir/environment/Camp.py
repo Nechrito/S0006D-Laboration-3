@@ -98,9 +98,6 @@ class Camp:
         elif Camp.level == 5:
             if Camp.woodCount >= 58:
                 return True
-        elif Camp.level == 6:
-            if Camp.woodCount >= 65:
-                return True
 
     @classmethod
     def canProduce(cls, buildingType: BuildingType):

@@ -72,7 +72,7 @@ class Building:
                 self.item = None
 
         # crafts the building itself
-        if self.timerStart != 0 and not self.isCrafted and time.time() - self.timerStart > self.duration:
+        if self.timerStart != 0 and not self.isCrafted and time.time() - self.timerStart > 0.5:#self.duration:
             self.isCrafted = True
             self.timerStart = 0
             Camp.buildings.append(self)

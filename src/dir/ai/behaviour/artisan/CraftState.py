@@ -20,7 +20,7 @@ class CraftState(IState):
     def handleMessage(self, telegram):
         if telegram.messageType and telegram.messageType == MessageType.CraftRequest:
             dist = Camp.radius // 16
-            self.selected = Building(Camp.position.randomized(iterations=10, maxDist=dist * 0.75, minDist=dist * 0.20), telegram.message)
+            self.selected = Building(Camp.position.randomized(iterations=10, maxDist=dist * 0.5, minDist=dist * 0.15), telegram.message)
             self.locked = True
 
     def execute(self, entity):

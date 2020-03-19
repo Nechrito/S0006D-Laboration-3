@@ -8,8 +8,8 @@ class PriorityQueue(object):
     def empty(self):
         return len(self.queue) == 0
 
-    def push(self, data):
-        heapq.heappush(self.queue, data)  # todo: (node, cost/weight)
+    def push(self, data, prio):
+        heapq.heappush(self.queue, (data, prio))
 
-    def pop(self):
-        return heapq.heappop(self.queue)
+    def get(self):
+        return heapq.heappop(self.queue)[1]

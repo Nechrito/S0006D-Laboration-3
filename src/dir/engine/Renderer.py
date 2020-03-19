@@ -48,9 +48,9 @@ class Renderer:
         sHeight = SETTINGS.MAP_HEIGHT
         color = (102, 227, 164)
         center = CameraInstance.center
-        for x in fori(size, sWidth + size + size + size, size):
+        for x in fori(size, sWidth, size):
             pygame.draw.line(self.surface, color, (vec2(x, size) + center).tuple, (vec2(x, sHeight) + center).tuple)
-        for y in fori(size + size, sHeight, size):
+        for y in fori(size, sHeight, size):
             pygame.draw.line(self.surface, color, (vec2(size, y) + center).tuple, (vec2(sWidth, y) + center).tuple)
 
     def renderLine(self, start: vec2, end: vec2, color=(255, 255, 255), width=1):
