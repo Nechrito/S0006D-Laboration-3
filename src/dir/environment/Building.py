@@ -53,7 +53,6 @@ class Building:
         Camp.ironIngotCount -= self.costIronIngot
         Camp.ironOreCount   -= self.costIronOre
         self.timerStart = time.time()
-        print("Real duration: " + str(self.duration) + " | Relative: " + str(GameTime.relativeDuration(self.duration)))
 
     def startProducing(self, itemType: ItemType):
         if self.item:

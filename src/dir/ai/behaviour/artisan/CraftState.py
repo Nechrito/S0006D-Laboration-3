@@ -15,7 +15,6 @@ class CraftState(IState):
         self.locked = True # if we get a msg that we should craft something, wait until we can craft it
 
     def enter(self, entity):
-        entity.setType(EntityType.Craftsman)
         Message.sendConsole(entity, "What to build today..")
 
     def handleMessage(self, telegram):

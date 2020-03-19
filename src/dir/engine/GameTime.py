@@ -53,7 +53,7 @@ class GameTime:
 
     @classmethod
     def relativeDuration(cls, seconds):
-        return (seconds * 1000) / cls.timeScale
+        return seconds / cls.timeScale
 
     @classmethod
     def timeSince(cls, ticksStart):

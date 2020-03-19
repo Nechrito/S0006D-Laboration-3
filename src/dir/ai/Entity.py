@@ -12,9 +12,9 @@ from src.enums.PathType import PathType
 
 class Entity:
 
-    def __init__(self, characterType: EntityType, campPos, image, startState, globalState):
-        self.entityType = characterType
-        self.name = str(characterType).replace("EntityType.", "")
+    def __init__(self, entityType: EntityType, campPos, image, startState, globalState):
+        self.entityType = entityType
+        self.name = str(entityType).replace("EntityType.", "")
         self.stateMachine = StateMachine(self, startState, globalState)
         self.position = campPos.randomized(9)
         self.image = image
@@ -23,7 +23,7 @@ class Entity:
         self.isComputingPath = False
 
         # increase movement speed by 20% if entity is an explorer
-        if characterType == EntityType.Explorer:
+        if entityType == EntityType.Explorer:
             self.moveSpeed *= 1.20
 
         self.rect = self.image.get_rect()
@@ -74,10 +74,6 @@ class Entity:
 
     def handleMessage(self, telegram):
         self.stateMachine.handleMessage(telegram)
-
-    def setType(self, entityType):
-        self.entityType = entityType
-        self.name = str(self.entityType).replace("EntityType.", "")
 
     def setState(self, state):
         self.stateMachine.change(state)

@@ -5,6 +5,7 @@ from dir.ai.Telegram import Telegram
 from dir.ai.behaviour.generic.GlobalState import GlobalState
 from dir.ai.behaviour.generic.IdleState import IdleState
 from enums.EntityType import EntityType
+from enums.MessageType import MessageType
 
 
 class EntityManager:
@@ -30,7 +31,9 @@ class EntityManager:
         else: # todo: if we want more images
             img = cls.imgHatguy
 
-        cls.entities.append(Entity(entityType, cls.campPosition.randomized(), img, IdleState(), GlobalState()))
+        entity = Entity(entityType, cls.campPosition, img, IdleState(), GlobalState())
+        cls.entities.append(entity)
+        cls.sendMessage(Telegram(messageType=MessageType.StateChange, target=entity))
 
     @classmethod
     def remove(cls, entity: Entity):
@@ -46,7 +49,7 @@ class EntityManager:
 
     @classmethod
     def sendMessage(cls, telegram: Telegram):
-        for entity in EntityManager.entities:
+        for entity in cls.entities:
             temp = telegram
             if temp.isForMe(entity) or temp.entityType == EntityType.Ignored:
                 if not temp.target:

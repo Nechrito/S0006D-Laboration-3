@@ -14,7 +14,6 @@ class MineState(IState):
         self.reached = False
 
     def enter(self, entity):
-        entity.setType(EntityType.Miner)
         Message.sendConsole(entity, "Headin' over to the mines")
 
     def handleMessage(self, telegram):

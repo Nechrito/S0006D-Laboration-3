@@ -94,9 +94,6 @@ class Game:
         EntityManager.register(EntityType.Explorer)
         EntityManager.register(EntityType.Explorer)
 
-        # set their actual default state, rather than idle (easier to create entities by doing this)
-        EntityManager.sendMessage(Telegram(messageType=MessageType.StateChange, entityType=EntityType.Ignored))
-
         self.realCursorEnabled = False
         pygame.mouse.set_visible(self.realCursorEnabled)
         pygame.event.set_grab(not self.realCursorEnabled)
@@ -169,11 +166,12 @@ class Game:
         # level up
         if Camp.canLevelUp():
 
-            nextLevel = Camp.level + 1
+            nextLevel = Camp.nextLevel
+            print(str(Camp.level) + ' ' + str(nextLevel))
 
             if nextLevel == 3:
-                EntityManager.register(EntityType.Craftsman)
                 EntityManager.register(EntityType.Miner)
+                EntityManager.register(EntityType.Craftsman)
                 EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Mine))
             elif nextLevel == 4:
                 EntityManager.register(EntityType.Worker)

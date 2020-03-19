@@ -14,7 +14,6 @@ class SmeltState(IState):
         self.reached = False
 
     def enter(self, entity):
-        entity.setType(EntityType.Miner)
         Message.sendConsole(entity, "I wonder how many ingots I can produce today")
 
     def handleMessage(self, telegram):

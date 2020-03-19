@@ -21,14 +21,10 @@ class IdleState(IState):
         self.entity = entity
 
     def handleMessage(self, telegram):
-        if not self.entity:
-            if telegram.target:
-                self.entity = telegram.target
-            else:
-                return
-        if telegram.messageType == MessageType.RevertState:
-            self.entity.revertState()
-        elif telegram.messageType == MessageType.StateChange:
+
+        #if telegram.messageType == MessageType.RevertState:
+            #self.entity.revertState()
+        if telegram.messageType == MessageType.StateChange:
 
             if self.entity.entityType == EntityType.Worker:
                 StateTransition.setState(self.entity, StateType.WorkState)

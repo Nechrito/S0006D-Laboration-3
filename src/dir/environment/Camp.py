@@ -23,8 +23,9 @@ from enums.BuildingType import BuildingType
 class Camp:
 
     level = 1
+    nextLevel = 2
     maxLevel = 6
-    radius = 215
+    radius = 220
     position: vec2
     image: pygame.Surface
     imageScale: vec2
@@ -67,6 +68,8 @@ class Camp:
     def levelUp(cls):
 
         cls.level += 1
+        cls.nextLevel += 1
+
         if cls.level >= cls.maxLevel:
             cls.radius = 2000
         else:
@@ -90,7 +93,7 @@ class Camp:
             if Camp.woodCount >= 26:
                 return True
         elif Camp.level == 4:
-            if Camp.woodCount >= 40:
+            if Camp.woodCount >= 34:
                 return True
         elif Camp.level == 5:
             if Camp.woodCount >= 58:

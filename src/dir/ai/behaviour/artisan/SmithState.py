@@ -14,8 +14,7 @@ class SmithState(IState):
         self.reached = False
 
     def enter(self, entity):
-        entity.setType(EntityType.Miner)
-        Message.sendConsole(entity, "I wonder how many swords I can produce today")
+        Message.sendConsole(entity, "Keep them swords comin'!")
 
     def handleMessage(self, telegram):
         pass
