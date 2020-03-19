@@ -1,5 +1,6 @@
 from dir.environment.Camp import Camp
 from dir.environment.Item import Item
+from dir.math.Vector import vec2
 from enums.ItemType import ItemType
 
 from src.dir.ai.Entity import SETTINGS

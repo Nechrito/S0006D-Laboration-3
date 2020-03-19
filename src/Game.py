@@ -1,12 +1,11 @@
 import random
+import time
 from os import path
 
 import pygame
 import pygame.freetype
 
 from dir.ai.Telegram import Telegram
-from dir.ai.behaviour.generic.GlobalState import GlobalState
-from dir.ai.behaviour.generic.IdleState import IdleState
 from dir.engine.EntityManager import EntityManager
 from dir.engine.Map import Map
 from dir.environment.Camp import Camp
@@ -17,7 +16,6 @@ from enums.EntityType import EntityType
 from enums.ItemType import ItemType
 from enums.MessageType import MessageType
 from src.Settings import *
-from src.dir.ai.Entity import Entity
 from src.dir.engine.CameraInstance import CameraInstance
 from src.dir.engine.GameTime import GameTime
 from src.dir.engine.Renderer import Renderer
@@ -55,7 +53,7 @@ class Game:
 
         self.map = Map(self.getRealFilePath(SETTINGS.MAP_PATH), self.getRealFilePath(SETTINGS.MAP_REF))
 
-        self.fontSmall = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 15 // SETTINGS.SCREEN_WIDTH)
+        self.fontSmall = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BLACK), SETTINGS.SCREEN_HEIGHT * 15 // SETTINGS.SCREEN_WIDTH)
         self.fontRegular = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 16 // SETTINGS.SCREEN_WIDTH)
         self.fontBold = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 18 // SETTINGS.SCREEN_WIDTH)
         self.fontBig = pygame.freetype.Font(self.getRealFilePath(SETTINGS.FONT_BOLD), SETTINGS.SCREEN_HEIGHT * 22 // SETTINGS.SCREEN_WIDTH)
@@ -105,6 +103,14 @@ class Game:
         CameraInstance.init()
         CameraInstance.followTarget(Camp.position)
 
+        self.lastSoldierTick = 0
+
+    def tryProduceSoldier(self):
+        if Camp.swordCount >= 1 and (time.time() - self.lastSoldierTick >= 60 or self.lastSoldierTick == 0):
+            EntityManager.register(EntityType.soldier)
+            Camp.swordCount -= 1
+            self.lastSoldierTick = time.time()
+
     def checkFOW(self):
 
         # Computes the FOG OF WAR
@@ -118,12 +124,12 @@ class Game:
 
             node.isVisible = True
 
+            if agent.entityType != EntityType.Explorer:
+                continue
+
             for neighbour in node.neighbours:
                 if neighbour:
                     neighbour.isVisible = True
-
-                    if agent.entityType != EntityType.Explorer:
-                        continue
 
                     # 2nd layer lol
                     for neighbour2 in neighbour.neighbours:
@@ -163,6 +169,7 @@ class Game:
             CameraInstance.followTarget(Camp.position)
 
         self.checkFOW()
+        self.tryProduceSoldier()
         EntityManager.update()
 
         # level up
@@ -172,17 +179,23 @@ class Game:
 
             if nextLevel == 3:
                 EntityManager.register(EntityType.Explorer)
+                EntityManager.register(EntityType.Explorer)
                 EntityManager.register(EntityType.Miner)
                 EntityManager.register(EntityType.Craftsman)
                 EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Mine))
             elif nextLevel == 4:
                 EntityManager.register(EntityType.Worker)
+                EntityManager.register(EntityType.Worker)
                 EntityManager.register(EntityType.Smelter)
                 EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Smelt))
             elif nextLevel == 5:
+                EntityManager.register(EntityType.Worker)
+                EntityManager.register(EntityType.Worker)
                 EntityManager.register(EntityType.Smith)
                 EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Smith))
             elif nextLevel == 6:
+                EntityManager.register(EntityType.Worker)
+                EntityManager.register(EntityType.Worker)
                 EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.TrainingCamp))
 
             Camp.levelUp()
@@ -198,15 +211,15 @@ class Game:
     def draw(self):
 
         self.renderer.clear()
+        
+        #for node in SETTINGS.DiscoveredTiles:
+            #self.renderer.renderTile(node)
 
         # lowest layer, the tiles
         for row in SETTINGS.Graph:
             for node in row:
-                if node:
-                    # todo: remove isVisible once optimized drawing, then cover unseen nodes with an alpha
-                    if node.isVisible:
-                        if CameraInstance.inCameraBounds(node.position):
-                            self.renderer.renderTile(node)
+                if node and node.isVisible:
+                    self.renderer.renderTile(node)
 
         #self.renderer.renderGrid()
 
@@ -255,16 +268,15 @@ class Game:
             self.renderer.renderText(entity.name, entity.position + vec2(0, 18), self.fontBold, (232, 232, 232))
 
         for item in Camp.items:
-            self.renderer.renderRect((4, 4), item.position)
-            self.renderer.renderText('[' + item.name + ']', item.position, self.fontSmall, item.color)
+            self.renderer.renderText('[' + item.name + ']', item.position + vec2(0, 30), self.fontSmall, item.color)
 
         # draw information
         self.renderer.append("Camp Level: " + str(int(Camp.level)))
         self.renderer.append("Wood: " + str(Camp.woodCount) + "/727")
         self.renderer.append("IronOres: " + str(Camp.ironOreCount) + "/60")
-        self.renderer.append("IronIngots: " + str(Camp.ironIngotCount) + "/20")
-        self.renderer.append("Soldiers: " + str(Camp.soldierCount) + "/20")
-        self.renderer.append("Charcoal: " + str(Camp.charcoalCount) + "/200")
+        self.renderer.append("IronIngots: " + str(Camp.ironIngotCount))
+        self.renderer.append("Charcoal: " + str(Camp.charcoalCount))
+        self.renderer.append("Swords: " + str(Camp.swordCount))
         self.renderer.append("")
         self.renderer.append("~Entities~")
         self.renderer.append("Workers: " + str(len(EntityManager.getAllOfType(EntityType.Worker))))
@@ -273,9 +285,10 @@ class Game:
         self.renderer.append("Miners: " + str(len(EntityManager.getAllOfType(EntityType.Miner))))
         self.renderer.append("Smelters: " + str(len(EntityManager.getAllOfType(EntityType.Smelter))))
         self.renderer.append("Smiths: " + str(len(EntityManager.getAllOfType(EntityType.Smith))))
+        self.renderer.append("Soldiers: " + str(Camp.soldierCount))
 
         centered = vec2(SETTINGS.SCREEN_WIDTH * 0.10, SETTINGS.SCREEN_HEIGHT * 0.015)
-        self.renderer.renderRectToScreen((150, 425), centered, (37, 37, 38), 200)
+        self.renderer.renderRectToScreen((150, 445), centered, (37, 37, 38), 200)
         self.renderer.renderTexts(centered, self.fontBold, (255, 255, 255))
 
         self.clock.tick(SETTINGS.MAX_FPS)

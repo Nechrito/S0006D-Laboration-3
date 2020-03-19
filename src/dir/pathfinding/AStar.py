@@ -32,7 +32,7 @@ class AStar(IPath):
         currentNode = None
 
         # iterate until end is located
-        while openList and time.time() - self.timerStart < 500:
+        while openList:
 
             currentNode = openList[0]
             currentIndex = 0

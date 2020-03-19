@@ -8,5 +8,6 @@ class EntityType(Enum):
     Smith = auto()
     Smelter = auto()
     Craftsman = auto()
+    Soldier = auto()
     Ignored = auto()
 

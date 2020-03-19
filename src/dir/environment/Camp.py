@@ -37,11 +37,13 @@ class Camp:
     # entity cap
     entitiesCount = 200
 
-    # gathered/produced
+    # gathered
     woodCount      = 0
-    charcoalCount  = 0
-    ironIngotCount = 0
     ironOreCount   = 0
+
+    # produced
+    ironIngotCount = 0
+    charcoalCount  = 0
     swordCount     = 0
     soldierCount   = 0
 

@@ -39,6 +39,5 @@ class Item:
         if not self.isProducing:
             return
 
-        if self.timerStart != 0 and time.time() - self.timerStart > 5:#self.duration:
+        if self.timerStart != 0 and time.time() - self.timerStart >= 5: #self.duration:
             self.isProducing = False
-           # print("Created: " + self.name)
