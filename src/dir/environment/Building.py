@@ -21,6 +21,9 @@ class Building:
         #    for neighbour in node.neighbours:
         #        if neighbour:
         #            neighbour.isWalkable = False
+        #            for neighbourExt in neighbour.neighbours:
+        #                if neighbourExt:
+        #                    neighbourExt.isWalkable = False
 
         # int
         self.priority = self.buildingType.value
