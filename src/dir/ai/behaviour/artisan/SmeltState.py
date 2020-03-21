@@ -19,6 +19,7 @@ class SmeltState(IState):
         pass
 
     def execute(self, entity):
+
         if not self.selected:
             for building in Camp.buildings:
                 if building.buildingType != BuildingType.Smelt:

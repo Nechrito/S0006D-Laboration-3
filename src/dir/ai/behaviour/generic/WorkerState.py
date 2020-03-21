@@ -131,7 +131,7 @@ class WorkerState(IState):
                 if not itemNode or not itemNode.isVisible:
                     continue
 
-                if itemNode.position.distance(Camp.position) > Camp.radius:
+                if itemNode.position.distance(Camp.position) >= Camp.radius - 16:
                     continue
 
                 distanceToSub = item.position.distance(entity.position)

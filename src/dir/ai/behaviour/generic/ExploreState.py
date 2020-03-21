@@ -21,7 +21,7 @@ class ExploreState(IState):
         self.entity = None
         self.lastCheckTick = 0
         self.moveRate = 0
-        self.threshold = 0.65
+        self.threshold = 0.85
 
     def enter(self, entity):
         self.entity = entity
@@ -32,7 +32,7 @@ class ExploreState(IState):
             if telegram.messageType == MessageType.PositionChange:
                 self.avoidableTarget = telegram.message
 
-               # if self.currentTarget and self.currentTarget.distance(self.avoidableTarget) < Camp.radius * self.threshold:
+                #if self.currentTarget and self.currentTarget.distance(self.avoidableTarget) < Camp.radius * self.threshold:
                     #self.currentTarget = None
 
     def execute(self, entity):
@@ -60,7 +60,10 @@ class ExploreState(IState):
         #timeStart = time.time()
         closest = None
         distance = 0
+        exit = False
         for i in SETTINGS.Graph:
+            if exit:
+                break
             for node in i:
 
                 # Could perform class type Node check, but might result in circular import
@@ -71,15 +74,16 @@ class ExploreState(IState):
                 if node.position.distance(Camp.position) <= Camp.radius:
                     currentDist = entity.position.distance(node.position)
 
-                    if currentDist < 16 * 5 or currentDist > distance != 0:
+                    if currentDist < 16 * 3 or currentDist < distance != 0:
                         continue
 
                     if self.avoidableTarget:
-                        if self.avoidableTarget.distance(node.position) <= 200:
+                        if self.avoidableTarget.distance(node.position) <= Camp.radius * self.threshold:
                             continue
 
                     distance = currentDist
                     closest = node
+                    exit = True
                     break
 
         #timeElapsed = truncate((time.time() - timeStart) * 1000)

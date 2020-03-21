@@ -42,7 +42,7 @@ class AStar(IPath):
         # iterate until end is located
         while openList:
 
-            if len(closedList) > 500:
+            if len(closedList) > 400:
                 start.log("start")
                 end.log("end")
                 break

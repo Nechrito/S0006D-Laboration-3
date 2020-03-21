@@ -106,10 +106,10 @@ class Game:
         self.lastSoldierTick = 0
 
     def tryProduceSoldier(self):
-        if Camp.swordCount >= 1 and (time.time() - self.lastSoldierTick >= 60 or self.lastSoldierTick == 0):
-            EntityManager.register(EntityType.Soldier)
-            Camp.swordCount -= 1
+        if Camp.swordCount >= 1 and time.time() - self.lastSoldierTick >= 60 / GameTime.timeScale:
             self.lastSoldierTick = time.time()
+            Camp.swordCount -= 1
+            EntityManager.register(EntityType.Soldier)
 
     def checkFOW(self):
 
@@ -270,7 +270,7 @@ class Game:
             self.renderer.renderText('[' + item.name + ']', item.position + vec2(0, 30), self.fontSmall, item.color)
 
         # draw information
-        self.renderer.append("Camp Level: " + str(int(Camp.level)))
+        self.renderer.append("Camp Level: " + str(int(Camp.level)) + "/" + str(Camp.maxLevel))
         self.renderer.append("Wood: " + str(Camp.woodCount) + '/' + str(Camp.totalWoodCount))
         self.renderer.append("IronOres: " + str(Camp.ironOreCount) + '/' + str(Camp.totalOreCount))
         self.renderer.append("IronIngots: " + str(Camp.ironIngotCount))
@@ -284,7 +284,7 @@ class Game:
         self.renderer.append("Miners: " + str(len(EntityManager.getAllOfType(EntityType.Miner))))
         self.renderer.append("Smelters: " + str(len(EntityManager.getAllOfType(EntityType.Smelter))))
         self.renderer.append("Smiths: " + str(len(EntityManager.getAllOfType(EntityType.Smith))))
-        self.renderer.append("Soldiers: " + str(Camp.soldierCount))
+        self.renderer.append("Soldiers: " + str(len(EntityManager.getAllOfType(EntityType.Soldier))))
 
         centered = vec2(SETTINGS.SCREEN_WIDTH * 0.10, SETTINGS.SCREEN_HEIGHT * 0.015)
         self.renderer.renderRectToScreen((150, 445), centered, (37, 37, 38), 200)
