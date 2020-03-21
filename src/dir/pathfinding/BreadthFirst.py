@@ -15,7 +15,6 @@ class BreadthFirst(IPath):
         self.timeElapsed = None
 
     def getPath(self, start: vec2, end: vec2):
-
         self.timerStart = time.time()
         self.timeElapsed = None
 

@@ -19,7 +19,6 @@ class PathManager:
     def __init__(self, pathType: PathType = 0):
         self.updateTime = 0
         self.pathType = pathType
-
         if pathType == PathType.AStar:
             self.algorithm = AStar()
         elif pathType == PathType.DFS:
@@ -31,7 +30,6 @@ class PathManager:
         if waypoints and len(waypoints) >= 1:
             if waypoints[-1].position == end:
                 return waypoints
-
         newPath = self.requestPath(start, end)
         return newPath
 

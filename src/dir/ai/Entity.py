@@ -42,10 +42,10 @@ class Entity:
 
         self.stateMachine.update()
 
-        self.rect.center = self.position.tuple
-
         if self.isComputingPath:
             return
+
+        self.rect.center = self.position.tuple
 
         if self.nextNode.distance(self.position) >= self.radius:
             node = SETTINGS.getNode(self.position, True, False)
@@ -62,6 +62,7 @@ class Entity:
     def moveTo(self, target: vec2):
         self.isComputingPath = True
         temp = self.pathfinder.requestPathCached(self.waypoints, self.position, target)
+
         if not temp or len(temp) <= 1:
             return
 

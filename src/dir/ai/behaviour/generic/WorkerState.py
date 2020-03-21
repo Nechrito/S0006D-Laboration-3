@@ -43,6 +43,7 @@ class WorkerState(IState):
         # move to camp once the item is picked up
         if self.selectedItem.isPickedUp:
             entity.moveTo(Camp.position)
+
             self.selectedItem.position = entity.position
 
             if entity.position.distance(Camp.position) <= entity.radius:
@@ -61,12 +62,12 @@ class WorkerState(IState):
                 if self.selectedItem:
                     if self.selectedItem in Camp.items:
                         Camp.items.remove(self.selectedItem)
+
                     self.selectedItem = None
 
         # move towards the item to then pick it up
         else:
             entity.moveTo(self.selectedItem.position)
-
             if entity.position.distance(self.selectedItem.position) <= entity.radius:
                 self.selectedItem.isPickedUp = True
 
@@ -80,7 +81,7 @@ class WorkerState(IState):
             if self.selectedTree.isChopped and self.selectedTree in Camp.trees:
                 Camp.trees.remove(self.selectedTree)
 
-                self.selectedItem = Item(self.selectedTree.position.randomized(5, 3), ItemType.Wood)
+                self.selectedItem = Item(self.selectedTree.position.randomized(15, 6, 0), ItemType.Wood)
                 Camp.items.append(self.selectedItem)
 
                 self.selectedTree = None

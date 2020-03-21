@@ -18,11 +18,11 @@ class AStar(IPath):
         if not start or not end:
             return
 
-        startNode = SETTINGS.getNode(start, True, False)
+        startNode = SETTINGS.getNode(start, False, True)
         if not startNode:
             return
 
-        endNode = SETTINGS.getNode(end, True, False)
+        endNode = SETTINGS.getNode(end, False, True)
         if not endNode:
             return
 
@@ -32,7 +32,7 @@ class AStar(IPath):
         currentNode = None
 
         # iterate until end is located
-        while openList:
+        while 0 < len(openList) < 200 and len(closedList) < 200:
 
             currentNode = openList[0]
             currentIndex = 0

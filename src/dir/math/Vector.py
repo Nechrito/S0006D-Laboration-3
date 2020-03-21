@@ -44,12 +44,14 @@ class vec2:
                     continue
                 return node.position
 
-
     def distance(self, other):
         return math.hypot(self.X - other.X, self.Y - other.Y)
 
     def log(self, header=""):
-        print(header + " (" + str(self.X) + ", " + str(self.Y) + ") | Local: (" + str(self.LocalX) + ", " + str(self.LocalY) + ")")
+        print(header + ' ' + str(self))
+
+    def __repr__(self):
+        return "Relative: (" + str(self.X) + ", " + str(self.Y) + ") | Raw: (" + str(self.LocalX) + ", " + str(self.LocalY) + ")"
 
     def __eq__(self, other):
         if isinstance(other, vec2):
