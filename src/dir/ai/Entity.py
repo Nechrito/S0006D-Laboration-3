@@ -28,7 +28,7 @@ class Entity:
 
         self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
-
+        self.scaleTime = GameTime.timeScale
         self.isBeingUpgraded = False
 
         self.pathfinder = PathManager(PathType.AStar)
@@ -38,9 +38,10 @@ class Entity:
         self.radius = 16
 
     def update(self):
+        self.scaleTime = GameTime.timeScale
+
         self.stateMachine.update()
 
-        self.rect = self.image.get_rect()
         self.rect.center = self.position.tuple
 
         if self.isComputingPath:

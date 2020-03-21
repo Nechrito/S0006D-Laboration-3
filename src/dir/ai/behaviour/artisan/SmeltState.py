@@ -36,9 +36,7 @@ class SmeltState(IState):
         if self.reached:
             if self.selected.isCrafted:
                 self.selected.startProducing(ItemType.Ingot)
-                self.selected.update()
-            else:
-                self.selected.startBuilding()
+                self.selected.updateItemTimer(entity)
 
         elif self.selected and entity.position.distance(self.selectedPos) <= entity.radius:
             self.reached = True

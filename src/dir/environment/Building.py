@@ -15,12 +15,12 @@ class Building:
         self.buildingType = buildingType
         self.name = str(self.buildingType).replace("BuildingType.", "")
 
-        #node = SETTINGS.getNode(position, False, True)
-        #if node:
-        #    node.isWalkable = False
-        #    for neighbour in node.neighbours:
-        #        if neighbour:
-        #            neighbour.isWalkable = False
+        node = SETTINGS.getNode(position, False, True)
+        if node:
+            node.isWalkable = False
+            for neighbour in node.neighbours:
+                if neighbour:
+                    neighbour.isWalkable = False
 
         # int
         self.priority = self.buildingType.value
@@ -30,6 +30,7 @@ class Building:
         self.duration = 0
         self.timerStart = 0
         self.isCrafted = False
+        self.isCrafting = False
 
         self.costWood = 0
         self.costIronOre = 0
@@ -55,14 +56,15 @@ class Building:
         if self.timerStart != 0:
             return
 
-        #Camp.totalWoodCount -= self.costWood
-        #Camp.totalOreCount -= self.costIronOre
+        Camp.totalWoodCount -= self.costWood
+        Camp.totalOreCount -= self.costIronOre
 #
-        #Camp.woodCount  -= self.costWood
-        #Camp.swordCount -= self.costSword
-        #Camp.ironIngotCount -= self.costIronIngot
-        #Camp.ironOreCount   -= self.costIronOre
+        Camp.woodCount  -= self.costWood
+        Camp.swordCount -= self.costSword
+        Camp.ironIngotCount -= self.costIronIngot
+        Camp.ironOreCount   -= self.costIronOre
         self.timerStart = time.time()
+        self.isCrafting = True
 
     def startProducing(self, itemType: ItemType):
         if self.item:
@@ -71,19 +73,18 @@ class Building:
         self.item = Item(self.position.randomized(maxDist=4, checkCollision=False), itemType)
         self.item.startProducing()
 
-    def update(self):
-
+    def updateItemTimer(self, entity):
         # produce until finished
         if self.item:
             if self.item.isProducing:
-                self.item.update()
+                self.item.update(entity)
             elif self.item.isProduced:
                 Camp.items.append(self.item)
                 self.item = None
 
+    def updateBuildingTimer(self, entity):
         # crafts the building itself
-        if self.timerStart != 0 and not self.isCrafted and time.time() - self.timerStart >= 1:#self.duration:
+        if not self.isCrafted and time.time() - self.timerStart >= self.duration / entity.scaleTime:
             self.isCrafted = True
             self.timerStart = 0
             Camp.buildings.append(self)
-

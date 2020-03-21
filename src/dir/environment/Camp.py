@@ -25,7 +25,7 @@ class Camp:
     level = 1
     nextLevel = 2
     maxLevel = 6
-    radius = 220
+    radius = 240
     position: vec2
     image: pygame.Surface
     imageScale: vec2
@@ -91,18 +91,17 @@ class Camp:
             if Camp.woodCount >= 10:
                 return True
         elif Camp.level == 2:
-            if Camp.woodCount >= 16:
+            if Camp.woodCount >= 11:
                 return True
         elif Camp.level == 3:
-            if Camp.woodCount >= 26:
+            if Camp.woodCount >= 15:
                 return True
         elif Camp.level == 4:
-            if Camp.woodCount >= 34:
+            if Camp.woodCount >= 24:
                 return True
 
     @classmethod
     def canProduce(cls, buildingType: BuildingType):
-        return True
         wood    = cls.woodCount
         swords  = cls.swordCount
         ingots  = cls.ironIngotCount

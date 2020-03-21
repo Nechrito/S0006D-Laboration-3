@@ -37,10 +37,10 @@ class Item:
         self.isProducing = True
         self.timerStart = time.time()
 
-    def update(self):
+    def update(self, entity):
         if not self.isProducing:
             return
 
-        if time.time() - self.timerStart >= 3: #self.duration:
+        if time.time() - self.timerStart >= self.duration / entity.scaleTime:
             self.isProducing = False
             self.isProduced = True

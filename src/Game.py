@@ -149,8 +149,8 @@ class Game:
                 entity.moveTo(node.position.randomized())
 
     def update(self):
-
         if not self.realCursorEnabled:
+
             CameraInstance.followTarget(self.relative)
 
             temp = pygame.mouse.get_pos()
@@ -178,8 +178,7 @@ class Game:
             nextLevel = Camp.nextLevel
 
             if nextLevel == 2:
-                EntityManager.register(EntityType.Explorer)
-                EntityManager.register(EntityType.Explorer)
+                EntityManager.register(EntityType.Worker)
                 EntityManager.register(EntityType.Miner)
                 EntityManager.register(EntityType.Craftsman)
                 EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Mine))
@@ -202,6 +201,7 @@ class Game:
 
             # only IdleState listens to this specific message
             EntityManager.sendMessage(Telegram(messageType=MessageType.StateChange, entityType=EntityType.Ignored))
+
             EntityManager.sendMessage(Telegram(messageType=MessageType.LevelUp, entityType=EntityType.Ignored))
 
         # window title
@@ -211,14 +211,14 @@ class Game:
     def draw(self):
 
         self.renderer.clear()
-        
+
         #for node in SETTINGS.DiscoveredTiles:
             #self.renderer.renderTile(node)
 
         # lowest layer, the tiles
         for row in SETTINGS.Graph:
             for node in row:
-                if node and node.isVisible and len(node.images) > 0:
+                if node and node.isVisible:
                     self.renderer.renderTile(node)
 
         #self.renderer.renderGrid()

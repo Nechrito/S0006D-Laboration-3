@@ -37,9 +37,7 @@ class MineState(IState):
         if self.reached:
             if self.selected.isCrafted:
                 self.selected.startProducing(ItemType.Charcoal)
-                self.selected.update()
-            else:
-                self.selected.startBuilding()
+                self.selected.updateItemTimer(entity)
 
         elif entity.position.distance(self.selectedPos) <= entity.radius:
             self.reached = True # <- lessens the amount of .distance(...) calls

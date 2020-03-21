@@ -74,10 +74,10 @@ class WorkerState(IState):
         # busy chopping down tree
         if self.isChoppingTree:
             # update tree timer
-            self.selectedTree.update()
+            self.selectedTree.update(entity)
 
             # if chopped, remove tree and swap into wood
-            if self.selectedTree in Camp.trees:
+            if self.selectedTree.isChopped and self.selectedTree in Camp.trees:
                 Camp.trees.remove(self.selectedTree)
 
                 self.selectedItem = Item(self.selectedTree.position.randomized(5, 3), ItemType.Wood)
@@ -87,10 +87,9 @@ class WorkerState(IState):
                 self.isChoppingTree = False
         else:
             # start tree timer if close, else move towards the tree
-            distanceToTree = self.selectedTree.position.distance(entity.position)
-            if distanceToTree <= entity.radius:
-                self.selectedTree.startTimer()
+            if self.selectedTree.position.distance(entity.position) <= entity.radius:
                 self.isChoppingTree = True
+                self.selectedTree.startTimer()
             else:
                 entity.moveTo(self.selectedTree.position)
 
