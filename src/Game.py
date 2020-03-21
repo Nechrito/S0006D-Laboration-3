@@ -73,9 +73,9 @@ class Game:
         # scatter iron ores around map
         centreP = vec2(SETTINGS.MAP_WIDTH // 2, SETTINGS.MAP_HEIGHT // 2)
         maxDist = 48
-        maxIterations = 6
+        maxIterations = 20
         for i in range(60):
-            Camp.items.append(Item(centreP.randomized(maxIterations, maxDist), ItemType.Ore))
+            Camp.items.append(Item(centreP.randomized(maxIterations, maxDist, 1), ItemType.Ore))
 
         for treeTile in SETTINGS.TILES_T:
             i = random.randint(1, 2)
@@ -88,8 +88,8 @@ class Game:
             Camp.trees.append(tree)
 
         EntityManager.register(EntityType.Worker)
-        #EntityManager.register(EntityType.Worker)
-        #EntityManager.register(EntityType.Explorer)
+        EntityManager.register(EntityType.Worker)
+        EntityManager.register(EntityType.Explorer)
         EntityManager.register(EntityType.Explorer)
 
         self.realCursorEnabled = False
@@ -179,23 +179,23 @@ class Game:
             nextLevel = Camp.nextLevel
 
             if nextLevel == 2:
-                #EntityManager.register(EntityType.Worker)
+                EntityManager.register(EntityType.Worker)
                 EntityManager.register(EntityType.Miner)
                 EntityManager.register(EntityType.Craftsman)
                 EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Mine))
             elif nextLevel == 3:
-                #EntityManager.register(EntityType.Worker)
-                #EntityManager.register(EntityType.Worker)
+                EntityManager.register(EntityType.Worker)
+                EntityManager.register(EntityType.Worker)
                 EntityManager.register(EntityType.Smith)
                 EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Smith))
             elif nextLevel == 4:
-                #EntityManager.register(EntityType.Worker)
-                #EntityManager.register(EntityType.Worker)
+                EntityManager.register(EntityType.Worker)
+                EntityManager.register(EntityType.Worker)
                 EntityManager.register(EntityType.Smelter)
                 EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.Smelt))
             elif nextLevel == 5:
-                #EntityManager.register(EntityType.Worker)
-                #EntityManager.register(EntityType.Worker)
+                EntityManager.register(EntityType.Worker)
+                EntityManager.register(EntityType.Worker)
                 EntityManager.sendMessage(Telegram(messageType=MessageType.CraftRequest, entityType=EntityType.Craftsman, message=BuildingType.TrainingCamp))
 
             Camp.levelUp()

@@ -29,6 +29,7 @@ class WorkerState(IState):
         # update selected tree
         elif self.selectedTree:
             self.updateTree(entity)
+
         # locate tree, then item if no tree found
         else:
             item = self.findItem(entity)
@@ -111,6 +112,7 @@ class WorkerState(IState):
             if distTreeToEnt < distToEntCached or not selectedTree:
                 distToEntCached = distTreeToEnt
                 selectedTree = tree
+                break
 
         if selectedTree:
             selectedTree.isTarget = True
@@ -129,11 +131,15 @@ class WorkerState(IState):
                 if not itemNode or not itemNode.isVisible:
                     continue
 
+                if itemNode.position.distance(Camp.position) > Camp.radius:
+                    continue
+
                 distanceToSub = item.position.distance(entity.position)
 
                 if not selectedItem or distanceToSub < closestDistance:
                     closestDistance = distanceToSub
                     selectedItem = item
+                    break
 
         if selectedItem:
             selectedItem.isTarget = True

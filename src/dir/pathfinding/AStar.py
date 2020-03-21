@@ -18,13 +18,21 @@ class AStar(IPath):
         if not start or not end:
             return
 
-        startNode = SETTINGS.getNode(start, False, True)
+        if start.LocalY == 0 or start.LocalY >= 99 or end.LocalY == 0 or end.LocalY >= 99:
+            return
+
+        if start.LocalX <= 1 or start.LocalX >= 99 or end.LocalX <= 1 or end.LocalY >= 99:
+            return
+
+        startNode = SETTINGS.getNode(start, False, False)
         if not startNode:
             return
 
-        endNode = SETTINGS.getNode(end, False, True)
+        endNode = SETTINGS.getNode(end, True, False)
         if not endNode:
             return
+
+        endNode.isWalkable = True
 
         closedList = []
         openList = [startNode]
@@ -32,7 +40,12 @@ class AStar(IPath):
         currentNode = None
 
         # iterate until end is located
-        while 0 < len(openList) < 200 and len(closedList) < 200:
+        while openList:
+
+            if len(closedList) > 500:
+                start.log("start")
+                end.log("end")
+                break
 
             currentNode = openList[0]
             currentIndex = 0

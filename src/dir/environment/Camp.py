@@ -25,7 +25,7 @@ class Camp:
     level = 1
     nextLevel = 2
     maxLevel = 6
-    radius = 240
+    radius = 275
     position: vec2
     image: pygame.Surface
     imageScale: vec2

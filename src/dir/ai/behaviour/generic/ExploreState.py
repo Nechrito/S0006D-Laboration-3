@@ -80,6 +80,7 @@ class ExploreState(IState):
 
                     distance = currentDist
                     closest = node
+                    break
 
         #timeElapsed = truncate((time.time() - timeStart) * 1000)
         #print("[Explorer] Got unseen node in: " + str(timeElapsed))

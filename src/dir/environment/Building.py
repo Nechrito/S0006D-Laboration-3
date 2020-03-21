@@ -15,12 +15,12 @@ class Building:
         self.buildingType = buildingType
         self.name = str(self.buildingType).replace("BuildingType.", "")
 
-        node = SETTINGS.getNode(position, False, True)
-        if node:
-            node.isWalkable = False
-            for neighbour in node.neighbours:
-                if neighbour:
-                    neighbour.isWalkable = False
+        #node = SETTINGS.getNode(position, False, True)
+        #if node:
+        #    node.isWalkable = False
+        #    for neighbour in node.neighbours:
+        #        if neighbour:
+        #            neighbour.isWalkable = False
 
         # int
         self.priority = self.buildingType.value
