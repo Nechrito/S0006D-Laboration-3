@@ -14,7 +14,7 @@ class Renderer:
         self.texts = []
 
     def clear(self):
-        pygame.display.update()
+        pygame.display.update(CameraInstance.rect)
         self.surface.fill((109, 247, 177))
 
     def renderTile(self, node: Node):

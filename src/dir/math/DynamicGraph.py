@@ -17,7 +17,7 @@ class DynamicGraph(list):
         else:
             m = index + 1
         if m > n:
-            self.extend([self.__class__() for i in range(m - n)])
+            self.extend([self.__class__() for _ in range(m - n)])
 
     def __getitem__(self, index):
         self._resize(index)

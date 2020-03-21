@@ -18,8 +18,9 @@ class CraftState(IState):
 
     def handleMessage(self, telegram):
         if telegram.messageType and telegram.messageType == MessageType.CraftRequest:
-            self.selected = Building(Camp.position.randomized(iterations=10, maxDist=11, minDist=6), telegram.message)
-            self.locked = True
+            if isinstance(telegram.message, BuildingType):
+                self.selected = Building(Camp.position.randomized(iterations=10, maxDist=11, minDist=6), telegram.message)
+                self.locked = True
 
     def execute(self, entity):
 

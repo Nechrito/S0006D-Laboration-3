@@ -10,4 +10,4 @@ setup(name = "S0006D Strategic AI",
       description = "Author: Philip Lindh",
       options = {"build_exe": build_options,
                  "bdist_msi": bdist_options},
-      executables = [exe_options])
+      executables = [exe_options], requires=['pytmx'])

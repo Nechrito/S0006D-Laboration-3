@@ -7,7 +7,6 @@ from dir.ai.StateTransition import StateTransition
 from dir.ai.Telegram import Telegram
 from dir.ai.behaviour.IState import IState
 from dir.engine.EntityManager import EntityManager
-from dir.math.cMath import truncate
 from enums.EntityType import EntityType
 from enums.MessageType import MessageType
 from enums.StateType import StateType
@@ -44,7 +43,7 @@ class ExploreState(IState):
             if self.currentTarget.distance(entity.position) <= entity.radius:
                 self.currentTarget = None
 
-        elif time.time() - self.lastCheckTick >= self.moveRate: # seconds
+        elif time.time() - self.lastCheckTick >= self.moveRate / entity.scaleTime: # seconds
             self.lastCheckTick = time.time()
             temp = self.getUnmarkedNode(entity)
             if temp:
